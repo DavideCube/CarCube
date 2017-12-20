@@ -3,7 +3,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 
-
+//a Cremo piacciono i termosifoni
 public class DatabaseConnection {
 	
 	private static final DatabaseConnection myConnection = new DatabaseConnection();
