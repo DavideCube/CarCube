@@ -16,9 +16,7 @@ public class CarCubeManager {
 		frame.getContentPane().add(MainPanel.getMainPanel());
 		frame.pack();
 		frame.setVisible(true);
-		frame.setResizable(false);
-		//Prova commit Sbetti--- Ciao sono Sbetti
-		
+		frame.setResizable(false);		
 		Connection conn = DatabaseConnection.getDBConnection().getConnection();
 		try {
 			Statement st = conn.createStatement();
@@ -33,7 +31,6 @@ public class CarCubeManager {
 	} catch (SQLException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-		// ciao sbetti, lo invitiamo quell'altro scemo?
 
 	}
 
