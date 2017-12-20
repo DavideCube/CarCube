@@ -1,6 +1,4 @@
 package atunibz.dcube.DBProject.GUI;
-
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 
