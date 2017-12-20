@@ -14,6 +14,7 @@ public class CarCubeManager {
 		frame.setVisible(true);
 		frame.setResizable(false);
 		//Prova commit Sbetti--- Ciao sono Sbetti
+		// ciao sbetti, lo invitiamo quell'altro scemo?
 	}
 
 }
