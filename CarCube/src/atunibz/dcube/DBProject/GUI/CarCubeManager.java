@@ -18,7 +18,6 @@ public class CarCubeManager {
 		frame.setVisible(true);
 		frame.setResizable(false);
 		//Prova commit Sbetti--- Ciao sono Sbetti
-<<<<<<< HEAD
 		
 		Connection conn = DatabaseConnection.getDBConnection().getConnection();
 		try {
@@ -34,9 +33,8 @@ public class CarCubeManager {
 	} catch (SQLException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-=======
 		// ciao sbetti, lo invitiamo quell'altro scemo?
->>>>>>> branch 'master' of https://github.com/CremoD/CarCube.git
+
 	}
 
 	}
