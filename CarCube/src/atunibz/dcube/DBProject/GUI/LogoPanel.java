@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import atunibz.dcube.DBProject.Utilities.FontUtility;
+import atunibz.dcube.DBProject.configuration.Resources;
 
 public class LogoPanel extends JPanel {
 	private JPanel logoPanel, titlePanel, controlPanel;
@@ -24,7 +24,7 @@ public class LogoPanel extends JPanel {
 		logoPanel.setLayout(new BoxLayout(logoPanel, BoxLayout.Y_AXIS));
 		logoPanel.add((Box.createRigidArea(new Dimension(0, 30))));
 		// Panel containing the beautiful logo
-		titlePanel = FontUtility.carCubePanel();
+		titlePanel = Resources.carCubePanel();
 		logoPanel.add(titlePanel);
 		
 		// control panel
@@ -36,12 +36,12 @@ public class LogoPanel extends JPanel {
 		manage = new JButton ();
 		manage.setIcon(new ImageIcon ("icons/management.png"));
 		manage.setText("Management");
-		FontUtility.changeFont(manage, Font.BOLD, 30);
+		Resources.changeFont(manage, Font.BOLD, 30);
 		
 		car = new JButton ();
 		car.setIcon(new ImageIcon ("icons/car-2.png"));
 		car.setText("Search Car");
-		FontUtility.changeFont(car, Font.BOLD, 30);
+		Resources.changeFont(car, Font.BOLD, 30);
 		car.setHorizontalTextPosition(SwingConstants.LEFT);
 		controlPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 		controlPanel.add(manage);

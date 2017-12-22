@@ -1,4 +1,4 @@
-package atunibz.dcube.DBProject.Utilities;
+package atunibz.dcube.DBProject.configuration;
 
 import java.awt.Font;
 
@@ -7,7 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class FontUtility {
+public class Resources {
 	
 	
 	public static void changeFont(Object o, int FontType, int dimension) {
