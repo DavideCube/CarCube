@@ -57,7 +57,7 @@ public class CarCubeManager {
 		else if(os.compareTo("Davide Cremonini\n") == 0) {
 			System.out.println("Ciao cremo\n");
 		}
-		else if(os.compareTo("Windows 10\n") == 0) {
+		else if(os.compareTo("Windows 10") == 0) {
 			System.out.println("Ciao sbetti\n");
 			p = "C:\\Users\\Davide\\Documents\\unibz\\DatabaseSystems\\Project\\postgresql-42.1.4.jar";
 		}
