@@ -1,5 +1,10 @@
 package atunibz.dcube.DBProject.GUI;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 /**
@@ -9,7 +14,7 @@ import javax.swing.JPanel;
  * the panel object and switch method for switching between two panels.
  * This is also the class which is added at the frame of the program in the main method.
  */
-public class MainPanel extends JPanel {
+public class MainPanel extends BackgroundedPanel{
 	// create ONE TIME the object
 	private static final MainPanel mainPanel = new MainPanel();
 
@@ -19,6 +24,14 @@ public class MainPanel extends JPanel {
 	 * At the beginning the logo panel is the first one which is added to the main panel.
 	 */
 	private MainPanel() {
+		Image bg = null;
+		try {
+			bg = ImageIO.read(new File(""));
+		} catch (IOException e) {
+			System.err.println("Cannot load background!");
+		}
+		this.setImage(bg);
+		this.setBackgroundLayout(BackgroundLayout.SCALED);
 		LogoPanel intro = new LogoPanel();
 		add(intro);
 	}
