@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 
 public final class AppResources {
 	
+	public static final Font TITLE_FONT;
+	public static final Font DEFAULT_FONT = 
 	
 	
 	public static void changeFont(Object o, int FontType, int dimension) {

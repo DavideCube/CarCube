@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import atunibz.dcube.DBProject.configuration.AppResources;
 import atunibz.dcube.DBProject.configuration.Resources;
 
 public class LogoPanel extends JPanel {
@@ -36,12 +37,12 @@ public class LogoPanel extends JPanel {
 		manage = new JButton ();
 		manage.setIcon(new ImageIcon ("icons/management.png"));
 		manage.setText("Management");
-		Resources.changeFont(manage, Font.BOLD, 30);
+		manage.setFont(AppResources.BUTTON_FONT);
 		
 		car = new JButton ();
 		car.setIcon(new ImageIcon ("icons/car-2.png"));
 		car.setText("Search Car");
-		Resources.changeFont(car, Font.BOLD, 30);
+		manage.setFont(AppResources.BUTTON_FONT);
 		car.setHorizontalTextPosition(SwingConstants.LEFT);
 		controlPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 		controlPanel.add(manage);
