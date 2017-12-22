@@ -23,10 +23,11 @@ public class CarCubeManager {
 		frame.getContentPane().add(MainPanel.getMainPanel());
 		frame.pack();
 		frame.setVisible(true);
-		frame.setResizable(false);		
-		Connection conn = DatabaseConnection.getDBConnection().getConnection();
-		String currentUser = System.getProperty("user.name");
+		frame.setResizable(false);	
+		String currentUser = System.getProperty("os.name");
 		addPath(currentUser);
+		Connection conn = DatabaseConnection.getDBConnection().getConnection();
+		
 		//dperez, Davide Sbetti, Davide Cremonini
 		try {
 			Statement st = conn.createStatement();
@@ -46,17 +47,17 @@ public class CarCubeManager {
 
 	}
 	
-	public static void addPath(String user){
-		System.out.println("User " + System.getProperty("user.name") + " is running the application\n");
+	public static void addPath(String os){
+		System.out.println("User " + System.getProperty("os.name") + " is running the application\n");
 		String p = "";
-		if(user.compareTo("dperez") == 0) {
+		if(os.compareTo("Linux") == 0) {
 			System.out.println("Ciao perez\n");
 			p = "/home/dperez/Desktop/Java/external libs/postgresql-42.1.4.jar";
 		}
-		else if(user.compareTo("Davide Cremonini\n") == 0) {
+		else if(os.compareTo("Davide Cremonini\n") == 0) {
 			System.out.println("Ciao cremo\n");
 		}
-		else if(user.compareTo("Davide\n") == 0) {
+		else if(os.compareTo("Windows 10\n") == 0) {
 			System.out.println("Ciao sbetti\n");
 			p = "C:\\Users\\Davide\\Documents\\unibz\\DatabaseSystems\\Project\\postgresql-42.1.4.jar";
 		}
@@ -87,7 +88,7 @@ public class CarCubeManager {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-	    System.out.println("Classpath updated by " + user + "\n");
+	    System.out.println("Classpath updated from " + os + "\n");
 	    System.out.println("Loading classes...\n");
 		
 		try {
