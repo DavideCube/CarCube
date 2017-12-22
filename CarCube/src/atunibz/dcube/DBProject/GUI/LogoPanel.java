@@ -42,7 +42,7 @@ public class LogoPanel extends JPanel {
 		car = new JButton ();
 		car.setIcon(new ImageIcon ("icons/car-2.png"));
 		car.setText("Search Car");
-		manage.setFont(AppResources.BUTTON_FONT);
+		car.setFont(AppResources.BUTTON_FONT);
 		car.setHorizontalTextPosition(SwingConstants.LEFT);
 		controlPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 		controlPanel.add(manage);
