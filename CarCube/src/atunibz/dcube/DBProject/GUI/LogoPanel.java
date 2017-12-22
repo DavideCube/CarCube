@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import atunibz.dcube.DBProject.configuration.AppResources;
-import atunibz.dcube.DBProject.configuration.Resources;
+import atunibz.dcube.DBProject.configuration.AppResources;
 
 public class LogoPanel extends JPanel {
 	private JPanel logoPanel, titlePanel, controlPanel;
@@ -25,7 +25,7 @@ public class LogoPanel extends JPanel {
 		logoPanel.setLayout(new BoxLayout(logoPanel, BoxLayout.Y_AXIS));
 		logoPanel.add((Box.createRigidArea(new Dimension(0, 30))));
 		// Panel containing the beautiful logo
-		titlePanel = Resources.carCubePanel();
+		titlePanel = AppResources.carCubePanel();
 		logoPanel.add(titlePanel);
 		
 		// control panel
