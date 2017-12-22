@@ -61,6 +61,7 @@ public class StakeholdersPanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
+			
 			String selected = (String) cus_sup.getSelectedItem();
 			
 			if(selected.compareTo("Suppliers") == 0) {
