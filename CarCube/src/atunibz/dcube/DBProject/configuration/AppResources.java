@@ -7,7 +7,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class Resources {
+public final class AppResources {
+	
 	
 	
 	public static void changeFont(Object o, int FontType, int dimension) {
