@@ -10,7 +10,8 @@ import javax.swing.JPanel;
 public final class AppResources {
 	
 	public static final Font TITLE_FONT;
-	public static final Font DEFAULT_FONT = 
+	public static final Font DEFAULT_FONT;
+	public static final Font BUTTON_FONT = new Font("Comic Sans MS", Font.BOLD, 30);
 	
 	
 	public static void changeFont(Object o, int FontType, int dimension) {
