@@ -8,11 +8,19 @@ import javax.swing.JLabel;
 public class FontUtility {
 	
 	
-	public static void changeFont(FontInterface o, int FontType, int dimension) {
+	public static void changeFont(Object o, int FontType, int dimension) {
 		
 		Font myFont = new Font("Comic Sans MS", FontType, dimension);
 		
-		o.setFont(myFont);
+		if (o instanceof JButton) {
+			JButton but = (JButton) o;
+			but.setFont(myFont);
+		}
+		
+		if(o instanceof JLabel) {
+			JLabel lab = (JLabel) o;
+			lab.setFont(myFont);
+		}
 	}
 	
 }
