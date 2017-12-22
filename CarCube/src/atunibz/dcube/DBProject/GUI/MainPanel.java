@@ -7,6 +7,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import atunibz.dcube.DBProject.configuration.AppResources;
+
 /**
  * Singleton: Class which is responsible for switching between different panels in the program. Its private 
  * constructor allows only one time the creation of an instance of this class, so that another
@@ -24,13 +26,7 @@ public class MainPanel extends BackgroundedPanel{
 	 * At the beginning the logo panel is the first one which is added to the main panel.
 	 */
 	private MainPanel() {
-		Image bg = null;
-		try {
-			bg = ImageIO.read(new File(""));
-		} catch (IOException e) {
-			System.err.println("Cannot load background!");
-		}
-		this.setImage(bg);
+		this.setImage(AppResources.DEFAULT_BACKGROUND);
 		this.setBackgroundLayout(BackgroundLayout.SCALED);
 		LogoPanel intro = new LogoPanel();
 		add(intro);
