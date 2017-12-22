@@ -56,7 +56,7 @@ public class CarCubeManager {
 		else if(user.compareTo("Davide Cremonini\n") == 0) {
 			System.out.println("Ciao cremo\n");
 		}
-		else if(user.compareTo("Davide Sbetti\n") == 0) {
+		else if(user.compareTo("Davide\n") == 0) {
 			System.out.println("Ciao sbetti\n");
 			p = "C:\\Users\\Davide\\Documents\\unibz\\DatabaseSystems\\Project\\postgresql-42.1.4.jar";
 		}
