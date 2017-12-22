@@ -21,7 +21,7 @@ public final class AppResources {
 	public static final Image DEFAULT_BACKGROUND = backgroundInit();
 	
 	//se volete cambiare lo sfondo cambiate solo la stringa qua sotto
-	private static final String DEFAULT_BACKGROUND_PATH = "icons/default_bg.jpeg";
+	private static final String DEFAULT_BACKGROUND_PATH = "icons/default_bg.jpg";
 	
 	private static Image backgroundInit() {
 		Image backgroundImg = null;
@@ -57,6 +57,7 @@ public final class AppResources {
 		JLabel logo = new JLabel();
 		logo.setIcon(new ImageIcon ("icons/logo.png"));
 		titlePanel.add(logo);
+		titlePanel.setOpaque(false);
 		return titlePanel;
 	}
 	

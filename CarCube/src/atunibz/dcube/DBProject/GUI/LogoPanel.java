@@ -1,5 +1,6 @@
 package atunibz.dcube.DBProject.GUI;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 
@@ -27,11 +28,13 @@ public class LogoPanel extends JPanel {
 		// Panel containing the beautiful logo
 		titlePanel = AppResources.carCubePanel();
 		logoPanel.add(titlePanel);
+		logoPanel.setOpaque(false);
 		
 		// control panel
 		logoPanel.add((Box.createRigidArea(new Dimension(0, 150))));
 		
 		controlPanel = new JPanel();
+		controlPanel.setOpaque(false);
 		controlPanel.setPreferredSize(new Dimension(1000,150));
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.X_AXIS));
 		manage = new JButton ();
@@ -49,7 +52,6 @@ public class LogoPanel extends JPanel {
 		controlPanel.add((Box.createRigidArea(new Dimension(150, 0))));
 		controlPanel.add(car);
 		controlPanel.add((Box.createRigidArea(new Dimension(50, 0))));
-		controlPanel.setBorder(BorderFactory.createLoweredBevelBorder());
 		logoPanel.add(controlPanel);
 		
 		
