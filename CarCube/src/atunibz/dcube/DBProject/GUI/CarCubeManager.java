@@ -25,7 +25,7 @@ public class CarCubeManager {
 		frame.setVisible(true);
 		frame.setResizable(false);	
 		String currentUser = System.getProperty("os.name");
-		//addPath(currentUser);
+		addPath(currentUser);
 		Connection conn = DatabaseConnection.getDBConnection().getConnection();
 		
 		//dperez, Davide Sbetti, Davide Cremonini
@@ -47,7 +47,7 @@ public class CarCubeManager {
 
 	}
 	
-	/*public static void addPath(String os){
+	public static void addPath(String os){
 		System.out.println("User " + System.getProperty("os.name") + " is running the application\n");
 		String p = "";
 		if(os.compareTo("Linux") == 0) {
@@ -56,6 +56,7 @@ public class CarCubeManager {
 		}
 		else if(os.compareTo("Davide Cremonini\n") == 0) {
 			System.out.println("Ciao cremo\n");
+			p = "/Users/DavideCremonini/DocumentiDavide/UniBZ/Database_System/DavideCube/postgresql-42.1.4.jar";
 		}
 		else if(os.compareTo("Windows 10") == 0) {
 			System.out.println("Ciao sbetti\n");
@@ -99,5 +100,5 @@ public class CarCubeManager {
 		}
 		
 		System.out.print("Class loaded.\n");
-	}*/
+	}
 }
