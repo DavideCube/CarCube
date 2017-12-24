@@ -54,7 +54,7 @@ public class CarCubeManager {
 			System.out.println("Ciao perez\n");
 			p = "/home/dperez/Desktop/Java/external libs/postgresql-42.1.4.jar";
 		}
-		else if(os.compareTo("Mac OS X\n") == 0) {
+		else if(os.compareTo("Mac OS X") == 0) {
 			System.out.println("Ciao cremo\n");
 			p = "/Users/DavideCremonini/DocumentiDavide/UniBZ/Database_System/DavideCube/postgresql-42.1.4.jar";
 		}
