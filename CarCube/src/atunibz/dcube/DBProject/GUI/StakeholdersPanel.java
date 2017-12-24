@@ -2,7 +2,6 @@ package atunibz.dcube.DBProject.GUI;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -32,7 +31,7 @@ import atunibz.dcube.DBProject.configuration.AppResources;
 
 public class StakeholdersPanel extends JPanel{
 	private JPanel shPanel, titlePanel, comboPanel, scrollPanel;
-	private String[] caseCusCus, caseSup, caseBoth;
+	private String[] caseCusCus, caseSup;
 	private JComboBox cus_sup, criteria;
 	private JScrollPane scrollPane;
 	private JLabel search;
@@ -57,7 +56,7 @@ public class StakeholdersPanel extends JPanel{
 		comboPanel = new JPanel();
 		comboPanel.setLayout(new BoxLayout(comboPanel, BoxLayout.X_AXIS));
 		
-		String [] stakeH = {"Suppliers", "Customers", "Both"};
+		String [] stakeH = {"Suppliers", "Customers"};
 		cus_sup = new JComboBox (stakeH);
 		comboPanel.add(cus_sup);
 		cus_sup.addActionListener(new SHlistener());
@@ -126,6 +125,8 @@ public class StakeholdersPanel extends JPanel{
 		public void actionPerformed(ActionEvent e) {
 			
 			searchField.setText("");
+			DefaultListModel dlm = new DefaultListModel();
+			list.setModel(dlm);
 			String selected = (String) cus_sup.getSelectedItem();
 			
 			if(selected.compareTo("Suppliers") == 0) {
@@ -152,17 +153,33 @@ public class StakeholdersPanel extends JPanel{
 			
 			if(selected.compareTo("Customers") == 0) {
 				switch (selected2) {
-				case "Name": results = resultQuery("customer", "c_name", "");
+				case "Name": results = resultQuery("customer", "c_name", "", "tax_code", true);
 				break;
-				case "Surname": results = resultQuery("customer", "c_surname", "");
+				case "Surname": results = resultQuery("customer", "c_surname", "", "tax_code", true);
 				break;
-				case "Tax Code": results = resultQuery("customer", "tax_code", "");
+				case "Tax Code": results = resultQuery("customer", "tax_code", "", "tax_code", true);
 				break;
-				case "Phone": results = resultQuery("phone_contact", "phone_number", "");
+				case "Phone": results = resultQuery("phone_contact", "phone_number", "", "phone_number", true);
 				break;
-				case "Mail": results = resultQuery("mail_contact", "mail", "");
+				case "Mail": results = resultQuery("mail_contact", "mail", "", "mail", true);
 				break;
-				case "Fax": results = resultQuery("fax_contact", "fax", "");
+				case "Fax": results = resultQuery("fax_contact", "fax", "", "fax", true);
+				break;
+				
+				}
+			}
+			
+			else if(selected.compareTo("Suppliers") == 0) {
+				switch (selected2) {
+				case "Name": results = resultQuery("supplier", "name", "", "vat", false);
+				break;
+				case "Vat": results = resultQuery("supplier", "vat", "", "vat", false);
+				break;
+				case "Phone": results = resultQuery("phone_contact", "phone_number", "", "phone_number", false);
+				break;
+				case "Mail": results = resultQuery("mail_contact", "mail", "", "mail", false);
+				break;
+				case "Fax": results = resultQuery("fax_contact", "fax", "", "fax", false);
 				break;
 				
 				}
@@ -210,17 +227,33 @@ public class StakeholdersPanel extends JPanel{
 			
 			if(selected.compareTo("Customers") == 0) {
 				switch (selected2) {
-				case "Name": results = resultQuery("customer", "c_name", inserted);
+				case "Name": results = resultQuery("customer", "c_name", inserted, "tax_code", true);
 				break;
-				case "Surname": results = resultQuery("customer", "c_surname", inserted);
+				case "Surname": results = resultQuery("customer", "c_surname", inserted, "tax_code", true);
 				break;
-				case "Tax Code": results = resultQuery("customer", "tax_code", inserted);
+				case "Tax Code": results = resultQuery("customer", "tax_code", inserted, "tax_code", true);
 				break;
-				case "Phone": results = resultQuery("phone_contact", "phone_number", inserted);
+				case "Phone": results = resultQuery("phone_contact", "phone_number", inserted, "phone_number", true);
 				break;
-				case "Mail": results = resultQuery("mail_contact", "mail", inserted);
+				case "Mail": results = resultQuery("mail_contact", "mail", inserted, "mail", true);
 				break;
-				case "Fax": results = resultQuery("fax_contact", "fax", inserted);
+				case "Fax": results = resultQuery("fax_contact", "fax", inserted, "fax", true);
+				break;
+				
+				}
+			}
+			
+			else if(selected.compareTo("Suppliers") == 0) {
+				switch (selected2) {
+				case "Name": results = resultQuery("supplier", "name", inserted, "vat", false);
+				break;
+				case "Vat": results = resultQuery("supplier", "vat", inserted, "vat", false);
+				break;
+				case "Phone": results = resultQuery("phone_contact", "phone_number", inserted, "phone_number", false);
+				break;
+				case "Mail": results = resultQuery("mail_contact", "mail", inserted, "mail", false);
+				break;
+				case "Fax": results = resultQuery("fax_contact", "fax", inserted, "fax", false);
 				break;
 				
 				}
@@ -238,24 +271,37 @@ public class StakeholdersPanel extends JPanel{
 		
 	}
 	
-	String [] resultQuery (String table, String attribute, String inserted) {
+	// method that executes the the research query in Database and returns the results as an array of Strings
+	String [] resultQuery (String table, String attribute, String inserted, String primaryAttribute, boolean customer) {
 		ArrayList <String> resultList = null;
 		try {
 			Statement st = conn.createStatement();
-			String sql = "SELECT * FROM " + table + " WHERE UPPER(" + attribute + ") like UPPER('%" + inserted + "%')";
+			String baseString = "SELECT * FROM " + table + " WHERE UPPER(" + attribute + ") like UPPER('%" + inserted + "%')";
+			String sql = null;
+			if (table.contains("contact")) {
+				if (customer)
+					sql = baseString + " and owner_supplier isNULL";
+				else
+					sql = baseString + " and owner_customer isNULL";
+			}
+			else 
+				sql = baseString;
 			resultList = new ArrayList <String>();
 			ResultSet rs = st.executeQuery(sql);
 		
 			
 			while(rs.next()) {
-				resultList.add(rs.getString(attribute));
+				if (primaryAttribute.compareTo(attribute) == 0)
+					resultList.add(rs.getString(attribute));
+				else
+					resultList.add(rs.getString(attribute) + "  (" + rs.getString (primaryAttribute) + ")");
+					
 			}
 	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Results are " + resultList.size());
 		String [] result = resultList.toArray(new String[resultList.size()]);
 		return result;
 	}

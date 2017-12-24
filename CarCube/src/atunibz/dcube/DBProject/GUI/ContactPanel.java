@@ -33,7 +33,7 @@ public class ContactPanel extends BackgroundedPanel {
 		faxTF = new JTextField(15);
 		//go back
 		backBtn = new JButton("Back");
-		statsBtn = new JButton()
+		statsBtn = new JButton();
 		
 		
 	}
