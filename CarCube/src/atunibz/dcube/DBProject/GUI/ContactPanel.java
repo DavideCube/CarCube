@@ -31,6 +31,9 @@ public class ContactPanel extends BackgroundedPanel {
 		//fax
 		faxLbl = new IconLabel(null,"Fax:", false);
 		faxTF = new JTextField(15);
+		//go back
+		backBtn = new JButton("Back");
+		statsBtn = new JButton()
 		
 		
 	}
