@@ -86,6 +86,7 @@ public class StakeholdersPanel extends JPanel{
 		criteria.addActionListener(new CriteriaListener());
 		comboPanel.add(criteria);
 		comboPanel.add(Box.createRigidArea(new Dimension (45, 0)));
+		comboPanel.setOpaque(false);
 		shPanel.add(comboPanel);
 		
 		// add the text field
@@ -98,6 +99,8 @@ public class StakeholdersPanel extends JPanel{
 		support.add(search);
 		support.add(searchField);
 		searchPanel.add(support);
+		support.setOpaque(false);
+		searchPanel.setOpaque(false);
 		shPanel.add(searchPanel);
 		searchField.getDocument().addDocumentListener(new MyDocumentListener());
 		
@@ -113,20 +116,21 @@ public class StakeholdersPanel extends JPanel{
 		scrollPane.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.GRAY, Color.GRAY));
 		scrollPane.setAlignmentX(CENTER_ALIGNMENT);
 		scrollPanel.add(scrollPane);
-		shPanel.add((Box.createRigidArea(new Dimension(0, 20))));
+		scrollPanel.setOpaque(false);
+		shPanel.add((Box.createRigidArea(new Dimension(0, 30))));
 		shPanel.add(scrollPanel);
 		
 		// panel at the bottom which contains the buttons to go back, add a customer, add a supplier, see statistics (maybe?)
-		shPanel.add((Box.createRigidArea(new Dimension(0, 40))));
+		shPanel.add((Box.createRigidArea(new Dimension(0, 60))));
 		JPanel buttonPanel = new JPanel ();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		//back
-		back = AppResources.iconButton("Go back", "icons/back.png");
+		back = AppResources.iconButton("Go back     ", "icons/back.png");
 		buttonPanel.add(back);
 		back.addActionListener(new BackListener());
 		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 		// stats
-		stats = AppResources.iconButton("Statistics", "icons/graph.png");
+		stats = AppResources.iconButton("Statistics  ", "icons/graph.png");
 		buttonPanel.add(stats);
 		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 		// add customer
@@ -136,6 +140,7 @@ public class StakeholdersPanel extends JPanel{
 		// add supplier 
 		addSup = AppResources.iconButton("Add supplier", "icons/truck.png");
 		buttonPanel.add(addSup);
+		buttonPanel.setOpaque(false);
 		
 		shPanel.add(buttonPanel);
 		cus_sup.setSelectedItem(stakeH[0]);
