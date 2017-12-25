@@ -10,12 +10,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 public final class AppResources {
 	
 	public static final Font TITLE_FONT = null;
 	public static final Font DEFAULT_FONT = null;
 	public static final Font BUTTON_FONT = new Font("Comic Sans MS", Font.BOLD, 30);
+	public static final Font LITTLEBUTTON_FONT = new Font("Helvetica", Font.PLAIN, 15);
 	
 	//background constants
 	public static final Image DEFAULT_BACKGROUND = backgroundInit();
@@ -59,6 +61,15 @@ public final class AppResources {
 		titlePanel.add(logo);
 		titlePanel.setOpaque(false);
 		return titlePanel;
+	}
+	
+	public static JButton iconButton (String name, String imagePath) {
+		JButton button = new JButton();
+		button.setText(name);
+		button.setIcon(new ImageIcon(imagePath));
+		button.setHorizontalTextPosition(SwingConstants.RIGHT);
+		button.setFont(AppResources.LITTLEBUTTON_FONT);
+		return button;
 	}
 	
 }

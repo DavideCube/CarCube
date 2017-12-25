@@ -3,6 +3,8 @@ package atunibz.dcube.DBProject.GUI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -41,7 +43,7 @@ public class LogoPanel extends JPanel {
 		manage.setIcon(new ImageIcon ("icons/management.png"));
 		manage.setText("Management");
 		manage.setFont(AppResources.BUTTON_FONT);
-		
+		manage.addActionListener(new StakeholdersListener());
 		car = new JButton ();
 		car.setIcon(new ImageIcon ("icons/car-2.png"));
 		car.setText("Search Car");
@@ -54,10 +56,16 @@ public class LogoPanel extends JPanel {
 		controlPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 		logoPanel.add(controlPanel);
 		
-		
-		
-		
 		add (logoPanel);
+	}
+	
+	// listener class to swap to the stakeholder panel
+	private class StakeholdersListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
+		}
+		
 	}
 
 }

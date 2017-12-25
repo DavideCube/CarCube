@@ -16,6 +16,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -23,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -38,6 +40,7 @@ public class StakeholdersPanel extends JPanel{
 	private JList list;
 	private JTextField searchField;
 	private Connection conn;
+	private JButton back, addSup, addCus, stats;
 	
 	
 	public StakeholdersPanel() {
@@ -56,13 +59,13 @@ public class StakeholdersPanel extends JPanel{
 		comboPanel = new JPanel();
 		comboPanel.setLayout(new BoxLayout(comboPanel, BoxLayout.X_AXIS));
 		
-		String [] stakeH = {"Suppliers", "Customers"};
+		String [] stakeH = {"Customers", "Suppliers"};
 		cus_sup = new JComboBox (stakeH);
+		comboPanel.add(Box.createRigidArea(new Dimension (45, 0)));
 		comboPanel.add(cus_sup);
 		cus_sup.addActionListener(new SHlistener());
-		shPanel.add(comboPanel);
+		
 		//combo box to choose criteria
-		String [] machecazzoserve = {"Select stakeholder first"};
 		caseCusCus = new String[6];
 		caseCusCus[0] = "Name";
 		caseCusCus[1] = "Surname";
@@ -79,10 +82,11 @@ public class StakeholdersPanel extends JPanel{
 		caseSup[3] = "Mail";
 		caseSup[4] = "Fax";
 		
-		criteria = new JComboBox (machecazzoserve);
-		criteria.setEnabled(false);
+		criteria = new JComboBox (caseSup);
 		criteria.addActionListener(new CriteriaListener());
 		comboPanel.add(criteria);
+		comboPanel.add(Box.createRigidArea(new Dimension (45, 0)));
+		shPanel.add(comboPanel);
 		
 		// add the text field
 		JPanel searchPanel = new JPanel ();
@@ -112,38 +116,59 @@ public class StakeholdersPanel extends JPanel{
 		shPanel.add((Box.createRigidArea(new Dimension(0, 20))));
 		shPanel.add(scrollPanel);
 		
+		// panel at the bottom which contains the buttons to go back, add a customer, add a supplier, see statistics (maybe?)
+		shPanel.add((Box.createRigidArea(new Dimension(0, 40))));
+		JPanel buttonPanel = new JPanel ();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+		//back
+		back = AppResources.iconButton("Go back", "icons/back.png");
+		buttonPanel.add(back);
+		back.addActionListener(new BackListener());
+		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
+		// stats
+		stats = AppResources.iconButton("Statistics", "icons/graph.png");
+		buttonPanel.add(stats);
+		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
+		// add customer
+		addCus = AppResources.iconButton("Add customer", "icons/user.png");
+		buttonPanel.add(addCus);
+		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
+		// add supplier 
+		addSup = AppResources.iconButton("Add supplier", "icons/truck.png");
+		buttonPanel.add(addSup);
 		
-		
-		
+		shPanel.add(buttonPanel);
+		cus_sup.setSelectedItem(stakeH[0]);
+		criteria.setSelectedItem(stakeH[0]);
 		add(shPanel);
 	}
 	
 	// listener class to update the criteria combo box
 	private class SHlistener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			
 			searchField.setText("");
-			DefaultListModel dlm = new DefaultListModel();
-			list.setModel(dlm);
 			String selected = (String) cus_sup.getSelectedItem();
+			String [] results = null;
 			
 			if(selected.compareTo("Suppliers") == 0) {
 				criteria.setModel(new DefaultComboBoxModel(caseSup));
+				results = resultQuery("supplier", "vat", "", "vat", false); 
 			} else if(selected.compareTo("Customers") == 0) {
 				criteria.setModel(new DefaultComboBoxModel(caseCusCus));
-			} else {
-				
-			}
+				results = resultQuery("customer", "c_name", "", "tax_code", true); 
+			} 
 			
-			criteria.setEnabled(true);
+			DefaultListModel dlm = new DefaultListModel();
+			for (int i = 0; i< results.length; i++) {
+				dlm.addElement(results[i]);
+			}
+			list.setModel(dlm);
 		}
-		
 	}
 	
+	// listener for the selected criteria from the combo box
 	private class CriteriaListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			searchField.setText("");
@@ -165,10 +190,8 @@ public class StakeholdersPanel extends JPanel{
 				break;
 				case "Fax": results = resultQuery("fax_contact", "fax", "", "fax", true);
 				break;
-				
 				}
 			}
-			
 			else if(selected.compareTo("Suppliers") == 0) {
 				switch (selected2) {
 				case "Name": results = resultQuery("supplier", "name", "", "vat", false);
@@ -180,43 +203,31 @@ public class StakeholdersPanel extends JPanel{
 				case "Mail": results = resultQuery("mail_contact", "mail", "", "mail", false);
 				break;
 				case "Fax": results = resultQuery("fax_contact", "fax", "", "fax", false);
-				break;
-				
+				break;	
 				}
 			}
-			
 			DefaultListModel dlm = new DefaultListModel();
 			for (int i = 0; i< results.length; i++) {
 				dlm.addElement(results[i]);
 			}
 			list.setModel(dlm);
-			
-			
-			
 		}
-		
 	}
 	
+	// listener add to the text field which dynamically searches in the database the inserted characters
 	private class MyDocumentListener implements DocumentListener {
-
 		@Override
 		public void insertUpdate(DocumentEvent e) {
 			searchInDatabase ();
-			
 		}
-
 		@Override
 		public void removeUpdate(DocumentEvent e) {
-			searchInDatabase ();
-			
+			searchInDatabase ();	
 		}
-
 		@Override
 		public void changedUpdate(DocumentEvent e) {
-			searchInDatabase ();
-			
+			searchInDatabase ();	
 		}
-		
 		public void searchInDatabase () {
 			// what the user inserts in the search field
 			String inserted = searchField.getText();
@@ -239,10 +250,8 @@ public class StakeholdersPanel extends JPanel{
 				break;
 				case "Fax": results = resultQuery("fax_contact", "fax", inserted, "fax", true);
 				break;
-				
 				}
 			}
-			
 			else if(selected.compareTo("Suppliers") == 0) {
 				switch (selected2) {
 				case "Name": results = resultQuery("supplier", "name", inserted, "vat", false);
@@ -255,17 +264,21 @@ public class StakeholdersPanel extends JPanel{
 				break;
 				case "Fax": results = resultQuery("fax_contact", "fax", inserted, "fax", false);
 				break;
-				
 				}
 			}
-			
 			DefaultListModel dlm = new DefaultListModel();
 			for (int i = 0; i< results.length; i++) {
 				dlm.addElement(results[i]);
 			}
 			list.setModel(dlm);
-			
-			
+		}
+	}
+	
+	// listener to go back to the logo Panel
+	private class BackListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainPanel.getMainPanel().swapPanel(new LogoPanel());
 			
 		}
 		
@@ -288,16 +301,13 @@ public class StakeholdersPanel extends JPanel{
 				sql = baseString;
 			resultList = new ArrayList <String>();
 			ResultSet rs = st.executeQuery(sql);
-		
-			
+	
 			while(rs.next()) {
 				if (primaryAttribute.compareTo(attribute) == 0)
 					resultList.add(rs.getString(attribute));
 				else
 					resultList.add(rs.getString(attribute) + "  (" + rs.getString (primaryAttribute) + ")");
-					
 			}
-	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -305,5 +315,4 @@ public class StakeholdersPanel extends JPanel{
 		String [] result = resultList.toArray(new String[resultList.size()]);
 		return result;
 	}
-
 }
