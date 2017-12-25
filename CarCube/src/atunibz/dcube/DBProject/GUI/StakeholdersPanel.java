@@ -290,7 +290,7 @@ public class StakeholdersPanel extends JPanel{
 	}
 	
 	// method that executes the the research query in Database and returns the results as an array of Strings
-	String [] resultQuery (String table, String attribute, String inserted, String primaryAttribute, boolean customer) {
+	public String [] resultQuery (String table, String attribute, String inserted, String primaryAttribute, boolean customer) {
 		ArrayList <String> resultList = null;
 		try {
 			Statement st = conn.createStatement();
