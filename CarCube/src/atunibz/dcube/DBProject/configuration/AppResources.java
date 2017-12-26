@@ -15,7 +15,7 @@ import javax.swing.SwingConstants;
 public final class AppResources {
 	
 	public static final Font TITLE_FONT = null;
-	public static final Font DEFAULT_FONT = null;
+	public static final Font DEFAULT_FONT = new Font("Comic Sans MS", Font.BOLD, 25);
 	public static final Font BUTTON_FONT = new Font("Comic Sans MS", Font.BOLD, 30);
 	public static final Font LITTLEBUTTON_FONT = new Font("Helvetica", Font.PLAIN, 15);
 	

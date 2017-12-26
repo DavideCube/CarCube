@@ -147,7 +147,7 @@ public class IconLabel extends JPanel {
 		this.revalidate();
 		this.repaint();
 	}
-	
+
 	
 	
 	

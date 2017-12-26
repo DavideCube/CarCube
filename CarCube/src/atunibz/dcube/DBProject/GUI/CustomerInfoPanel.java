@@ -27,22 +27,22 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	
 	private void initComponents() {
 		//name
-		nameLbl = new IconLabel("icons/contacts/tax.png","Name:", false);
+		nameLbl = new IconLabel("icons/contacts/tax.png","Name:", AppResources.DEFAULT_FONT, false);
 		nameTF = new JLabel();
 		//surname
-		surnameLbl = new IconLabel("icons/contacts/tax.png", "Surname:", false);
+		surnameLbl = new IconLabel("icons/contacts/tax.png", "Surname:", AppResources.DEFAULT_FONT, false);
 		surnameTF = new JLabel();
 		//taxcode
-		taxLbl = new IconLabel("icons/contacts/tax.png","Taxcode:", false);
+		taxLbl = new IconLabel("icons/contacts/tax.png","Taxcode:", AppResources.DEFAULT_FONT, false);
 		taxTF = new JLabel();
 		//phone
-		phoneLbl = new IconLabel("icons/contacts/phone.png","Phone:", false);
+		phoneLbl = new IconLabel("icons/contacts/phone.png","Phone:", AppResources.DEFAULT_FONT, false);
 		phoneTF = new JLabel();
 		//mail
-		mailLbl = new IconLabel("icons/contacts/mail.png","Mail:", false);
+		mailLbl = new IconLabel("icons/contacts/mail.png","Mail:", AppResources.DEFAULT_FONT, false);
 		mailTF = new JLabel();
 		//fax
-		faxLbl = new IconLabel("icons/contacts/fax.png","Fax:", false);
+		faxLbl = new IconLabel("icons/contacts/fax.png","Fax:", AppResources.DEFAULT_FONT, false);
 		faxTF = new JLabel();
 		//go back
 		backBtn = new JButton("Back");
