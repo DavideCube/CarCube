@@ -430,10 +430,11 @@ public class addCustomerPanel extends JPanel {
 				JOptionPane.showMessageDialog(addCustomerPanel, "Nation cannot be empty or longer than 30 characters");
 				return;
 			}
-			Pattern p = Pattern.compile("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]");
+			
+			Pattern p = Pattern.compile("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+");
 			Matcher m = p.matcher(firstMail.getText());
 			
-			if (firstMail.getText().equals("") || firstMail.getText().length() > 40 ) {
+			if (firstMail.getText().equals("") || firstMail.getText().length() > 40 || !m.matches() ) {
 				JOptionPane.showMessageDialog(addCustomerPanel, "There must be at least one email and this cannot be longer than 40 characters or invalid");
 				return;
 			}
@@ -502,7 +503,7 @@ public class addCustomerPanel extends JPanel {
 
 				if (affected > 0) {
 					// we have added it so now we can add its contacts
-					Pattern p1 = Pattern.compile("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]");
+					Pattern p1 = Pattern.compile("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+");
 					//we start with its emails....
 					for(JTextField currentEmail : emails) {
 						
