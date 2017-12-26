@@ -118,7 +118,7 @@ public class StatisticsPanel extends JPanel{
 		JPanel salesPanel = new JPanel ();
 		JPanel support2 = new JPanel();
 		support2.setLayout(new BoxLayout(support2, BoxLayout.Y_AXIS));
-		sales1 = AppResources.iconLabel("Total revenues: " , "icons/money-bag.png");
+		sales1 = AppResources.iconLabel("Total incomes: " , "icons/money-bag.png");
 		sales1.setAlignmentX(LEFT_ALIGNMENT);
 		sales1.setFont(new Font("Helvetica", Font.PLAIN, 17));
 		sales2 = AppResources.iconLabel("New cars sold: " , "icons/racing.png");
@@ -289,7 +289,7 @@ public class StatisticsPanel extends JPanel{
 			if (!dateFrom.after(dateTo)) {
 				String from = sdf.format(datePicker.getModel().getValue());
 				String to = sdf.format(datePicker2.getModel().getValue());
-				sales1.setText("Total revenues: " + totalRevenues(from, to) + ".00 €");
+				sales1.setText("Total incomes: " + totalRevenues(from, to) + ".00 €");
 				sales2.setText("New cars sold: " + carSold (false, from, to));
 				sales3.setText("Used cars sold: " + carSold (true, from, to));
 				sales4.setText("Most sold car make: " + mostSold ("make", from, to));
