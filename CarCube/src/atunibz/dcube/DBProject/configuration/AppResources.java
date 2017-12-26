@@ -71,5 +71,12 @@ public final class AppResources {
 		button.setFont(AppResources.LITTLEBUTTON_FONT);
 		return button;
 	}
+	public static JLabel iconLabel (String text, String path) {
+		JLabel label= new JLabel();
+		label.setText(text);
+		label.setIcon(new ImageIcon (path));
+		label.setHorizontalTextPosition(SwingConstants.RIGHT);
+		return label;
+	}
 	
 }

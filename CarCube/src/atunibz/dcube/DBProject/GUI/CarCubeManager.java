@@ -20,7 +20,7 @@ public class CarCubeManager {
 		JFrame frame = new JFrame ("CarCube");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setPreferredSize(new Dimension(1435, 865));
-		frame.getContentPane().add(MainPanel.getMainPanel());
+		frame.getContentPane().add(new StatisticsPanel());
 		frame.pack();
 		frame.setVisible(true);
 		frame.setResizable(false);	
