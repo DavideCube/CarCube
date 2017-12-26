@@ -135,6 +135,7 @@ public class StakeholdersPanel extends JPanel{
 		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 		// add customer
 		addCus = AppResources.iconButton("Add customer", "icons/user.png");
+		addCus.addActionListener(new addCusListener() );
 		buttonPanel.add(addCus);
 		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 		// add supplier 
@@ -289,6 +290,17 @@ public class StakeholdersPanel extends JPanel{
 		
 	}
 	
+	//listener for the add customer button
+		private class addCusListener implements ActionListener{
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				MainPanel.getMainPanel().swapPanel(new addCustomerPanel());
+				
+			}
+			
+		}
+		
 	// method that executes the the research query in Database and returns the results as an array of Strings
 	public String [] resultQuery (String table, String attribute, String inserted, String primaryAttribute, boolean customer) {
 		ArrayList <String> resultList = null;

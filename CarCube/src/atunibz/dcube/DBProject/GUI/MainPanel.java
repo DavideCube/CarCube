@@ -1,11 +1,13 @@
 package atunibz.dcube.DBProject.GUI;
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import atunibz.dcube.DBProject.configuration.AppResources;
 
@@ -25,7 +27,7 @@ public class MainPanel extends BackgroundedPanel{
 	 * will be created only at the beginning and another main panel cannot be created (singleton).
 	 * At the beginning the logo panel is the first one which is added to the main panel.
 	 */
-	private MainPanel() {
+	MainPanel() {
 		this.setImage(AppResources.DEFAULT_BACKGROUND);
 		this.setBackgroundLayout(BackgroundLayout.SCALED);
 		LogoPanel intro = new LogoPanel();
@@ -47,8 +49,10 @@ public class MainPanel extends BackgroundedPanel{
 	 * @param panel the JPanel which is now added to the main panel and also visible in the program.
 	 */
 	public void swapPanel(JPanel panel) {
+		JScrollPane pane = new JScrollPane(panel);
+		pane.setPreferredSize(new Dimension(1435, 865));
 		mainPanel.removeAll();
-		mainPanel.add(panel);
+		mainPanel.add(pane);
 		mainPanel.revalidate();
 		mainPanel.repaint();
 	}
