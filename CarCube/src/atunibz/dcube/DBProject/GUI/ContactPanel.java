@@ -3,6 +3,8 @@ package atunibz.dcube.DBProject.GUI;
 import java.awt.*;
 import javax.swing.*;
 
+import atunibz.dcube.DBProject.configuration.AppResources;
+
 public class ContactPanel extends BackgroundedPanel {
 	
 	private IconLabel nameLbl, surnameLbl, taxLbl, phoneLbl, mailLbl, faxLbl;
@@ -13,7 +15,7 @@ public class ContactPanel extends BackgroundedPanel {
 	public ContactPanel() {
 		
 		initComponents();
-		applyLayout();
+		configLayout();
 		getQueryResults();
 		
 	}
@@ -42,6 +44,103 @@ public class ContactPanel extends BackgroundedPanel {
 		statsBtn = new JButton("Stats");
 	}
 	
+	
+	private void configLayout() {
+		
+		this.setLayout(new BorderLayout());
+		this.add(AppResources.carCubePanel(), BorderLayout.NORTH);
+		JPanel infoPanel = new JPanel();
+		
+		GridBagLayout l = new GridBagLayout();
+		infoPanel.setLayout(l);
+		GridBagConstraints c = new GridBagConstraints();
+		//c.fill = GridBagConstraints.HORIZONTAL;
+		//set constraints and add name
+		c.gridx = 0;
+		c.gridy = 0;
+		c.insets = new Insets(0, -24, 0, 0);
+		infoPanel.add(nameLbl, c);
+		c.gridx = 1;
+		c.gridy = 0;
+		c.insets = new Insets(0, 0, 0, 0);
+		c.anchor = GridBagConstraints.LINE_START;
+		infoPanel.add(nameTF, c);
+		
+		//set constraints and add surname
+		c.gridx = 0;
+		c.gridy = 2;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(surnameLbl, c);
+		c.gridx = 1;
+		c.gridy = 2;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(surnameTF, c);
+		
+		//set constraints and add taxcode
+		c.gridx = 0;
+		c.gridy = 4;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(taxLbl, c);
+		c.gridx = 1;
+		c.gridy = 4;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(taxTF, c);
+		
+		//set constraints and add phone number
+		c.gridx = 0;
+		c.gridy = 6;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(phoneLbl, c);
+		c.gridx = 1;
+		c.gridy = 6;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(phoneTF, c);
+		
+		//set constraints and add phone number
+		c.gridx = 0;
+		c.gridy = 8;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(phoneLbl, c);
+		c.gridx = 1;
+		c.gridy = 8;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(phoneTF, c);
+		
+		//set constraints and add mail
+		c.gridx = 0;
+		c.gridy = 10;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(mailLbl, c);
+		c.gridx = 1;
+		c.gridy = 10;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(mailTF, c);
+		
+		//set constraints and add fax
+		c.gridx = 0;
+		c.gridy = 12;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(faxLbl, c);
+		c.gridx = 1;
+		c.gridy = 12;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(faxTF, c);
+		this.add(infoPanel, BorderLayout.CENTER);
+		
+		//set up buttons
+		JPanel btnPanel = new JPanel();
+		btnPanel.setLayout(new FlowLayout());
+		btnPanel.add(backBtn);
+		btnPanel.add(statsBtn);
+		this.add(btnPanel, BorderLayout.SOUTH);
+		
+		
+	}
+	
+	
+	
+	/*
+	
 	private void applyLayout() {
 		
 		GridBagLayout l = new GridBagLayout();
@@ -60,66 +159,71 @@ public class ContactPanel extends BackgroundedPanel {
 		
 		//set constraints and add surname
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 2;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(surnameLbl, c);
 		c.gridx = 1;
-		c.gridy = 1;
+		c.gridy = 2;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(surnameTF, c);
 		
 		//set constraints and add taxcode
 		c.gridx = 0;
-		c.gridy = 2;
+		c.gridy = 4;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(taxLbl, c);
 		c.gridx = 1;
-		c.gridy = 2;
+		c.gridy = 4;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(taxTF, c);
 		
 		//set constraints and add phone number
 		c.gridx = 0;
-		c.gridy = 3;
+		c.gridy = 6;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(phoneLbl, c);
 		c.gridx = 1;
-		c.gridy = 3;
+		c.gridy = 6;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(phoneTF, c);
 		
 		//set constraints and add phone number
 		c.gridx = 0;
-		c.gridy = 3;
+		c.gridy = 8;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(phoneLbl, c);
 		c.gridx = 1;
-		c.gridy = 3;
+		c.gridy = 8;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(phoneTF, c);
 		
 		//set constraints and add mail
 		c.gridx = 0;
-		c.gridy = 4;
+		c.gridy = 10;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(mailLbl, c);
 		c.gridx = 1;
-		c.gridy = 4;
+		c.gridy = 10;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(mailTF, c);
 		
 		//set constraints and add fax
 		c.gridx = 0;
-		c.gridy = 5;
+		c.gridy = 12;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(faxLbl, c);
 		c.gridx = 1;
-		c.gridy = 5;
+		c.gridy = 12;
 		c.insets = new Insets(0, 0, 0, 0);
 		this.add(faxTF, c);
 		
+		
+		c.gridx = 0;
+		c.gridy = 14;
+		this.add(statsBtn, c);
+		
 	}
-	
+	*/
 	private void getQueryResults() {
 		nameTF.setText(results[0]);
 		surnameTF.setText(results[1]);

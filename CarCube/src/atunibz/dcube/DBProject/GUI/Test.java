@@ -14,7 +14,7 @@ public class Test {
 		frame.getContentPane().add(new ContactPanel());
 		frame.pack();
 		frame.setVisible(true);
-		frame.setResizable(false);
+		frame.setResizable(true);
 
 	}
 
