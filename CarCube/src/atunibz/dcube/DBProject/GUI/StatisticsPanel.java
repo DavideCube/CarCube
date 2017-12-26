@@ -34,7 +34,7 @@ public class StatisticsPanel extends JPanel{
 	private JPanel statPanel, titlePanel, dataPanel;
 	private Connection conn;
 	private JLabel lab1, lab2, lab3, lab4, sales1, sales2, sales3, sales4, sales5;
-	private JButton start;
+	private JButton start, back;
 	private JDatePickerImpl datePicker, datePicker2;
 	
 	public StatisticsPanel () {
@@ -50,7 +50,7 @@ public class StatisticsPanel extends JPanel{
 		
 		// panel that contains information about the car dealership
 		JLabel info = new JLabel ("Information about the car dealership");
-		info.setFont(new Font("Helvetica", Font.BOLD, 18));
+		info.setFont(new Font("Comic Sans MS", Font.BOLD, 18));
 		info.setAlignmentX(CENTER_ALIGNMENT);
 		statPanel.add(info);
 		dataPanel = new JPanel();
@@ -81,7 +81,7 @@ public class StatisticsPanel extends JPanel{
 		
 		// information about the sales
 		JLabel info1 = new JLabel ("Information about the sales");
-		info1.setFont(new Font("Helvetica", Font.BOLD, 18));
+		info1.setFont(new Font("Comic Sans MS", Font.BOLD, 18));
 		info1.setAlignmentX(CENTER_ALIGNMENT);
 		statPanel.add(info1);
 		statPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -145,12 +145,12 @@ public class StatisticsPanel extends JPanel{
 		salesPanel.add(support2);
 		statPanel.add(salesPanel);
 		
-	
-		
-		
-		
-		
-
+		// back button
+		statPanel.add(Box.createRigidArea(new Dimension(0, 40)));
+		back = AppResources.iconButton("Go back     ", "icons/back.png");
+		back.addActionListener(new BackListener());
+		back.setAlignmentX(CENTER_ALIGNMENT);
+		statPanel.add(back);
 		
 		add(statPanel);
 	}
@@ -301,6 +301,14 @@ public class StatisticsPanel extends JPanel{
 			}
 		}
 		
+	}
+	
+	// listener for back button
+	private class BackListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
+		}
 	}
 }
 

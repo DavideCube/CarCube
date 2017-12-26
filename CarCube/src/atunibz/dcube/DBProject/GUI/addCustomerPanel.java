@@ -16,6 +16,7 @@ import java.sql.Statement;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -396,38 +397,38 @@ public class addCustomerPanel extends JPanel {
 			// and the respective lengths)
 
 			if (taxField.getText().equals("") || taxField.getText().length() > 16) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "Taxcode cannot be empty or longer than 16 characters");
+				JOptionPane.showMessageDialog(addCustomerPanel, "Taxcode cannot be empty or longer than 16 characters","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
 
 			if (nameField.getText().equals("") || nameField.getText().length() > 20) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "Name cannot be empty or longer than 20 characters");
+				JOptionPane.showMessageDialog(addCustomerPanel, "Name cannot be empty or longer than 20 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
 
 			if (surnameField.getText().equals("") || surnameField.getText().length() > 30) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "Surname cannot be empty or longer than 30 characters");
+				JOptionPane.showMessageDialog(addCustomerPanel, "Surname cannot be empty or longer than 30 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
 
 			if (postcodeField.getText().equals("") || postcodeField.getText().length() > 5) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "Postcode cannot be empty or longer than 5 characters");
+				JOptionPane.showMessageDialog(addCustomerPanel, "Postcode cannot be empty or longer than 5 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
 			if (streetField.getText().equals("") || streetField.getText().length() > 30) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "Street cannot be empty or longer than 30 characters");
+				JOptionPane.showMessageDialog(addCustomerPanel, "Street cannot be empty or longer than 30 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
 			if (cityField.getText().equals("") || cityField.getText().length() > 20) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "City cannot be empty or longer than 20 characters");
+				JOptionPane.showMessageDialog(addCustomerPanel, "City cannot be empty or longer than 20 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
 			if (civicNumberField.getText().equals("")) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "Civic number cannot be empty");
+				JOptionPane.showMessageDialog(addCustomerPanel, "Civic number cannot be empty", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
 			if (nationField.getText().equals("") || nationField.getText().length() > 30) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "Nation cannot be empty or longer than 30 characters");
+				JOptionPane.showMessageDialog(addCustomerPanel, "Nation cannot be empty or longer than 30 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
 			
@@ -435,15 +436,15 @@ public class addCustomerPanel extends JPanel {
 			Matcher m = p.matcher(firstMail.getText());
 			
 			if (firstMail.getText().equals("") || firstMail.getText().length() > 40 || !m.matches() ) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "There must be at least one email and this cannot be longer than 40 characters or invalid");
+				JOptionPane.showMessageDialog(addCustomerPanel, "There must be at least one email and this cannot be longer than 40 characters or invalid", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
 			if (firstPhone.getText().equals("") || firstPhone.getText().length() > 25) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "There must be at least one phone and this cannot be longer than 25 characters");
+				JOptionPane.showMessageDialog(addCustomerPanel, "There must be at least one phone and this cannot be longer than 25 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
 			if (firstFax.getText().equals("") || firstFax.getText().length() > 30) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "There must be at least one fax and this cannot be longer than 30 characters");
+				JOptionPane.showMessageDialog(addCustomerPanel, "There must be at least one fax and this cannot be longer than 30 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
 			// We check if the address of our new customer is already present, if yes we
