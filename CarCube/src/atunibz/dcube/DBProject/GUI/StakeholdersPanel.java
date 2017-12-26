@@ -24,7 +24,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -131,6 +130,7 @@ public class StakeholdersPanel extends JPanel{
 		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 		// stats
 		stats = AppResources.iconButton("Statistics  ", "icons/graph.png");
+		stats.addActionListener(new StatsListener());
 		buttonPanel.add(stats);
 		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 		// add customer
@@ -289,17 +289,26 @@ public class StakeholdersPanel extends JPanel{
 		}
 		
 	}
-	
-	//listener for the add customer button
-		private class addCusListener implements ActionListener{
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				MainPanel.getMainPanel().swapPanel(new addCustomerPanel());
-				
-			}
+	// listener for the statistic button
+	private class StatsListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainPanel.getMainPanel().swapPanel(new StatisticsPanel());
 			
 		}
+		
+	}
+	
+	//listener for the add customer button
+	private class addCusListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			MainPanel.getMainPanel().swapPanel(new addCustomerPanel());
+				
+		}
+			
+	}
 		
 	// method that executes the the research query in Database and returns the results as an array of Strings
 	public String [] resultQuery (String table, String attribute, String inserted, String primaryAttribute, boolean customer) {
