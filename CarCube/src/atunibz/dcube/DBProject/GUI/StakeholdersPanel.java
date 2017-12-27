@@ -140,6 +140,7 @@ public class StakeholdersPanel extends JPanel{
 		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 		// add supplier 
 		addSup = AppResources.iconButton("Add supplier", "icons/truck.png");
+		addSup.addActionListener(new addSupListener() );
 		buttonPanel.add(addSup);
 		buttonPanel.setOpaque(false);
 		
@@ -308,6 +309,17 @@ public class StakeholdersPanel extends JPanel{
 				
 		}
 			
+	}
+	
+	//listener for the add supplier button
+	private class addSupListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			MainPanel.getMainPanel().swapPanel(new addSupplierPanel());
+			
+		}
+		
 	}
 		
 	// method that executes the the research query in Database and returns the results as an array of Strings
