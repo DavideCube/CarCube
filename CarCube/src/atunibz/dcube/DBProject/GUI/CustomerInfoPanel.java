@@ -25,13 +25,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	
 	public CustomerInfoPanel(String customerPkey) {
 		this.customerPkey = customerPkey;
+		getNumberOfContacts();
 		initComponents();
 		configLayout();
-		getQueryResults();
-		getNumberOfContacts();
-		getPhones();
-		getMails();
-		getFaxes();
+		//getQueryResults();
 		
 	}
 	//select count(*) from phone_contact where owner_customer = customerPkey;
@@ -66,6 +63,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private String[] getPhones() {
 		Connection conn = DatabaseConnection.getDBConnection().getConnection();
 		String[] phones = new String[numberOfPhones];
+		System.out.println("PHONES: " + Arrays.toString(phones));
 		int index = 0;
 		try {
 			Statement stmnt = conn.createStatement();
@@ -121,32 +119,136 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		return faxes;
 	}
 	
+	private String getCustomerName() {
+		Connection conn = DatabaseConnection.getDBConnection().getConnection();
+		String name = null;
+		try {
+			Statement stmnt = conn.createStatement();
+			ResultSet rs = stmnt.executeQuery("select c_name from customer where tax_code = '" + customerPkey + "'");
+			while(rs.next()) {
+				name = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return name;
+	}
+	
+	private String getCustomerSurname() {
+		Connection conn = DatabaseConnection.getDBConnection().getConnection();
+		String surname = null;
+		try {
+			Statement stmnt = conn.createStatement();
+			ResultSet rs = stmnt.executeQuery("select c_surname from customer where tax_code = '" + customerPkey + "'");
+			while(rs.next()) {
+				surname = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return surname;
+	}
 	
 	
 	private void initComponents() {
 		//name
 		nameLbl = new IconLabel("icons/contacts/tax.png","Name:", AppResources.DEFAULT_FONT, false);
 		nameTF = new JLabel();
+		nameTF.setText(this.getCustomerName());
 		//surname
 		surnameLbl = new IconLabel("icons/contacts/tax.png", "Surname:", AppResources.DEFAULT_FONT, false);
 		surnameTF = new JLabel();
+		surnameTF.setText(this.getCustomerSurname());
 		//taxcode
 		taxLbl = new IconLabel("icons/contacts/tax.png","Taxcode:", AppResources.DEFAULT_FONT, false);
 		taxTF = new JLabel();
-		//phone
-		phoneLbl = new IconLabel("icons/contacts/phone.png","Phone:", AppResources.DEFAULT_FONT, false);
-		phoneTF = new JLabel();
-		//mail
-		mailLbl = new IconLabel("icons/contacts/mail.png","Mail:", AppResources.DEFAULT_FONT, false);
-		mailTF = new JLabel();
-		//fax
-		faxLbl = new IconLabel("icons/contacts/fax.png","Fax:", AppResources.DEFAULT_FONT, false);
-		faxTF = new JLabel();
-		//go back
+		taxTF.setText(customerPkey);
+		//buttons
 		backBtn = new JButton("Back");
 		statsBtn = new JButton("Stats");
 		deleteBtn = new JButton("Delete");
 		modifyBtn = new JButton("Modify");
+	}
+	
+	private int addPhoneLabels(GridBagConstraints c, JPanel infoPanel) {
+		System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
+		int offsetX = 0, offsetY = ++c.gridy;
+		String[] phones = getPhones();
+		c.gridx = offsetX;
+		c.gridy = offsetY;
+		for(int i = 0; i < phones.length; i++) {
+			IconLabel phoneLbl = new IconLabel("icons/contacts/phone.png","Phone #" + (i+1) +":", AppResources.DEFAULT_FONT, false);
+			JLabel phoneTF = new JLabel();
+			phoneTF.setText(phones[i]);
+			infoPanel.add(phoneLbl, c);
+			c.gridx = offsetX + 1;
+			infoPanel.add(phoneTF, c);
+			c.gridy = ++c.gridy;
+			c.gridx = 0;
+			System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
+			
+		}
+		
+		return c.gridy;
+	}
+	
+	private int addMailLabels(GridBagConstraints c, JPanel infoPanel) {
+		System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
+		int offsetX = 0, offsetY = ++c.gridy;
+		String[] mails = getMails();
+		c.gridx = offsetX;
+		c.gridy = offsetY;
+		for(int i = 0; i < mails.length; i++) {
+			IconLabel mailLbl = new IconLabel("icons/contacts/mail.png","Mail #" + (i+1) +":", AppResources.DEFAULT_FONT, false);
+			JLabel mailTF = new JLabel();
+			mailTF.setText(mails[i]);
+			infoPanel.add(mailLbl, c);
+			c.gridx = offsetX + 1;
+			infoPanel.add(mailTF, c);
+			c.gridy = ++c.gridy;
+			c.gridx = 0;
+			System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
+			
+		}
+		
+		return c.gridy;
+	}
+	
+	private int addFaxLabels(GridBagConstraints c, JPanel infoPanel) {
+		System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
+		int offsetX = 0, offsetY = ++c.gridy;
+		String[] faxes = getFaxes();
+		c.gridx = offsetX;
+		c.gridy = offsetY;
+		//no fax
+		if(faxes.length == 0) {
+			IconLabel faxLbl = new IconLabel("icons/contacts/fax.png","Fax:", AppResources.DEFAULT_FONT, false);
+			JLabel faxTF = new JLabel();
+			faxTF.setText("-");
+			infoPanel.add(faxLbl, c);
+			c.gridx = offsetX + 1;
+			infoPanel.add(faxTF, c);
+			c.gridy = ++c.gridy;
+			c.gridx = 0;
+			System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
+			return c.gridy;
+		}
+		else {
+		for(int i = 0; i < faxes.length; i++) {
+			IconLabel faxLbl = new IconLabel("icons/contacts/fax.png","Fax #" + (i+1) +":", AppResources.DEFAULT_FONT, false);
+			JLabel faxTF = new JLabel();
+			faxTF.setText(faxes[i]);
+			infoPanel.add(faxLbl, c);
+			c.gridx = offsetX + 1;
+			infoPanel.add(faxTF, c);
+			c.gridy = ++c.gridy;
+			c.gridx = 0;
+			System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
+			
+		}
+		
+		return c.gridy;
+		}
 	}
 	
 	
@@ -163,7 +265,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		//set constraints and add name
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, -48, 0, 0);
+		c.insets = new Insets(0, -40, 0, 0);
 		infoPanel.add(nameLbl, c);
 		c.gridx = 1;
 		c.gridy = 0;
@@ -183,53 +285,25 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		
 		//set constraints and add taxcode
 		c.gridx = 0;
-		c.gridy = 4;
+		c.gridy = 3;
 		c.insets = new Insets(0, 0, 0, 0);
 		infoPanel.add(taxLbl, c);
 		c.gridx = 1;
-		c.gridy = 4;
+		c.gridy = 3;
 		c.insets = new Insets(0, 0, 0, 0);
 		infoPanel.add(taxTF, c);
-		
-		//set constraints and add phone number
+		//add phone labels, one for each phone number read directly from DB
+		int offsetY = addPhoneLabels(c, infoPanel) + 1;
+		//update offsets
 		c.gridx = 0;
-		c.gridy = 6;
-		c.insets = new Insets(0, 0, 0, 0);
-		infoPanel.add(phoneLbl, c);
-		c.gridx = 1;
-		c.gridy = 6;
-		c.insets = new Insets(0, 0, 0, 0);
-		infoPanel.add(phoneTF, c);
-		
-		//set constraints and add phone number
+		c.gridy = offsetY;
+		//add mails
+		offsetY = addMailLabels(c, infoPanel) + 1;
+		//update offsets
 		c.gridx = 0;
-		c.gridy = 8;
-		c.insets = new Insets(0, 0, 0, 0);
-		infoPanel.add(phoneLbl, c);
-		c.gridx = 1;
-		c.gridy = 8;
-		c.insets = new Insets(0, 0, 0, 0);
-		infoPanel.add(phoneTF, c);
+		c.gridy = offsetY;
+		offsetY = addFaxLabels(c, infoPanel) + 1;
 		
-		//set constraints and add mail
-		c.gridx = 0;
-		c.gridy = 10;
-		c.insets = new Insets(0, 0, 0, 0);
-		infoPanel.add(mailLbl, c);
-		c.gridx = 1;
-		c.gridy = 10;
-		c.insets = new Insets(0, 0, 0, 0);
-		infoPanel.add(mailTF, c);
-		
-		//set constraints and add fax
-		c.gridx = 0;
-		c.gridy = 12;
-		c.insets = new Insets(0, 0, 0, 0);
-		infoPanel.add(faxLbl, c);
-		c.gridx = 1;
-		c.gridy = 12;
-		c.insets = new Insets(0, 0, 0, 0);
-		infoPanel.add(faxTF, c);
 		this.add(infoPanel, BorderLayout.CENTER);
 		
 		//set up buttons
@@ -245,15 +319,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		this.add(btnPanel, BorderLayout.SOUTH);
 		
 		
-	}
-	
-	private void getQueryResults() {
-		nameTF.setText(results[0]);
-		surnameTF.setText(results[1]);
-		taxTF.setText(results[2]);
-		phoneTF.setText(results[3]);
-		mailTF.setText(results[4]);
-		faxTF.setText(results[5]);
 	}
 	
 	
