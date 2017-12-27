@@ -62,7 +62,7 @@ public class addCustomerPanel extends JPanel {
 		descriptionPanel.setOpaque(false);
 		descriptionPanel.setLayout(new BoxLayout(descriptionPanel, BoxLayout.X_AXIS));
 
-		mainDescriptionLabel = new JLabel("All fields are required");
+		mainDescriptionLabel = new JLabel("* required fields");
 		AppResources.changeFont(mainDescriptionLabel, Font.PLAIN, 30);
 		descriptionPanel.add(mainDescriptionLabel);
 
@@ -77,7 +77,7 @@ public class addCustomerPanel extends JPanel {
 		JPanel taxCodePanel = new JPanel();
 		taxCodePanel.setLayout(new BoxLayout(taxCodePanel, BoxLayout.X_AXIS));
 		taxCodePanel.setOpaque(false);
-		JLabel taxLabel = new JLabel("Taxcode:");
+		JLabel taxLabel = new JLabel("Taxcode *");
 		//taxLabel.setForeground(Color.white);
 		AppResources.changeFont(taxLabel, Font.PLAIN, 25);
 		taxCodePanel.add(taxLabel);
@@ -94,7 +94,7 @@ public class addCustomerPanel extends JPanel {
 		namePanel.setOpaque(false);
 		namePanel.setPreferredSize(new Dimension(700, 30));
 		namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.X_AXIS));
-		JLabel nameLabel = new JLabel("Name:");
+		JLabel nameLabel = new JLabel("Name *");
 		//nameLabel.setForeground(Color.white);
 		AppResources.changeFont(nameLabel, Font.PLAIN, 25);
 		namePanel.add(nameLabel);
@@ -108,12 +108,12 @@ public class addCustomerPanel extends JPanel {
 		JPanel surnamePanel = new JPanel();
 		surnamePanel.setOpaque(false);
 		surnamePanel.setLayout(new BoxLayout(surnamePanel, BoxLayout.X_AXIS));
-		JLabel surnameLabel = new JLabel("Surname:");
+		JLabel surnameLabel = new JLabel("Surname *");
 		//surnameLabel.setForeground(Color.white);
 		AppResources.changeFont(surnameLabel, Font.PLAIN, 25);
 		surnamePanel.add(surnameLabel);
 		surnameField = new JTextField(10);
-		surnamePanel.add(Box.createRigidArea(new Dimension(191, 0)));
+		surnamePanel.add(Box.createRigidArea(new Dimension(189, 0)));
 		surnamePanel.add(surnameField);
 
 		formPanel.add(surnamePanel);
@@ -122,7 +122,7 @@ public class addCustomerPanel extends JPanel {
 		JPanel streetAndCivicPanel = new JPanel();
 		streetAndCivicPanel.setOpaque(false);
 		streetAndCivicPanel.setLayout(new BoxLayout(streetAndCivicPanel, BoxLayout.X_AXIS));
-		JLabel streetLabel = new JLabel("Street and civic number:");
+		JLabel streetLabel = new JLabel("Street and civic number *");
 		//streetLabel.setForeground(Color.white);
 		AppResources.changeFont(streetLabel, Font.PLAIN, 25);
 		streetAndCivicPanel.add(streetLabel);
@@ -139,7 +139,7 @@ public class addCustomerPanel extends JPanel {
 		JPanel postcodeAndCityPanel = new JPanel();
 		postcodeAndCityPanel.setOpaque(false);
 		postcodeAndCityPanel.setLayout(new BoxLayout(postcodeAndCityPanel, BoxLayout.X_AXIS));
-		JLabel postcodeLabel = new JLabel("Postcode and city:");
+		JLabel postcodeLabel = new JLabel("Postcode and city *");
 		//postcodeLabel.setForeground(Color.white);
 		AppResources.changeFont(postcodeLabel, Font.PLAIN, 25);
 		postcodeAndCityPanel.add(postcodeLabel);
@@ -156,7 +156,7 @@ public class addCustomerPanel extends JPanel {
 		JPanel nationPanel = new JPanel();
 		nationPanel.setOpaque(false);
 		nationPanel.setLayout(new BoxLayout(nationPanel, BoxLayout.X_AXIS));
-		JLabel nationLabel = new JLabel("Nation:");
+		JLabel nationLabel = new JLabel("Nation *");
 		//nationLabel.setForeground(Color.white);
 		AppResources.changeFont(nationLabel, Font.PLAIN, 25);
 		nationPanel.add(nationLabel);
@@ -176,7 +176,7 @@ public class addCustomerPanel extends JPanel {
 		currentEmail.setOpaque(false);
 		currentEmail.setLayout(new BoxLayout(currentEmail, BoxLayout.X_AXIS));
 
-		JLabel mailLabel = new JLabel("Email:");
+		JLabel mailLabel = new JLabel("Email *");
 		//mailLabel.setForeground(Color.white);
 		AppResources.changeFont(mailLabel, Font.PLAIN, 25);
 		currentEmail.add(mailLabel);
@@ -185,7 +185,7 @@ public class addCustomerPanel extends JPanel {
 		newEmail.addActionListener(new AnotherEmail());
 		firstMail = new JTextField(10);
 		emails.add(firstMail);
-		currentEmail.add(Box.createRigidArea(new Dimension(230, 0)));
+		currentEmail.add(Box.createRigidArea(new Dimension(229, 0)));
 		currentEmail.add(firstMail);
 		currentEmail.add(Box.createRigidArea(new Dimension(10, 0)));
 		currentEmail.add(newEmail);
@@ -204,7 +204,7 @@ public class addCustomerPanel extends JPanel {
 		currentPhone.setOpaque(false);
 		currentPhone.setLayout(new BoxLayout(currentPhone, BoxLayout.X_AXIS));
 
-		JLabel phoneLabel = new JLabel("Phone:");
+		JLabel phoneLabel = new JLabel("Phone *");
 		//phoneLabel.setForeground(Color.white);
 		AppResources.changeFont(phoneLabel, Font.PLAIN, 25);
 		currentPhone.add(phoneLabel);
@@ -213,7 +213,7 @@ public class addCustomerPanel extends JPanel {
 		newPhone.addActionListener(new AnotherPhone());
 		firstPhone = new JTextField(10);
 		phoneNumbers.add(firstPhone);
-		currentPhone.add(Box.createRigidArea(new Dimension(225, 0)));
+		currentPhone.add(Box.createRigidArea(new Dimension(224, 0)));
 		currentPhone.add(firstPhone);
 		currentPhone.add(Box.createRigidArea(new Dimension(10, 0)));
 		currentPhone.add(newPhone);
@@ -232,7 +232,7 @@ public class addCustomerPanel extends JPanel {
 		currentFax.setOpaque(false);
 		currentFax.setLayout(new BoxLayout(currentFax, BoxLayout.X_AXIS));
 
-		JLabel faxLabel = new JLabel("Fax:");
+		JLabel faxLabel = new JLabel("Fax");
 		//faxLabel.setForeground(Color.white);
 		AppResources.changeFont(faxLabel, Font.PLAIN, 25);
 		currentFax.add(faxLabel);
@@ -241,7 +241,7 @@ public class addCustomerPanel extends JPanel {
 		newFax.addActionListener(new AddFaxListener());
 		firstFax = new JTextField(10);
 		faxNumbers.add(firstFax);
-		currentFax.add(Box.createRigidArea(new Dimension(249, 0)));
+		currentFax.add(Box.createRigidArea(new Dimension(268, 0)));
 		currentFax.add(firstFax);
 		currentFax.add(Box.createRigidArea(new Dimension(10, 0)));
 		currentFax.add(newFax);
@@ -300,7 +300,7 @@ public class addCustomerPanel extends JPanel {
 			currentPhone.setOpaque(false);
 			currentPhone.setLayout(new BoxLayout(currentPhone, BoxLayout.X_AXIS));
 
-			JLabel phoneLabel = new JLabel("Phone:");
+			JLabel phoneLabel = new JLabel("Phone ");
 			AppResources.changeFont(phoneLabel, Font.PLAIN, 25);
 			//phoneLabel.setForeground(Color.white);
 			currentPhone.add(phoneLabel);
@@ -309,7 +309,7 @@ public class addCustomerPanel extends JPanel {
 			newPhone.addActionListener(new AnotherPhone());
 			JTextField tempPhone = new JTextField(10);
 			phoneNumbers.add(tempPhone);
-			currentPhone.add(Box.createRigidArea(new Dimension(225, 0)));
+			currentPhone.add(Box.createRigidArea(new Dimension(237, 0)));
 			currentPhone.add(tempPhone);
 			currentPhone.add(Box.createRigidArea(new Dimension(10, 0)));
 			currentPhone.add(newPhone);
@@ -332,7 +332,7 @@ public class addCustomerPanel extends JPanel {
 			currentEmail.setOpaque(false);
 			currentEmail.setLayout(new BoxLayout(currentEmail, BoxLayout.X_AXIS));
 
-			JLabel mailLabel = new JLabel("Email:");
+			JLabel mailLabel = new JLabel("Email ");
 			//mailLabel.setForeground(Color.white);
 			AppResources.changeFont(mailLabel, Font.PLAIN, 25);
 			currentEmail.add(mailLabel);
@@ -341,7 +341,7 @@ public class addCustomerPanel extends JPanel {
 			newEmail.addActionListener(new AnotherEmail());
 			JTextField tempEmail = new JTextField(10);
 			emails.add(tempEmail);
-			currentEmail.add(Box.createRigidArea(new Dimension(230, 0)));
+			currentEmail.add(Box.createRigidArea(new Dimension(242, 0)));
 			currentEmail.add(tempEmail);
 			currentEmail.add(Box.createRigidArea(new Dimension(10, 0)));
 			currentEmail.add(newEmail);
@@ -364,7 +364,7 @@ public class addCustomerPanel extends JPanel {
 			currentFax.setOpaque(false);
 			currentFax.setLayout(new BoxLayout(currentFax, BoxLayout.X_AXIS));
 
-			JLabel faxLabel = new JLabel("Fax:");
+			JLabel faxLabel = new JLabel("Fax");
 			//faxLabel.setForeground(Color.white);
 			AppResources.changeFont(faxLabel, Font.PLAIN, 25);
 			currentFax.add(faxLabel);
@@ -373,7 +373,7 @@ public class addCustomerPanel extends JPanel {
 			newFax.addActionListener(new AddFaxListener());
 			JTextField tempFax = new JTextField(10);
 			faxNumbers.add(tempFax);
-			currentFax.add(Box.createRigidArea(new Dimension(249, 0)));
+			currentFax.add(Box.createRigidArea(new Dimension(268, 0)));
 			currentFax.add(tempFax);
 			currentFax.add(Box.createRigidArea(new Dimension(10, 0)));
 			currentFax.add(newFax);
@@ -443,10 +443,8 @@ public class addCustomerPanel extends JPanel {
 				JOptionPane.showMessageDialog(addCustomerPanel, "There must be at least one phone and this cannot be longer than 25 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
-			if (firstFax.getText().equals("") || firstFax.getText().length() > 30) {
-				JOptionPane.showMessageDialog(addCustomerPanel, "There must be at least one fax and this cannot be longer than 30 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-				return;
-			}
+			
+			
 			// We check if the address of our new customer is already present, if yes we
 			// have
 			// the foreign key for creating the customer, otherwise we insert it.
