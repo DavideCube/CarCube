@@ -3,8 +3,12 @@ package atunibz.dcube.DBProject.GUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
 
 import javax.swing.*;
 
@@ -12,18 +16,112 @@ import atunibz.dcube.DBProject.configuration.AppResources;
 
 public class CustomerInfoPanel extends BackgroundedPanel {
 	
+	private String customerPkey;
 	private IconLabel nameLbl, surnameLbl, taxLbl, phoneLbl, mailLbl, faxLbl;
+	private int numberOfPhones, numberOfMails, numberOfFaxes;
 	private JLabel nameTF, surnameTF, taxTF, phoneTF, mailTF, faxTF;
 	private JButton backBtn, statsBtn, deleteBtn, modifyBtn;
 	private String[] results = {"Default", "Default", "CRMDVD96E15A952H", "Default", "Default", "Default"};
 	
-	public CustomerInfoPanel() {
-		
+	public CustomerInfoPanel(String customerPkey) {
+		this.customerPkey = customerPkey;
 		initComponents();
 		configLayout();
 		getQueryResults();
+		getNumberOfContacts();
+		getPhones();
+		getMails();
+		getFaxes();
 		
 	}
+	//select count(*) from phone_contact where owner_customer = customerPkey;
+	private void getNumberOfContacts() {
+		Connection conn = DatabaseConnection.getDBConnection().getConnection();
+		try {
+			Statement stmnt = conn.createStatement();
+			String queryPhone, queryMail, queryFax;
+			queryPhone = "select count(*) from phone_contact where owner_customer = " + "'" + customerPkey + "'";
+			queryMail = "select count(*) from mail_contact where owner_customer = " + "'" + customerPkey + "'";
+			queryFax = "select count(*) from fax_contact where owner_customer = " + "'" + customerPkey + "'";
+			ResultSet rsPhone = stmnt.executeQuery(queryPhone);
+			while(rsPhone.next()) {
+				numberOfPhones = rsPhone.getInt("count");
+			}
+			ResultSet rsMail = stmnt.executeQuery(queryMail);
+			while(rsMail.next()) {
+				numberOfMails = rsMail.getInt("count");
+			}
+			ResultSet rsFax = stmnt.executeQuery(queryFax);
+			while(rsFax.next()) {
+				numberOfFaxes = rsFax.getInt("count");
+			}
+			System.out.println("The customer has " + numberOfPhones + " phone numbers, " + numberOfMails + " mail addresses and " + numberOfFaxes + " fax numbers.");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private String[] getPhones() {
+		Connection conn = DatabaseConnection.getDBConnection().getConnection();
+		String[] phones = new String[numberOfPhones];
+		int index = 0;
+		try {
+			Statement stmnt = conn.createStatement();
+			ResultSet rs = stmnt.executeQuery("select phone_number from phone_contact where owner_customer = '" + customerPkey + "'");
+			while(rs.next()) {
+				phones[index] = rs.getString(1);
+				index++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(Arrays.toString(phones));
+		return phones;
+	}
+	
+	private String[] getMails() {
+		Connection conn = DatabaseConnection.getDBConnection().getConnection();
+		String[] mails = new String[numberOfMails];
+		int index = 0;
+		try {
+			Statement stmnt = conn.createStatement();
+			ResultSet rs = stmnt.executeQuery("select mail from mail_contact where owner_customer = '" + customerPkey + "'");
+			while(rs.next()) {
+				mails[index] = rs.getString(1);
+				index++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(Arrays.toString(mails));
+		return mails;
+	}
+	
+	private String[] getFaxes() {
+		Connection conn = DatabaseConnection.getDBConnection().getConnection();
+		String[] faxes = new String[numberOfFaxes];
+		int index = 0;
+		try {
+			Statement stmnt = conn.createStatement();
+			ResultSet rs = stmnt.executeQuery("select fax from fax_contact where owner_customer = '" + customerPkey + "'");
+			while(rs.next()) {
+				faxes[index] = rs.getString(1);
+				index++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		if(faxes.length == 0)
+			System.out.println("[No fax]");
+		System.out.println(Arrays.toString(faxes));
+		return faxes;
+	}
+	
+	
 	
 	private void initComponents() {
 		//name
@@ -65,7 +163,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		//set constraints and add name
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, -24, 0, 0);
+		c.insets = new Insets(0, -48, 0, 0);
 		infoPanel.add(nameLbl, c);
 		c.gridx = 1;
 		c.gridy = 0;
