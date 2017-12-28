@@ -158,7 +158,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		nameLbl = new IconLabel("icons/contacts/tax.png","Name:", AppResources.DEFAULT_FONT, false);
 		nameTF = new JLabel();
 		nameTF.setText(this.getSupplierName());
-		//surname
+		//address
 		addressLbl = new IconLabel("icons/contacts/address.png", "Address:", AppResources.DEFAULT_FONT, false);
 		addressTF = new JLabel();
 		addressTF.setText(this.getSupplierAddress());

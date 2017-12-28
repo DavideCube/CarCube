@@ -17,11 +17,10 @@ import atunibz.dcube.DBProject.configuration.AppResources;
 public class CustomerInfoPanel extends BackgroundedPanel {
 	
 	private String customerPkey;
-	private IconLabel nameLbl, surnameLbl, taxLbl, phoneLbl, mailLbl, faxLbl;
+	private IconLabel nameLbl, surnameLbl, taxLbl, addressLbl;
 	private int numberOfPhones, numberOfMails, numberOfFaxes;
-	private JLabel nameTF, surnameTF, taxTF, phoneTF, mailTF, faxTF;
+	private JLabel nameTF, surnameTF, taxTF, addressTF;
 	private JButton backBtn, statsBtn, deleteBtn, modifyBtn;
-	private String[] results = {"Default", "Default", "CRMDVD96E15A952H", "Default", "Default", "Default"};
 	
 	public CustomerInfoPanel(String customerPkey) {
 		this.customerPkey = customerPkey;
@@ -163,12 +162,33 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		taxLbl = new IconLabel("icons/contacts/tax.png","Taxcode:", AppResources.DEFAULT_FONT, false);
 		taxTF = new JLabel();
 		taxTF.setText(customerPkey);
+		//address
+		addressLbl = new IconLabel("icons/contacts/address.png", "Address:", AppResources.DEFAULT_FONT, false);
+		addressTF = new JLabel();
+		addressTF.setText(this.getCustomerAddress());
 		//buttons
 		backBtn = new JButton("Back");
 		statsBtn = new JButton("Stats");
 		deleteBtn = new JButton("Delete");
 		modifyBtn = new JButton("Modify");
 	}
+	
+	
+	private String getCustomerAddress() {
+		Connection conn = DatabaseConnection.getDBConnection().getConnection();
+		String address = null;
+		try {
+			Statement stmnt = conn.createStatement();
+			ResultSet rs = stmnt.executeQuery("select a.street, a.civic_number, a.city, a.postcode, a.nation from address a, customer c where a.address_id = c.address and c.tax_code = '" + customerPkey + "'");
+			while(rs.next()) {
+				address = rs.getString(1) + " Street n." + rs.getInt(2) + " , " + rs.getString(3) + " - " + rs.getString(4) + " , " + rs.getString(5);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return address;
+	}
+	
 	
 	private int addPhoneLabels(GridBagConstraints c, JPanel infoPanel) {
 		System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
@@ -292,6 +312,17 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		c.gridy = 3;
 		c.insets = new Insets(0, 0, 0, 0);
 		infoPanel.add(taxTF, c);
+		
+		//set constraints and add address
+		c.gridx = 0;
+		c.gridy = 4;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(addressLbl, c);
+		c.gridx = 1;
+		c.gridy = 4;
+		c.insets = new Insets(0, 0, 0, 0);
+		infoPanel.add(addressTF, c);
+		
 		//add phone labels, one for each phone number read directly from DB
 		int offsetY = addPhoneLabels(c, infoPanel) + 1;
 		//update offsets
