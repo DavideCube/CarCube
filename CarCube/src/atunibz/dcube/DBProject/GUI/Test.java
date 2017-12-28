@@ -11,7 +11,7 @@ public class Test {
 		JFrame frame = new JFrame ("CarCube");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setPreferredSize(new Dimension(1435, 800));
-		frame.getContentPane().add(new CustomerInfoPanel("CRMDVD96E15A952H"));
+		frame.getContentPane().add(new SupplierInfoPanel("86334519757"));
 		frame.pack();
 		frame.setVisible(true);
 		frame.setResizable(true);
