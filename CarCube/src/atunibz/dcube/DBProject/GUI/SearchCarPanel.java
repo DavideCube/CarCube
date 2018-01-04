@@ -60,14 +60,15 @@ public class SearchCarPanel extends JPanel{
 		make = new JComboBox<String>();
 		
 		allMakes = getMakes(2); //See method comments for more info
-		
+		make.addItem("All Makes");
 		for(String s: allMakes)
 			make.addItem(s);
 		make.setSelectedIndex(0);
 		make.addItemListener(new MakeListener());
+		
 		//Model at beginning disable
 		model = new JComboBox<String>();
-		
+		model.addItem("All Models");
 		allModels = getModels(2); // see comment above
 		
 		for(String s: allModels)
@@ -138,12 +139,14 @@ public class SearchCarPanel extends JPanel{
 			
 			allMakes = getMakes(param); //See method comments for more info
 			make.removeAllItems();
+			make.addItem("All Makes");
 			for(String s: allMakes)
 				make.addItem(s);
 			
 			//Change model accordingly
 			allModels = getModels(param); //See method comments for more info
 			model.removeAllItems();
+			model.addItem("All models");
 			for(String s: allModels)
 				model.addItem(s);
 		}
@@ -166,13 +169,15 @@ public class SearchCarPanel extends JPanel{
 				param = 2;
 			
 			//Change model accordingly
-			allModels = getModels(param); //See method comments for more info
+			String selectedMake = (String) e.getItem();	
 			model.removeAllItems();
-			for(String s: allModels)
-				model.addItem(s);
-			
+			model.addItem("All Models");
+			if (selectedMake.compareTo("All Makes") != 0) {
+				allModels = getModels(param); //See method comments for more info
+				for(String s: allModels)
+					model.addItem(s);
+			}
 		}
-		
 	}
 	//Get all makes from DBDBDBDBDBDB
 	//Commento serio: 0 = new car; 1 = used car; 2 = boat cars;
@@ -235,21 +240,7 @@ public class SearchCarPanel extends JPanel{
 		return tPiccola.toArray(new String[tPiccola.size()]);
 	}
 	
-	/*price.setModel(new DefaultComboBoxModel<String>() {
-	      private static final long serialVersionUID = 1L;
-	      boolean selectionAllowed = true;
-
-	      @Override
-	      public void setSelectedItem(Object anObject) {
-	        if (!NOT_SELECTABLE_OPTION2.equals(anObject)) {
-	          super.setSelectedItem(anObject);
-	        } else if (selectionAllowed) {
-	          // Allow this just once
-	          selectionAllowed = false;
-	          super.setSelectedItem(anObject);
-	        }
-	      }
-	    });*/
+	
 	
 	
 }
