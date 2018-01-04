@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,6 +29,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.Event.*;
 
 import atunibz.dcube.DBProject.configuration.AppResources;
 
@@ -107,6 +110,44 @@ public class StakeholdersPanel extends JPanel{
 		String [] results = new String [0];
 		list = new JList<String>(results);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.addMouseListener(new MouseAdapter() {
+		    public void mouseClicked(MouseEvent evt) {
+		        JList list = (JList)evt.getSource();
+		        if (evt.getClickCount() == 2) {
+		            // Double-click detected
+		            String current = (String) list.getSelectedValue();
+		            String selectedStake = (String)cus_sup.getSelectedItem();
+		            if (selectedStake.compareTo("Customers") == 0) {
+		            		String taxCode = null;
+		            		String selectedCrit = (String)criteria.getSelectedItem();
+		            		if (selectedCrit.compareTo("Tax Code") == 0) {
+		            			taxCode = current;
+		            		}
+		            		else if (selectedCrit.compareTo("Name") == 0 || selectedCrit.compareTo("Surname") == 0) {
+		            			taxCode = current.substring(current.lastIndexOf("(") + 1, current.lastIndexOf(")"));
+		            		}
+		            		else {
+		            			taxCode = getTaxCode (selectedCrit, current, true);
+		            		}
+		            		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(taxCode));
+		            }
+		            else {
+		            		String vat = null;
+		            		String selectedCrit = (String)criteria.getSelectedItem();
+		            		if (selectedCrit.compareTo("Vat") == 0) {
+		            			vat = current;
+		            		}
+		            		else if (selectedCrit.compareTo("Name") == 0 ) {
+		            			vat = current.substring(current.lastIndexOf("(") + 1, current.lastIndexOf(")"));
+		            		}
+		            		else {
+		            			vat = getTaxCode (selectedCrit, current, false);
+		            		}
+		            		MainPanel.getMainPanel().swapPanel(new SupplierInfoPanel(vat));
+		            }
+		        } 
+		    }
+		});
 		
 		// ScrolledPane
 		scrollPanel = new JPanel();
@@ -281,6 +322,8 @@ public class StakeholdersPanel extends JPanel{
 		}
 	}
 	
+	// listener to double click
+	
 	// listener to go back to the logo Panel
 	private class BackListener implements ActionListener {
 		@Override
@@ -352,5 +395,44 @@ public class StakeholdersPanel extends JPanel{
 		}
 		String [] result = resultList.toArray(new String[resultList.size()]);
 		return result;
+	}
+	
+	public String getTaxCode (String table, String contact, boolean customer) {
+		String result = null;
+		String stringa = null;
+		String stringa2 = null;
+		if (table.compareTo("Phone") == 0) {
+			stringa = "phone_contact";
+			stringa2 = "phone_number";
+		}
+		else if (table.compareTo("Mail") == 0) {
+			stringa = "mail_contact";
+			stringa2 = "mail";
+		}
+		else  {
+			stringa = "fax_contact";
+			stringa2 = "fax";
+		}
+		
+		
+		try {
+			Statement st = conn.createStatement();
+			String sql = "SELECT * FROM " + stringa + " WHERE " + stringa2 + "='" + contact + "'";
+			ResultSet rs = st.executeQuery(sql);
+	
+			while(rs.next()) {
+				if (customer) {
+					result = rs.getString("owner_customer");
+				}
+				else {
+					result = rs.getString("owner_supplier");
+				}
+				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;	
 	}
 }

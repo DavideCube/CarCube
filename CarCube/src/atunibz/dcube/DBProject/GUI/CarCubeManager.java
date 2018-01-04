@@ -24,46 +24,13 @@ public class CarCubeManager {
 		frame.pack();
 		frame.setVisible(true);
 		frame.setResizable(false);	
-		String currentUser = System.getProperty("os.name");
-		//addPath(currentUser);
+		addPath("jars/postgresql-42.1.4.jar");
 		Connection conn = DatabaseConnection.getDBConnection().getConnection();
 		
-		//dperez, Davide Sbetti, Davide Cremonini
-		try {
-			Statement st = conn.createStatement();
-			String sql = "SELECT * FROM color";
-			ResultSet rs = st.executeQuery(sql);
-			
-			System.out.println("Color_Code\tColor_name\tColor_value");
-			while(rs.next()) {
-				System.out.println(rs.getString("color_code") + "\t\t" + rs.getString("color_name") + "\t\t\t" + rs.getString("color_value"));
-			}
-	
-	} catch (SQLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-
-	}
 
 	}
 	
-	/*public static void addPath(String os){
-		System.out.println("User " + System.getProperty("os.name") + " is running the application\n");
-		String p = "";
-		if(os.compareTo("Linux") == 0) {
-			System.out.println("Ciao perez\n");
-			p = "/home/dperez/Desktop/Java/external libs/postgresql-42.1.4.jar";
-		}
-		else if(os.compareTo("Mac OS X") == 0) {
-			System.out.println("Ciao cremo\n");
-			p = "/Users/DavideCremonini/DocumentiDavide/UniBZ/Database_System/DavideCube/postgresql-42.1.4.jar";
-		}
-		else if(os.compareTo("Windows 10") == 0) {
-			System.out.println("Ciao sbetti\n");
-			p = "C:\\Users\\Davide\\Documents\\unibz\\DatabaseSystems\\Project\\postgresql-42.1.4.jar";
-		}
-		else
-			throw new RuntimeException("Ziocane non funziona. Porco termosifone.\n");
+	public static void addPath(String p){
 	    File f = new File(p);
 	    @SuppressWarnings("deprecation")
 		URL u = null;
@@ -89,7 +56,6 @@ public class CarCubeManager {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-	    System.out.println("Classpath updated from " + os + "\n");
 	    System.out.println("Loading classes...\n");
 		
 		try {
@@ -100,5 +66,5 @@ public class CarCubeManager {
 		}
 		
 		System.out.print("Class loaded.\n");
-	}*/
+	}
 }
