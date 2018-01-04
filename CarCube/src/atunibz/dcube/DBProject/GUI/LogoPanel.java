@@ -47,6 +47,7 @@ public class LogoPanel extends JPanel {
 		car = new JButton ();
 		car.setIcon(new ImageIcon ("icons/car-2.png"));
 		car.setText("Search Car");
+		car.addActionListener(new SearchCarListener());
 		car.setFont(AppResources.BUTTON_FONT);
 		car.setHorizontalTextPosition(SwingConstants.LEFT);
 		controlPanel.add((Box.createRigidArea(new Dimension(50, 0))));
@@ -65,7 +66,14 @@ public class LogoPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 		}
-		
+	}
+	
+	// listener class to swap to the search car panel
+	private class SearchCarListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainPanel.getMainPanel().swapPanel(new SearchCarPanel());
+		}
 	}
 
 }

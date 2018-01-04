@@ -289,7 +289,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	
 	
 	private void configLayout() {
-		
+			
 		this.setLayout(new BorderLayout());
 		JPanel shPanel = new JPanel();
 		shPanel.setLayout(new BoxLayout(shPanel, BoxLayout.Y_AXIS));
