@@ -23,6 +23,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private JButton backBtn, statsBtn, deleteBtn, modifyBtn;
 	
 	public CustomerInfoPanel(String customerPkey) {
+		this.setOpaque(false);
 		this.customerPkey = customerPkey;
 		getNumberOfContacts();
 		initComponents();
@@ -152,19 +153,27 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private void initComponents() {
 		//name
 		nameLbl = new IconLabel("icons/contacts/tax.png","Name:", AppResources.DEFAULT_FONT, false);
+		nameLbl.setOpaque(false);
 		nameTF = new JLabel();
+		nameTF.setOpaque(false);
 		nameTF.setText(this.getCustomerName());
 		//surname
 		surnameLbl = new IconLabel("icons/contacts/tax.png", "Surname:", AppResources.DEFAULT_FONT, false);
+		surnameLbl.setOpaque(false);
 		surnameTF = new JLabel();
+		surnameTF.setOpaque(false);
 		surnameTF.setText(this.getCustomerSurname());
 		//taxcode
 		taxLbl = new IconLabel("icons/contacts/tax.png","Taxcode:", AppResources.DEFAULT_FONT, false);
+		taxLbl.setOpaque(false);
 		taxTF = new JLabel();
+		taxTF.setOpaque(false);
 		taxTF.setText(customerPkey);
 		//address
 		addressLbl = new IconLabel("icons/contacts/address.png", "Address:", AppResources.DEFAULT_FONT, false);
+		addressLbl.setOpaque(false);
 		addressTF = new JLabel();
+		addressTF.setOpaque(false);
 		addressTF.setText(this.getCustomerAddress());
 		//buttons
 		backBtn = new JButton("Back");
@@ -198,7 +207,9 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		c.gridy = offsetY;
 		for(int i = 0; i < phones.length; i++) {
 			IconLabel phoneLbl = new IconLabel("icons/contacts/phone.png","Phone #" + (i+1) +":", AppResources.DEFAULT_FONT, false);
+			phoneLbl.setOpaque(false);
 			JLabel phoneTF = new JLabel();
+			phoneTF.setOpaque(false);
 			phoneTF.setText(phones[i]);
 			infoPanel.add(phoneLbl, c);
 			c.gridx = offsetX + 1;
@@ -220,7 +231,9 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		c.gridy = offsetY;
 		for(int i = 0; i < mails.length; i++) {
 			IconLabel mailLbl = new IconLabel("icons/contacts/mail.png","Mail #" + (i+1) +":", AppResources.DEFAULT_FONT, false);
+			mailLbl.setOpaque(false);
 			JLabel mailTF = new JLabel();
+			mailTF.setOpaque(false);
 			mailTF.setText(mails[i]);
 			infoPanel.add(mailLbl, c);
 			c.gridx = offsetX + 1;
@@ -243,7 +256,9 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		//no fax
 		if(faxes.length == 0) {
 			IconLabel faxLbl = new IconLabel("icons/contacts/fax.png","Fax:", AppResources.DEFAULT_FONT, false);
+			faxLbl.setOpaque(false);
 			JLabel faxTF = new JLabel();
+			faxTF.setOpaque(false);
 			faxTF.setText("-");
 			infoPanel.add(faxLbl, c);
 			c.gridx = offsetX + 1;
@@ -257,6 +272,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		for(int i = 0; i < faxes.length; i++) {
 			IconLabel faxLbl = new IconLabel("icons/contacts/fax.png","Fax #" + (i+1) +":", AppResources.DEFAULT_FONT, false);
 			JLabel faxTF = new JLabel();
+			faxTF.setOpaque(false);
 			faxTF.setText(faxes[i]);
 			infoPanel.add(faxLbl, c);
 			c.gridx = offsetX + 1;
@@ -275,8 +291,17 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private void configLayout() {
 		
 		this.setLayout(new BorderLayout());
-		this.add(AppResources.carCubePanel(), BorderLayout.NORTH);
+		JPanel shPanel = new JPanel();
+		shPanel.setLayout(new BoxLayout(shPanel, BoxLayout.Y_AXIS));
+		shPanel.add((Box.createRigidArea(new Dimension(0, 35))));
+		// Panel containing the beautiful logo
+		JPanel titlePanel = AppResources.carCubePanel();
+		shPanel.add(titlePanel);
+		shPanel.setOpaque(false);
+		//shPanel.add((Box.createRigidArea(new Dimension(0, 30))));
+		this.add(shPanel, BorderLayout.NORTH);
 		JPanel infoPanel = new JPanel();
+		infoPanel.setOpaque(false);
 		
 		GridBagLayout l = new GridBagLayout();
 		infoPanel.setLayout(l);
