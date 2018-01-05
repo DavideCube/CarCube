@@ -4,6 +4,8 @@ package atunibz.dcube.DBProject.GUI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Connection;
@@ -84,7 +86,7 @@ public class SearchCarPanel extends JPanel{
 			year.addItem(Integer.toString(2018 - i));
 		}
 		year.setSelectedIndex(0);
-		year.addItemListener(new YearListener());
+		year.addActionListener(new YearListener());
 		
 		// combo box for selecting the maximum price for the research
 		price = new JComboBox <String> ();
@@ -95,7 +97,7 @@ public class SearchCarPanel extends JPanel{
 			price.addItem(5000 + (5000*j) + " €");
 		}
 		price.setSelectedIndex(0);
-		price.addItemListener(new PriceListener());
+		price.addActionListener(new PriceListener());
 		
 		// add button to search
 		search = new JButton ();
@@ -205,10 +207,11 @@ public class SearchCarPanel extends JPanel{
 		
 	}
 	
-	private class YearListener implements ItemListener{
+	private class YearListener implements ActionListener{
 
 		@Override
-		public void itemStateChanged(ItemEvent e) {
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("Year Listener");
 			String modelSelected = (String) model.getSelectedItem();
 			String makeSelected = (String) make.getSelectedItem();
 			if (modelSelected != null && makeSelected != null)
@@ -218,10 +221,11 @@ public class SearchCarPanel extends JPanel{
 		
 	}
 	
-	private class PriceListener implements ItemListener{
+	private class PriceListener implements ActionListener{
 
 		@Override
-		public void itemStateChanged(ItemEvent e) {
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("Price Listener");
 			String modelSelected = (String) model.getSelectedItem();
 			String makeSelected = (String) make.getSelectedItem();
 			if (modelSelected != null && makeSelected != null)
@@ -339,12 +343,12 @@ public class SearchCarPanel extends JPanel{
 				}
 			}
 			// look at the year
-			if (yearSelected.compareTo("From year") != 0) {
+			if (yearSelected.compareTo(OPTION) != 0) {
 				yearInt = Integer.parseInt(yearSelected);
 				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE car_year >= " + yearInt;
 			}
 			// look at the price
-			if (priceSelected.compareTo("Price up to") != 0) {
+			if (priceSelected.compareTo(OPTION2) != 0) {
 				priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
 				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE net_price <= " + priceInt;
 			}
