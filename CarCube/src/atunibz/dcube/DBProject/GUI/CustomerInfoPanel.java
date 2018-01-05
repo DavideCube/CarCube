@@ -3,6 +3,8 @@ package atunibz.dcube.DBProject.GUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import atunibz.dcube.DBProject.configuration.AppResources;
@@ -20,7 +23,11 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private IconLabel nameLbl, surnameLbl, taxLbl, addressLbl;
 	private int numberOfPhones, numberOfMails, numberOfFaxes;
 	private JLabel nameTF, surnameTF, taxTF, addressTF;
+	private JTextField modNameTF, modSurnameTF, modAddressTF;
 	private JButton backBtn, statsBtn, deleteBtn, modifyBtn;
+	private ImageIcon modifyIcon;
+	private JButton modNameBtn, modSurnameBtn, modAddressBtn;
+	private JPanel infoPanel;
 	
 	public CustomerInfoPanel(String customerPkey) {
 		this.setOpaque(false);
@@ -180,6 +187,26 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		statsBtn = new JButton("Stats");
 		deleteBtn = new JButton("Delete");
 		modifyBtn = new JButton("Modify");
+		
+		
+		try {
+			modifyIcon = new ImageIcon(ImageIO.read(new File("icons/contacts/modify.png")));
+			modifyBtn.setIcon(modifyIcon);
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		
+		modNameBtn = new JButton();
+		modNameBtn.setIcon(modifyIcon);
+		modSurnameBtn = new JButton();
+		modSurnameBtn.setIcon(modifyIcon);
+		modAddressBtn = new JButton();
+		modAddressBtn.setIcon(modifyIcon);
+		
+		infoPanel = new JPanel();
+		
+		
 	}
 	
 	
@@ -287,10 +314,21 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		}
 	}
 	
+	private void activeModifyMode() {
+		//TODO
+		infoPanel.remove(nameTF);
+		infoPanel.remove(addressTF);
+		infoPanel.remove(surnameTF);
+		repaint();
+		revalidate();
+	}
+	
 	
 	private void configLayout() {
 			
 		this.setLayout(new BorderLayout());
+		//add title
+		/*
 		JPanel shPanel = new JPanel();
 		shPanel.setLayout(new BoxLayout(shPanel, BoxLayout.Y_AXIS));
 		shPanel.add((Box.createRigidArea(new Dimension(0, 35))));
@@ -299,24 +337,28 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		shPanel.add(titlePanel);
 		shPanel.setOpaque(false);
 		//shPanel.add((Box.createRigidArea(new Dimension(0, 30))));
-		this.add(shPanel, BorderLayout.NORTH);
-		JPanel infoPanel = new JPanel();
+		this.add(shPanel, BorderLayout.NORTH);*/
 		infoPanel.setOpaque(false);
 		
 		GridBagLayout l = new GridBagLayout();
 		infoPanel.setLayout(l);
 		GridBagConstraints c = new GridBagConstraints();
+		c.anchor = GridBagConstraints.LINE_START;
 		//c.fill = GridBagConstraints.HORIZONTAL;
 		//set constraints and add name
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, -40, 0, 0);
+		c.insets = new Insets(0, 0, 0, 0);
 		infoPanel.add(nameLbl, c);
 		c.gridx = 1;
 		c.gridy = 0;
 		c.insets = new Insets(0, 0, 0, 0);
-		c.anchor = GridBagConstraints.LINE_START;
 		infoPanel.add(nameTF, c);
+		c.gridx = 3;
+		JButton modNameBtn = new JButton();
+		modNameBtn.setIcon(modifyIcon);
+		modNameBtn.addActionListener(new ModifyListener());
+		infoPanel.add(modNameBtn, c);
 		
 		//set constraints and add surname
 		c.gridx = 0;
@@ -327,6 +369,11 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		c.gridy = 2;
 		c.insets = new Insets(0, 0, 0, 0);
 		infoPanel.add(surnameTF, c);
+		c.gridx = 3;
+		JButton modSurnameBtn = new JButton();
+		modSurnameBtn.setIcon(modifyIcon);
+		modSurnameBtn.addActionListener(new ModifyListener());
+		infoPanel.add(modSurnameBtn, c);
 		
 		//set constraints and add taxcode
 		c.gridx = 0;
@@ -347,6 +394,11 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		c.gridy = 4;
 		c.insets = new Insets(0, 0, 0, 0);
 		infoPanel.add(addressTF, c);
+		c.gridx = 3;
+		JButton modAddressBtn = new JButton();
+		modAddressBtn.setIcon(modifyIcon);
+		modAddressBtn.addActionListener(new ModifyListener());
+		infoPanel.add(modAddressBtn, c);
 		
 		//add phone labels, one for each phone number read directly from DB
 		int offsetY = addPhoneLabels(c, infoPanel) + 1;
@@ -371,9 +423,24 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		btnPanel.add(modifyBtn);
 		btnPanel.add(deleteBtn);
 		deleteBtn.addActionListener(new DeleteListener());
+		c.gridy = offsetY + 2;
+		infoPanel.add(btnPanel, c);
 		
-		this.add(btnPanel, BorderLayout.SOUTH);
 		
+	}
+	
+	private void addModBtn(GridBagConstraints c) {
+		
+	}
+	
+	
+	private class ModifyListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 	
@@ -391,18 +458,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			
-			String pkey = taxTF.getText();
-			String query = "DELETE from customer WHERE tax_code = ?";
-			PreparedStatement stmt;
-			try {
-				stmt = DatabaseConnection.getDBConnection().getConnection().prepareStatement(query);
-				stmt.setString(1, pkey);
-				stmt.executeQuery();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			
-			//MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
+			activeModifyMode();
 			
 		}
 		
