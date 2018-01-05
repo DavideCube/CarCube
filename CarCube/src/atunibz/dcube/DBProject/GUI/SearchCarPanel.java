@@ -7,7 +7,6 @@ import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -74,6 +73,7 @@ public class SearchCarPanel extends JPanel{
 		for(String s: allModels)
 			model.addItem(s);
 		model.setSelectedIndex(0);
+		model.addItemListener(new ModelListener());
 		
 		// add combobox to search starting from a specific year
 		year = new JComboBox <String>();
@@ -83,6 +83,8 @@ public class SearchCarPanel extends JPanel{
 		for (int i = 0; i <=68; i++) {
 			year.addItem(Integer.toString(2018 - i));
 		}
+		year.setSelectedIndex(0);
+		year.addItemListener(new YearListener());
 		
 		// combo box for selecting the maximum price for the research
 		price = new JComboBox <String> ();
@@ -92,9 +94,12 @@ public class SearchCarPanel extends JPanel{
 		for (int j = 0; j < 20; j++) {
 			price.addItem(5000 + (5000*j) + " €");
 		}
+		price.setSelectedIndex(0);
+		price.addItemListener(new PriceListener());
 		
 		// add button to search
-		search = new JButton ("Search");
+		search = new JButton ();
+		researchQuery();
 		search.setForeground(new Color (255, 128, 0));
 		AppResources.changeFont(search, Font.BOLD, 20);
 		
@@ -149,6 +154,7 @@ public class SearchCarPanel extends JPanel{
 			model.addItem("All models");
 			for(String s: allModels)
 				model.addItem(s);
+			researchQuery();
 		}
 		
 	}
@@ -177,8 +183,54 @@ public class SearchCarPanel extends JPanel{
 				for(String s: allModels)
 					model.addItem(s);
 			}
+			
+			String makeSelected = (String) make.getSelectedItem();
+			System.out.println("Make Listener");
+			if (makeSelected != null)
+				researchQuery();
 		}
 	}
+	
+	private class ModelListener implements ItemListener{
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			System.out.println("Model Listener");
+			String modelSelected = (String) model.getSelectedItem();
+			String makeSelected = (String) make.getSelectedItem();
+			if (modelSelected != null && makeSelected != null)
+				researchQuery();
+			
+		}
+		
+	}
+	
+	private class YearListener implements ItemListener{
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			String modelSelected = (String) model.getSelectedItem();
+			String makeSelected = (String) make.getSelectedItem();
+			if (modelSelected != null && makeSelected != null)
+				researchQuery();
+			
+		}
+		
+	}
+	
+	private class PriceListener implements ItemListener{
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			String modelSelected = (String) model.getSelectedItem();
+			String makeSelected = (String) make.getSelectedItem();
+			if (modelSelected != null && makeSelected != null)
+				researchQuery();
+			
+		}
+		
+	}
+	
 	//Get all makes from DBDBDBDBDBDB
 	//Commento serio: 0 = new car; 1 = used car; 2 = boat cars;
 	public String[] getMakes(int typeOfQuery) {
@@ -241,6 +293,92 @@ public class SearchCarPanel extends JPanel{
 	}
 	
 	
+	// very looong method that executes the correct query according to which combination of combo boxes is selected
+	// the method executes the query and set the text of the search button with the number of results of the query
+	public void researchQuery () {
+		String totalQuery = null;
+		String newCarQuery = "SELECT make, model FROM new_car";
+		String usedCarQuery = "SELECT make, model FROM used_car";
+		// first of all, get all the selected item from the combo boxes
+		String makeSelected = (String) make.getSelectedItem();
+		String modelSelected = (String) model.getSelectedItem();
+		String yearSelected = (String) year.getSelectedItem();
+		String priceSelected = (String) price.getSelectedItem();
+		int yearInt = 0;
+		int priceInt = 0;
+		// evaluate if we are searching in new cars, used cars, or both
 	
-	
+		if (newCar.isSelected()) {
+			// look at the make combo box (if it is equal "All makes" then no changes in the query)
+			if (makeSelected.compareTo("All Makes") != 0) {
+				newCarQuery += " WHERE make = '" + makeSelected + "'";
+				// look at the model (inside this "if" because if we are not entered here, then no model is automatically not selected
+				if (modelSelected.compareTo("All Models") != 0) {
+					newCarQuery += " AND model = '" + modelSelected + "'";
+				}
+			}
+			// look at the year
+			if (yearSelected.compareTo("From year") != 0) {
+				yearInt = Integer.parseInt(yearSelected);
+				newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE car_year >= " + yearInt;
+			}
+			// look at the price
+			if (priceSelected.compareTo("Price up to") != 0) {
+				priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
+				newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE base_price <= " + priceInt;
+			}
+		}
+		
+		if (usedCar.isSelected()) {
+			// look at the make combo box (if it is equal "All makes" then no changes in the query)
+			if (makeSelected.compareTo("All Makes") != 0) {
+				usedCarQuery += " WHERE make = '" + makeSelected + "'";
+				// look at the model (inside this "if" because if we are not entered here, then no model is automatically not selected
+				if (modelSelected.compareTo("All Models") != 0) {
+					usedCarQuery += " AND model = '" + modelSelected + "'";
+				}
+			}
+			// look at the year
+			if (yearSelected.compareTo("From year") != 0) {
+				yearInt = Integer.parseInt(yearSelected);
+				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE car_year >= " + yearInt;
+			}
+			// look at the price
+			if (priceSelected.compareTo("Price up to") != 0) {
+				priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
+				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE net_price <= " + priceInt;
+			}
+		}
+		// CASE BOTH
+		if (newCar.isSelected() && usedCar.isSelected())
+			totalQuery = "(" + newCarQuery + ") UNION ALL (" + usedCarQuery + ")";
+		// CASE NEW
+		else if (newCar.isSelected() && !usedCar.isSelected())
+			totalQuery = newCarQuery;
+		// CASE USED
+		else
+			totalQuery = usedCarQuery;
+		
+		try {
+			Statement stat = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			System.out.println(totalQuery);
+			ResultSet rs = stat.executeQuery(totalQuery);
+			int rowcount = 0;
+			if (rs.last()) {
+			  rowcount = rs.getRow();
+			}
+			if (rowcount == 0) {
+				search.setEnabled(false);;
+			}
+			else 
+				search.setEnabled(true);
+			
+			search.setText(rowcount + ((rowcount == 1) ? " car" : " cars"));
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }
