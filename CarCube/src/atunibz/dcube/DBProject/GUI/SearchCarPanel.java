@@ -16,10 +16,12 @@ import java.util.ArrayList;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import atunibz.dcube.DBProject.configuration.AppResources;
 
@@ -65,7 +67,7 @@ public class SearchCarPanel extends JPanel{
 		for(String s: allMakes)
 			make.addItem(s);
 		make.setSelectedIndex(0);
-		make.addItemListener(new MakeListener());
+		make.addActionListener(new MakeListener());
 		
 		//Model at beginning disable
 		model = new JComboBox<String>();
@@ -75,7 +77,7 @@ public class SearchCarPanel extends JPanel{
 		for(String s: allModels)
 			model.addItem(s);
 		model.setSelectedIndex(0);
-		model.addItemListener(new ModelListener());
+		model.addActionListener(new ModelListener());
 		
 		// add combobox to search starting from a specific year
 		year = new JComboBox <String>();
@@ -101,9 +103,11 @@ public class SearchCarPanel extends JPanel{
 		
 		// add button to search
 		search = new JButton ();
-		researchQuery();
+		search.setIcon(new ImageIcon("icons/searchCar.png"));
+		search.setHorizontalTextPosition(SwingConstants.RIGHT);
 		search.setForeground(new Color (255, 128, 0));
 		AppResources.changeFont(search, Font.BOLD, 20);
+		researchQuery();
 		
 		researchPanel.add(newCar);
 		researchPanel.add(usedCar);
@@ -153,7 +157,7 @@ public class SearchCarPanel extends JPanel{
 			//Change model accordingly
 			allModels = getModels(param); //See method comments for more info
 			model.removeAllItems();
-			model.addItem("All models");
+			model.addItem("All Models");
 			for(String s: allModels)
 				model.addItem(s);
 			researchQuery();
@@ -162,10 +166,10 @@ public class SearchCarPanel extends JPanel{
 	}
 	
 	//listener for the change item make field sembrava che aggiungessi parole a caso
-	private class MakeListener implements ItemListener {
+	private class MakeListener implements ActionListener {
 
 		@Override
-		public void itemStateChanged(ItemEvent e) {
+		public void actionPerformed(ActionEvent e) {
 			
 			//Change make accordingly
 			int param = 0;
@@ -177,10 +181,12 @@ public class SearchCarPanel extends JPanel{
 				param = 2;
 			
 			//Change model accordingly
-			String selectedMake = (String) e.getItem();	
+			JComboBox selectedCombo = (JComboBox) e.getSource();
+			String selectedMake = (String) selectedCombo.getSelectedItem();	
 			model.removeAllItems();
 			model.addItem("All Models");
-			if (selectedMake.compareTo("All Makes") != 0) {
+			
+			if (selectedMake != null && selectedMake.compareTo("All Makes") != 0) {
 				allModels = getModels(param); //See method comments for more info
 				for(String s: allModels)
 					model.addItem(s);
@@ -188,25 +194,27 @@ public class SearchCarPanel extends JPanel{
 			
 			String makeSelected = (String) make.getSelectedItem();
 			System.out.println("Make Listener");
-			if (makeSelected != null)
+			if (makeSelected != null && make.getItemCount() != 1)
 				researchQuery();
 		}
 	}
 	
-	private class ModelListener implements ItemListener{
+	// listener class for the combobox that allows the selection of the model
+	private class ModelListener implements ActionListener{
 
 		@Override
-		public void itemStateChanged(ItemEvent e) {
+		public void actionPerformed(ActionEvent e) {
 			System.out.println("Model Listener");
 			String modelSelected = (String) model.getSelectedItem();
 			String makeSelected = (String) make.getSelectedItem();
-			if (modelSelected != null && makeSelected != null)
+			if (modelSelected != null && makeSelected != null && model.getItemCount() != 1)
 				researchQuery();
 			
 		}
 		
 	}
 	
+	// listener class for the combobox that allows the selection of the year
 	private class YearListener implements ActionListener{
 
 		@Override
@@ -220,7 +228,7 @@ public class SearchCarPanel extends JPanel{
 		}
 		
 	}
-	
+	// listener class for the combobox that allows the selection of the price
 	private class PriceListener implements ActionListener{
 
 		@Override
