@@ -30,6 +30,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private JPanel infoPanel;
 	
 	public CustomerInfoPanel(String customerPkey) {
+		System.out.println("BUKA");
 		this.setOpaque(false);
 		this.customerPkey = customerPkey;
 		getNumberOfContacts();
@@ -241,6 +242,13 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			infoPanel.add(phoneLbl, c);
 			c.gridx = offsetX + 1;
 			infoPanel.add(phoneTF, c);
+			//modified here
+			c.gridx = ++c.gridx;
+			JButton modPhoneBtn = new JButton();
+			modPhoneBtn.setIcon(modifyIcon);
+			modPhoneBtn.addActionListener(new ModifyListener());
+			infoPanel.add(modPhoneBtn, c);
+			//
 			c.gridy = ++c.gridy;
 			c.gridx = 0;
 			System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
@@ -265,6 +273,13 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			infoPanel.add(mailLbl, c);
 			c.gridx = offsetX + 1;
 			infoPanel.add(mailTF, c);
+			//
+			c.gridx = ++c.gridx;
+			JButton modMailBtn = new JButton();
+			modMailBtn.setIcon(modifyIcon);
+			modMailBtn.addActionListener(new ModifyListener());
+			infoPanel.add(modMailBtn, c);
+			//
 			c.gridy = ++c.gridy;
 			c.gridx = 0;
 			System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
@@ -290,6 +305,13 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			infoPanel.add(faxLbl, c);
 			c.gridx = offsetX + 1;
 			infoPanel.add(faxTF, c);
+			//
+			c.gridx = ++c.gridx;
+			JButton modFaxBtn = new JButton();
+			modFaxBtn.setIcon(modifyIcon);
+			modFaxBtn.addActionListener(new ModifyListener());
+			infoPanel.add(modFaxBtn, c);
+			//
 			c.gridy = ++c.gridy;
 			c.gridx = 0;
 			System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
@@ -304,6 +326,13 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			infoPanel.add(faxLbl, c);
 			c.gridx = offsetX + 1;
 			infoPanel.add(faxTF, c);
+			//
+			c.gridx = ++c.gridx;
+			JButton modFaxBtn = new JButton();
+			modFaxBtn.setIcon(modifyIcon);
+			modFaxBtn.addActionListener(new ModifyListener());
+			infoPanel.add(modFaxBtn, c);
+			//
 			c.gridy = ++c.gridy;
 			c.gridx = 0;
 			System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
