@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
@@ -27,6 +28,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private ImageIcon modifyIcon;
 	private JButton modNameBtn, modSurnameBtn, modAddressBtn;
 	private JPanel infoPanel;
+	private ArrayList<JButton> buttons;
 	
 	public CustomerInfoPanel(String customerPkey) {
 		System.out.println("THERMHOSIFooooNE");
@@ -196,17 +198,20 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		catch(IOException e){
 			e.printStackTrace();
 		}
-		
+		/*
 		modNameBtn = new JButton();
 		modNameBtn.setIcon(modifyIcon);
 		modNameBtn.addActionListener(new ModifyListener(modNameBtn));
+		
 		modSurnameBtn = new JButton();
 		modSurnameBtn.setIcon(modifyIcon);
 		modSurnameBtn.addActionListener(new ModifyListener(modSurnameBtn));
+		
 		modAddressBtn = new JButton();
 		modAddressBtn.setIcon(modifyIcon);
 		modAddressBtn.addActionListener(new ModifyListener(modAddressBtn));
-		
+		*/
+		buttons = new ArrayList<>();
 		
 		infoPanel = new JPanel();
 		
@@ -249,9 +254,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			c.gridx = ++c.gridx;
 			JButton modPhoneBtn = new JButton();
 			modPhoneBtn.setIcon(modifyIcon);
-			modPhoneBtn.addActionListener(new ModifyListener(modPhoneBtn));
+			modPhoneBtn.addActionListener(new EditListener(modPhoneBtn));
 			infoPanel.add(modPhoneBtn, c);
-			modPhoneBtn.setName("modPhoneBtn");
+			modPhoneBtn.setName("modPhoneBtn" + (i+1));
+			buttons.add(modPhoneBtn);
 			//
 			c.gridy = ++c.gridy;
 			c.gridx = 0;
@@ -281,9 +287,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			c.gridx = ++c.gridx;
 			JButton modMailBtn = new JButton();
 			modMailBtn.setIcon(modifyIcon);
-			modMailBtn.addActionListener(new ModifyListener(modMailBtn));
+			modMailBtn.addActionListener(new EditListener(modMailBtn));
 			infoPanel.add(modMailBtn, c);
-			modMailBtn.setName("modMailBtn");
+			modMailBtn.setName("modMailBtn" + (i+1));
+			buttons.add(modMailBtn);
 			//
 			c.gridy = ++c.gridy;
 			c.gridx = 0;
@@ -314,9 +321,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			c.gridx = ++c.gridx;
 			JButton modFaxBtn = new JButton();
 			modFaxBtn.setIcon(modifyIcon);
-			modFaxBtn.addActionListener(new ModifyListener(modFaxBtn));
+			modFaxBtn.addActionListener(new EditListener(modFaxBtn));
 			infoPanel.add(modFaxBtn, c);
-			modFaxBtn.setName("modFaxBtn");
+			modFaxBtn.setName("modFaxBtn" + 0);
+			buttons.add(modFaxBtn);
 			//
 			c.gridy = ++c.gridy;
 			c.gridx = 0;
@@ -336,8 +344,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			c.gridx = ++c.gridx;
 			JButton modFaxBtn = new JButton();
 			modFaxBtn.setIcon(modifyIcon);
-			modFaxBtn.addActionListener(new ModifyListener(modFaxBtn));
+			modFaxBtn.setName("modFaxBtn" + (i+1));
+			modFaxBtn.addActionListener(new EditListener(modFaxBtn));
 			infoPanel.add(modFaxBtn, c);
+			buttons.add(modFaxBtn);
 			//
 			c.gridy = ++c.gridy;
 			c.gridx = 0;
@@ -392,9 +402,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		c.gridx = 3;
 		JButton modNameBtn = new JButton();
 		modNameBtn.setIcon(modifyIcon);
-		modNameBtn.addActionListener(new ModifyListener(modNameBtn));
+		modNameBtn.addActionListener(new EditListener(modNameBtn));
 		infoPanel.add(modNameBtn, c);
 		modNameBtn.setName("modNameBtn");
+		buttons.add(modNameBtn);
 		
 		//set constraints and add surname
 		c.gridx = 0;
@@ -408,9 +419,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		c.gridx = 3;
 		JButton modSurnameBtn = new JButton();
 		modSurnameBtn.setIcon(modifyIcon);
-		modSurnameBtn.addActionListener(new ModifyListener(modSurnameBtn));
+		modSurnameBtn.addActionListener(new EditListener(modSurnameBtn));
 		infoPanel.add(modSurnameBtn, c);
 		modSurnameBtn.setName("modSurnameBtn");
+		buttons.add(modSurnameBtn);
 		
 		//set constraints and add taxcode
 		c.gridx = 0;
@@ -435,9 +447,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		c.gridx = 3;
 		JButton modAddressBtn = new JButton();
 		modAddressBtn.setIcon(modifyIcon);
-		modAddressBtn.addActionListener(new ModifyListener(modAddressBtn));
+		modAddressBtn.addActionListener(new EditListener(modAddressBtn));
 		infoPanel.add(modAddressBtn, c);
 		modAddressBtn.setName("modAddressBtn");
+		buttons.add(modAddressBtn);
 		
 		
 		//add phone labels, one for each phone number read directly from DB
@@ -462,34 +475,51 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		btnPanel.add(statsBtn);
 		btnPanel.add(modifyBtn);
 		btnPanel.add(deleteBtn);
-		deleteBtn.addActionListener(new DeleteListener());
 		c.gridy = offsetY + 2;
 		c.gridx = 1;
 		infoPanel.add(btnPanel, c);
 		
+		//disable all buttons
+		for(JButton curr : buttons) {
+			curr.setVisible(false);
+		}
+		
+		modifyBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(JButton curr : buttons) {
+					curr.setVisible(true);
+				}
+			}
+			
+		});
 		
 	}
 	
-	private void editSimpleField(String fieldName) {
-		String s = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
-		System.out.println(s);
+	private String editSimpleField(String fieldName) {
+		return (String)JOptionPane.showInputDialog(null, "Insert new value for customer's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
 	}
 	
 	
-	private class ModifyListener implements ActionListener{
+	private class EditListener implements ActionListener{
 		
 		protected JButton source;
 		
-		protected ModifyListener(JButton btn){
+		protected EditListener(JButton btn){
 				this.source = btn;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			for(JButton curr : buttons) {
+				curr.setVisible(true);
+			}
 			System.out.println("Button " + source.getName() + " clicked.");
 			String fieldName = source.getName().substring(3, (source.getName().length() - 3));
-			editSimpleField(fieldName);
-			
+			if(fieldName.compareTo("Address") != 0)
+				editSimpleField(fieldName);
+			else
+				System.out.println("ADDRESS MODIFIER INVOKED.");
 			
 		}
 		
@@ -505,15 +535,45 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	}
 	
 	
-	private class DeleteListener implements ActionListener{
+	private class EnableButtonsListener implements ActionListener{
+		
+		protected JButton source;
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			
-			activeModifyMode();
-			
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("PRessed");
+			source = (JButton) e.getSource();
+			for (JButton curr : buttons) {
+				curr.setEnabled(true);
+				System.out.println("enabled");
+			}/*
+			infoPanel.repaint();
+			infoPanel.revalidate();
+			ActionListener[] als = source.getActionListeners();
+			for(ActionListener al : als) {
+				source.removeActionListener(al);
+			}
+			source.addActionListener(new DisableButtonsListener());*/
 		}
 		
 	}
 	
+	private class DisableButtonsListener implements ActionListener{
+		
+		protected JButton source;
 
-}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			source = (JButton) e.getSource();
+			for (JButton curr : buttons) {
+				curr.setEnabled(false);
+			}
+			ActionListener[] als = source.getActionListeners();
+			for(ActionListener al : als) {
+				source.removeActionListener(al);
+			}
+			source.addActionListener(new EnableButtonsListener());
+		}
+			
+		}
+		
+	}
