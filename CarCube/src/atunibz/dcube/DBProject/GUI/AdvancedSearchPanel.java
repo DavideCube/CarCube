@@ -39,7 +39,7 @@ public class AdvancedSearchPanel extends JPanel {
 	private JPanel carGeneralData, carSpecificData, colorPanel, optionalPanel;
 
 	private JCheckBox newCar, usedCar;
-	private JComboBox<String> make, model, price, year, carTypes, seats, doors, fuel, transmissions;
+	private JComboBox<String> make, model, price, year, sold, carTypes, seats, doors, fuel, transmissions;
 	private JTextField height, length, width, horsepower;
 	private String[] allMakes, allModels, allCarTypes, allSeats, allDoors, allFuel, allTransmissions;
 	private static final String OPTION = "From year";
@@ -53,7 +53,7 @@ public class AdvancedSearchPanel extends JPanel {
 	private JButton back, search;
 
 	public AdvancedSearchPanel(boolean newCarSel, boolean usedCarSel, int selectedMake, int selectedModel,
-			int selectedYear, int selectedPrice) {
+			int selectedYear, int selectedPrice, int selectedSold) {
 
 		conn = DatabaseConnection.getDBConnection().getConnection();
 		advancedSearch = new JPanel();
@@ -169,6 +169,14 @@ public class AdvancedSearchPanel extends JPanel {
 		}
 		price.setSelectedIndex(selectedPrice);
 		generalDataInfo.add(price);
+		
+		// combobox for sold or not sold
+		sold = new JComboBox <String> ();
+		sold.addItem("Sold or not");
+		sold.addItem("Not sold");
+		sold.addItem("Sold");
+		sold.setSelectedIndex(selectedSold);
+		generalDataInfo.add(sold);
 
 		carGeneralData.add(Box.createRigidArea(new Dimension(0, 5)));
 		carGeneralData.add(generalDataInfo);
@@ -424,6 +432,7 @@ public class AdvancedSearchPanel extends JPanel {
 		model.addActionListener(new ModelListener());
 		price.addActionListener(new ChangedListener());
 		year.addActionListener(new ChangedListener());
+		sold.addActionListener(new ChangedListener());
 		carTypes.addActionListener(new ChangedListener());
 		seats.addActionListener(new ChangedListener());
 		doors.addActionListener(new ChangedListener());
@@ -808,6 +817,7 @@ public class AdvancedSearchPanel extends JPanel {
 		String modelSelected = (String) model.getSelectedItem();
 		String yearSelected = (String) year.getSelectedItem();
 		String priceSelected = (String) price.getSelectedItem();
+		String soldSelected = (String) sold.getSelectedItem();
 		String typeSelected = (String) carTypes.getSelectedItem();
 		String seatsSelected = (String) seats.getSelectedItem();
 		String doorsSelected = (String) doors.getSelectedItem();
@@ -850,6 +860,14 @@ public class AdvancedSearchPanel extends JPanel {
 			if (priceSelected.compareTo("Price up to") != 0) {
 				priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
 				newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE base_price <= " + priceInt;
+			}
+			
+			// look at sold or not sold
+			if (soldSelected.compareTo("Sold or not") != 0) {
+				if (soldSelected.compareTo("Not sold") == 0)
+					newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE sold = 0";
+				else
+					newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE sold = 1";
 			}
 
 			// look at the car type
@@ -973,6 +991,13 @@ public class AdvancedSearchPanel extends JPanel {
 			if (priceSelected.compareTo(OPTION2) != 0) {
 				priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
 				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE net_price <= " + priceInt;
+			}
+			// look at sold or not sold
+			if (soldSelected.compareTo("Sold or not") != 0) {
+				if (soldSelected.compareTo("Not sold") == 0)
+					usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE sold = 0";
+				else
+					usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE sold = 1";
 			}
 
 			// look at the car type

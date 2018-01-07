@@ -29,7 +29,7 @@ public class SearchCarPanel extends JPanel{
 	private Connection conn;
 	private JPanel scPanel, titlePanel, researchPanel;
 	private JCheckBox newCar, usedCar;
-	private JComboBox<String> make, model, price, year;
+	private JComboBox<String> make, model, price, year, sold;
 	private String[] allMakes, allModels;
 	private JButton search, advancedSearch;
 	private static final String OPTION = "From year";
@@ -101,6 +101,14 @@ public class SearchCarPanel extends JPanel{
 		price.setSelectedIndex(0);
 		price.addActionListener(new PriceListener());
 		
+		// sold comboBox
+		sold = new JComboBox <String> ();
+		sold.addItem("Sold or not");
+		sold.addItem("Not sold");
+		sold.addItem("Sold");
+		sold.setSelectedIndex(0);
+		sold.addActionListener(new SoldListener());
+		
 		// add button to search
 		search = new JButton ();
 		search.setIcon(new ImageIcon("icons/searchCar.png"));
@@ -120,6 +128,7 @@ public class SearchCarPanel extends JPanel{
 		researchPanel.add(model);
 		researchPanel.add(year);
 		researchPanel.add(price);
+		researchPanel.add(sold);
 		researchPanel.add(advancedSearch);
 		researchPanel.add(search);
 		
@@ -250,6 +259,21 @@ public class SearchCarPanel extends JPanel{
 		
 	}
 	
+	// listener class for the combobox that allows the selection of the price
+		private class SoldListener implements ActionListener{
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Sold Listener");
+				String modelSelected = (String) model.getSelectedItem();
+				String makeSelected = (String) make.getSelectedItem();
+				if (modelSelected != null && makeSelected != null)
+					researchQuery();
+				
+			}
+			
+		}
+	
 	//Get all makes from DBDBDBDBDBDB
 	//Commento serio: 0 = new car; 1 = used car; 2 = boat cars;
 	public String[] getMakes(int typeOfQuery) {
@@ -323,6 +347,7 @@ public class SearchCarPanel extends JPanel{
 		String modelSelected = (String) model.getSelectedItem();
 		String yearSelected = (String) year.getSelectedItem();
 		String priceSelected = (String) price.getSelectedItem();
+		String soldSelected = (String) sold.getSelectedItem();
 		int yearInt = 0;
 		int priceInt = 0;
 		// evaluate if we are searching in new cars, used cars, or both
@@ -346,6 +371,14 @@ public class SearchCarPanel extends JPanel{
 				priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
 				newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE base_price <= " + priceInt;
 			}
+			// look at sold or not sold
+			if (soldSelected.compareTo("Sold or not") != 0) {
+				if (soldSelected.compareTo("Not sold") == 0)
+					newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE sold = 0";
+				else
+					newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE sold = 1";
+			}
+				
 		}
 		
 		if (usedCar.isSelected()) {
@@ -366,6 +399,13 @@ public class SearchCarPanel extends JPanel{
 			if (priceSelected.compareTo(OPTION2) != 0) {
 				priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
 				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE net_price <= " + priceInt;
+			}
+			// look at sold or not sold
+			if (soldSelected.compareTo("Sold or not") != 0) {
+				if (soldSelected.compareTo("Not sold") == 0)
+					usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE sold = 0";
+				else
+					usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE sold = 1";
 			}
 		}
 		// CASE BOTH
@@ -406,7 +446,7 @@ public class SearchCarPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			MainPanel.getMainPanel().swapPanel(new AdvancedSearchPanel(newCar.isSelected(), usedCar.isSelected(), make.getSelectedIndex(), model.getSelectedIndex(), year.getSelectedIndex(), price.getSelectedIndex()));	
+			MainPanel.getMainPanel().swapPanel(new AdvancedSearchPanel(newCar.isSelected(), usedCar.isSelected(), make.getSelectedIndex(), model.getSelectedIndex(), year.getSelectedIndex(), price.getSelectedIndex(), sold.getSelectedIndex()));	
 		}
 		
 	}
