@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -50,7 +51,8 @@ public class MainPanel extends BackgroundedPanel{
 	 */
 	public void swapPanel(JPanel panel) {
 		JScrollPane pane = new JScrollPane(panel);
-		pane.setPreferredSize(new Dimension(1435, 865));
+		pane.setPreferredSize(new Dimension(1435, 765));
+		pane.setBorder(BorderFactory.createEmptyBorder());
 		mainPanel.removeAll();
 		mainPanel.add(pane);
 		mainPanel.revalidate();

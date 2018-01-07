@@ -31,7 +31,7 @@ public class SearchCarPanel extends JPanel{
 	private JCheckBox newCar, usedCar;
 	private JComboBox<String> make, model, price, year;
 	private String[] allMakes, allModels;
-	private JButton search;
+	private JButton search, advancedSearch;
 	private static final String OPTION = "From year";
 	private static final String OPTION2 = "Price up to";
 	
@@ -109,6 +109,11 @@ public class SearchCarPanel extends JPanel{
 		AppResources.changeFont(search, Font.BOLD, 20);
 		researchQuery();
 		
+		//Advanced Search button
+		advancedSearch = new JButton("Advanced Search");
+		AppResources.changeFont(advancedSearch, Font.PLAIN, 20);
+		advancedSearch.addActionListener(new AdvancedSearchListener() );
+		
 		researchPanel.add(newCar);
 		researchPanel.add(usedCar);
 		researchPanel.add(make);
@@ -116,6 +121,7 @@ public class SearchCarPanel extends JPanel{
 		researchPanel.add(year);
 		researchPanel.add(price);
 		researchPanel.add(search);
+		researchPanel.add(advancedSearch);
 		scPanel.add(researchPanel);
 		
 		
@@ -390,6 +396,16 @@ public class SearchCarPanel extends JPanel{
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+	}
+	
+	//Listener for the advanced search button
+	private class AdvancedSearchListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainPanel.getMainPanel().swapPanel(new AdvancedSearchPanel(newCar.isSelected(), usedCar.isSelected(), make.getSelectedIndex(), model.getSelectedIndex(), year.getSelectedIndex(), price.getSelectedIndex()));	
 		}
 		
 	}
