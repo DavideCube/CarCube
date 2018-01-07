@@ -2,6 +2,7 @@ package atunibz.dcube.DBProject.configuration;
 
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -77,6 +78,17 @@ public final class AppResources {
 		label.setIcon(new ImageIcon (path));
 		label.setHorizontalTextPosition(SwingConstants.RIGHT);
 		return label;
+	}
+	public ImageIcon scaleProfileImage (String path) {
+		BufferedImage buffImg = null;
+		try {
+			buffImg = ImageIO.read(new File(path));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Image image = buffImg.getScaledInstance(140, 140, Image.SCALE_SMOOTH);
+		ImageIcon scaledImage = new ImageIcon(image);
+		return scaledImage;
 	}
 	
 }
