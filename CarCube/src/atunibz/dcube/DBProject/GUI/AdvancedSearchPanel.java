@@ -386,6 +386,11 @@ public class AdvancedSearchPanel extends JPanel {
 
 			rowPanel.add(optional.get(i));
 			countCurrentPanel++;
+			
+			if(i == optional.size() - 1) {
+				optionalContent.add(Box.createRigidArea(new Dimension(0, 10)));
+				optionalContent.add(rowPanel);
+			}
 		}
 
 		optionalPanel.add(Box.createRigidArea(new Dimension(0, 10)));
