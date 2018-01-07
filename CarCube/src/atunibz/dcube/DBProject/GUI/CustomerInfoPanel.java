@@ -508,12 +508,26 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				fieldName = "termosifone";
 			break;
 		}
-		String newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
-		
+			String newValue = null;
+			if(fieldName.compareTo("address" )!= 0) {
+				newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
+		}
+			
 		switch(fieldName) {
 		case "name": updateValueInDB("c_name", newValue);
 		break;
 		case "surname": updateValueInDB("c_surname", newValue);
+		break;
+		case "address":
+			AddressEditPanel panel = new AddressEditPanel();
+			 int result = JOptionPane.showConfirmDialog(null, panel, 
+		               "Please update the address of this customer", JOptionPane.OK_CANCEL_OPTION);
+		      if (result == JOptionPane.OK_OPTION) {
+		         System.out.println("Postcode: " + panel.zipTF.getText());
+		         System.out.println("City: " + panel.cityTF.getText());
+		         System.out.println("Street: " + panel.streetTF.getText());
+		      }
+		      break;
 		}
 	}
 	
@@ -521,26 +535,106 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private boolean updateValueInDB(String colName, String newVal) {
 		Connection con = DatabaseConnection.getDBConnection().getConnection();
 		Statement s;
-		try {
-			s = con.createStatement();
-			String sql = "UPDATE customer " +
-					 "SET " + colName + " = " + "'" + newVal + "' " +
-					 "WHERE tax_code = " + "'" + customerPkey + "'";
-			System.out.println("Query: " + sql);
-			s.executeUpdate(sql);
-			JOptionPane.showMessageDialog(null, "Value updated succesfully!");
-			MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
+		if(colName.compareTo("c_name") == 0 || colName.compareTo("c_surname") == 0){
+			try {
+				s = con.createStatement();
+				String sql = "UPDATE customer " +
+						"SET " + colName + " = " + "'" + newVal + "' " +
+						"WHERE tax_code = " + "'" + customerPkey + "'";
+				System.out.println("Query: " + sql);
+				s.executeUpdate(sql);
+				JOptionPane.showMessageDialog(null, "Value updated succesfully!");
+				MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		else if(colName.compareTo("address") == 0) {
+			
 		}
 		
-		this.revalidate();
-		this.repaint();
 		
 		return true;
 	}
+	
+	
+	private void updateAddress(String newZIP, String newStreet, String newCity, int newCivicNumber, String newNation) {
+		Connection con = DatabaseConnection.getDBConnection().getConnection();
+		Statement s;
+		if(newCivicNumber <= 0) {
+			JOptionPane.showMessageDialog(null, "Civic number cannot be equal to 0 or less!");
+			return;
+		}
+		try {
+			s = con.createStatement();
+			String sql = "UPDATE address " + 
+						 "SET postcode = " + newZIP + ", street = '" + newStreet + "', city = '" + newCity + "', civic_number = " + newCivicNumber + ", nation = '" + newNation + "' " + 
+						 "WHERE address_id = customer.address AND customer.tax_code = " + customerPkey;
+			System.out.println(sql);
+			s.executeUpdate(sql);
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	////////////////////////////////////INNER CLASSES///////////////////////////////////////////////////
+	
+	private class AddressEditPanel extends JPanel{
+		JTextField zipTF, streetTF, cityTF, civNumTF, nationTF;
+		
+		public AddressEditPanel() {
+			this.setLayout(new GridBagLayout());
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.anchor = gbc.LINE_START;
+			zipTF = new JTextField(5);
+			streetTF = new JTextField(10);
+			cityTF = new JTextField(10);
+			civNumTF = new JTextField(5);
+			nationTF = new JTextField(10);
+			
+			
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			this.add(new JLabel("Postcode: "), gbc);
+			gbc.gridx = 1;
+			this.add(zipTF, gbc);
+			zipTF.setText("customer's zip");
+			
+			gbc.gridx = 0;
+			gbc.gridy = 1;
+			this.add(new JLabel("Street: "), gbc);
+			gbc.gridx = 1;
+			this.add(streetTF, gbc);
+			streetTF.setText("customer's street");
+			
+			gbc.gridx = 0;
+			gbc.gridy = 2;
+			this.add(new JLabel("City: "), gbc);
+			gbc.gridx = 1;
+			this.add(cityTF, gbc);
+			cityTF.setText("customer's city");
+			
+			gbc.gridx = 0;
+			gbc.gridy = 3;
+			this.add(new JLabel("Civic number: "), gbc);
+			gbc.gridx = 1;
+			this.add(civNumTF, gbc);
+			civNumTF.setText("customer's civ num");
+			
+			gbc.gridx = 0;
+			gbc.gridy = 4;
+			this.add(new JLabel("Nation: "), gbc);
+			gbc.gridx = 1;
+			this.add(nationTF, gbc);
+			nationTF.setText("customer's nation");
+		}
+	}
+	
+	
+	
 	
 	
 	///////////////////////////////////////////LISTENERS/////////////////////////////////////////////////
