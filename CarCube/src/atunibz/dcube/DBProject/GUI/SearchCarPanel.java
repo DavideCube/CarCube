@@ -111,7 +111,7 @@ public class SearchCarPanel extends JPanel{
 		
 		//Advanced Search button
 		advancedSearch = new JButton("Advanced Search");
-		AppResources.changeFont(advancedSearch, Font.PLAIN, 20);
+		AppResources.changeFont(advancedSearch, Font.PLAIN, 17);
 		advancedSearch.addActionListener(new AdvancedSearchListener() );
 		
 		researchPanel.add(newCar);
@@ -120,8 +120,9 @@ public class SearchCarPanel extends JPanel{
 		researchPanel.add(model);
 		researchPanel.add(year);
 		researchPanel.add(price);
-		researchPanel.add(search);
 		researchPanel.add(advancedSearch);
+		researchPanel.add(search);
+		
 		scPanel.add(researchPanel);
 		
 		

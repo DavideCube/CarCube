@@ -925,6 +925,21 @@ public class AdvancedSearchPanel extends JPanel {
 				}
 			}
 			
+			// look at the hoursepower (inner join)
+			if (maxHorses.compareTo("") != 0) {
+				try {
+					maxHorsesVal = Integer.parseInt(maxHorses);
+
+					newCarQuery += " INTERSECT SELECT new_car.make, new_car.model FROM new_car INNER JOIN engine on new_car.engine = engine.engine_id WHERE engine.horsepower <= "
+							+ maxHorsesVal;
+				} catch (NumberFormatException n) {
+
+					JOptionPane.showMessageDialog(advancedSearch, "Max Horses must be a valid number", "CarCube",
+							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					return;
+				}
+			}
+			
 			//and now check all optionals...
 			for(JCheckBox c : optional) {
 				
@@ -1033,6 +1048,21 @@ public class AdvancedSearchPanel extends JPanel {
 				}
 			}
 			
+			// look at the hoursepower (inner join)
+			if (maxHorses.compareTo("") != 0) {
+				try {
+					maxHorsesVal = Integer.parseInt(maxHorses);
+
+					usedCarQuery += " INTERSECT SELECT used_car.make, used_car.model FROM used_car INNER JOIN engine on used_car.engine = engine.engine_id WHERE engine.horsepower <= "
+							+ maxHorsesVal;
+				} catch (NumberFormatException n) {
+
+					JOptionPane.showMessageDialog(advancedSearch, "Max Horses must be a valid number", "CarCube",
+							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					return;
+				}
+			}
+
 			//and now check all optionals...
 			for(JCheckBox c : optional) {
 				
