@@ -911,7 +911,7 @@ public class AdvancedSearchPanel extends JPanel {
 				}
 			}
 
-			// look at the car width (inner join)
+			// look at the car width (inner join) 
 			if (maxWidth.compareTo("") != 0) {
 				try {
 				maxWidthVal = Integer.parseInt(maxWidth);
