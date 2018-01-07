@@ -484,21 +484,66 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			curr.setVisible(false);
 		}
 		
-		modifyBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				for(JButton curr : buttons) {
-					curr.setVisible(true);
-				}
-			}
-			
-		});
+		modifyBtn.addActionListener(new EnableButtonsListener());
 		
 	}
 	
-	private String editSimpleField(String fieldName) {
-		return (String)JOptionPane.showInputDialog(null, "Insert new value for customer's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
+	private void editSimpleField(String sourceId) {
+		String fieldName;
+		switch(sourceId) {
+		case "modNameBtn": fieldName = "name";
+		break;
+		case "modSurnameBtn": fieldName = "surname";
+		break;
+		case "modAddressBtn": fieldName = "address";
+		break;
+		default:
+			if(sourceId.contains("Phone"))
+				fieldName = "phone";
+			else if(sourceId.contains("Mail"))
+				fieldName = "mail";
+			else if(sourceId.contains("Fax"))
+				fieldName = "fax";
+			else
+				fieldName = "termosifone";
+			break;
+		}
+		String newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
+		
+		switch(fieldName) {
+		case "name": updateValueInDB("c_name", newValue);
+		break;
+		case "surname": updateValueInDB("c_surname", newValue);
+		}
 	}
+	
+	
+	private boolean updateValueInDB(String colName, String newVal) {
+		Connection con = DatabaseConnection.getDBConnection().getConnection();
+		Statement s;
+		try {
+			s = con.createStatement();
+			String sql = "UPDATE customer " +
+					 "SET " + colName + " = " + "'" + newVal + "' " +
+					 "WHERE tax_code = " + "'" + customerPkey + "'";
+			System.out.println("Query: " + sql);
+			s.executeUpdate(sql);
+			JOptionPane.showMessageDialog(null, "Value updated succesfully!");
+			MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		this.revalidate();
+		this.repaint();
+		
+		return true;
+	}
+	
+	
+	///////////////////////////////////////////LISTENERS/////////////////////////////////////////////////
 	
 	
 	private class EditListener implements ActionListener{
@@ -515,16 +560,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				curr.setVisible(true);
 			}
 			System.out.println("Button " + source.getName() + " clicked.");
-			String fieldName = source.getName().substring(3, (source.getName().length() - 3));
-			if(fieldName.compareTo("Address") != 0)
-				editSimpleField(fieldName);
-			else
-				System.out.println("ADDRESS MODIFIER INVOKED.");
-			
+			editSimpleField(source.getName());
 		}
 		
 	}
-	
 	
 	private class BackListener implements ActionListener{
 		@Override
@@ -534,30 +573,42 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		}
 	}
 	
-	
-	private class EnableButtonsListener implements ActionListener{
-		
-		protected JButton source;
+	private abstract class MutualListener implements ActionListener{
+
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			System.out.println("PRessed");
-			source = (JButton) e.getSource();
-			for (JButton curr : buttons) {
-				curr.setEnabled(true);
-				System.out.println("enabled");
-			}/*
-			infoPanel.repaint();
-			infoPanel.revalidate();
-			ActionListener[] als = source.getActionListeners();
-			for(ActionListener al : als) {
-				source.removeActionListener(al);
+		public abstract void actionPerformed(ActionEvent arg0);
+		
+		protected void swapListener(Object o, ActionListener al) {
+			AbstractButton source = (JButton) o;
+			for(ActionListener curr : source.getActionListeners()) {
+				source.removeActionListener(curr);
+				System.out.println("Action listener removed.");
 			}
-			source.addActionListener(new DisableButtonsListener());*/
+			
+			source.addActionListener(al);
+			
 		}
 		
 	}
 	
-	private class DisableButtonsListener implements ActionListener{
+	private class EnableButtonsListener extends MutualListener{
+		
+		protected JButton source;
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			source = (JButton) e.getSource();
+			for (JButton curr : buttons) {
+				curr.setVisible(true);
+				System.out.println("enabled");
+			}
+			
+			swapListener(source, new DisableButtonsListener());
+		}
+		
+	}
+	
+	private class DisableButtonsListener extends MutualListener{
 		
 		protected JButton source;
 
@@ -565,13 +616,11 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		public void actionPerformed(ActionEvent e) {
 			source = (JButton) e.getSource();
 			for (JButton curr : buttons) {
-				curr.setEnabled(false);
+				curr.setVisible(false);
 			}
-			ActionListener[] als = source.getActionListeners();
-			for(ActionListener al : als) {
-				source.removeActionListener(al);
-			}
-			source.addActionListener(new EnableButtonsListener());
+			
+			swapListener(source, new EnableButtonsListener());
+			
 		}
 			
 		}
