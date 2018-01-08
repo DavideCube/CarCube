@@ -145,6 +145,7 @@ public class SearchCarPanel extends JPanel{
 		scPanel.add((Box.createRigidArea(new Dimension(0, 10))));
 		
 		// panel that shows the list of cars
+		JPanel bigContainer = new JPanel();
 		JPanel bigcarPanel = new JPanel ();
 		carPanel = new JPanel();
 		carPanel.setOpaque(false);
@@ -152,8 +153,10 @@ public class SearchCarPanel extends JPanel{
 		bigcarPanel.add(carPanel);
 		pane = new JScrollPane(bigcarPanel);
 		pane.setOpaque(false);
-		pane.setPreferredSize(new Dimension (800, 400));
-		scPanel.add(pane);
+		pane.setPreferredSize(new Dimension (830, 400));
+		bigContainer.add(pane);
+		bigContainer.setOpaque(false);
+		scPanel.add(bigContainer);
 		
 		
 		add(scPanel);
@@ -477,17 +480,20 @@ public class SearchCarPanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			if (newCar.isSelected() && !usedCar.isSelected()) {
-				String newCarQuery = "SELECT * FROM new_car";
-				// first of all, get all the selected item from the combo boxes
-				String makeSelected = (String) make.getSelectedItem();
-				String modelSelected = (String) model.getSelectedItem();
-				String yearSelected = (String) year.getSelectedItem();
-				String priceSelected = (String) price.getSelectedItem();
-				String soldSelected = (String) sold.getSelectedItem();
-				int yearInt = 0;
-				int priceInt = 0;
-				// evaluate if we are searching in new cars, used cars, or both
+			String totalQuery = null;
+			String newCarQuery = "SELECT * FROM new_car";
+			String usedCarQuery = "SELECT * FROM used_car";
+			// first of all, get all the selected item from the combo boxes
+			String makeSelected = (String) make.getSelectedItem();
+			String modelSelected = (String) model.getSelectedItem();
+			String yearSelected = (String) year.getSelectedItem();
+			String priceSelected = (String) price.getSelectedItem();
+			String soldSelected = (String) sold.getSelectedItem();
+			int yearInt = 0;
+			int priceInt = 0;
+			// evaluate if we are searching in new cars, used cars, or both
+			if (newCar.isSelected()) {
+				
 
 				// look at the make combo box (if it is equal "All makes" then no changes in the
 				// query)
@@ -507,7 +513,7 @@ public class SearchCarPanel extends JPanel{
 				// look at the price
 				if (priceSelected.compareTo("Price up to") != 0) {
 					priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
-					newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE base_price <= " + priceInt;
+					newCarQuery += " INTERSECT SELECT * FROM new_car WHERE base_price <= " + priceInt;
 				}
 				// look at sold or not sold
 				if (soldSelected.compareTo("Sold or not") != 0) {
@@ -517,12 +523,51 @@ public class SearchCarPanel extends JPanel{
 						newCarQuery += " INTERSECT SELECT * FROM new_car WHERE sold = 1";
 				}
 				
-				
+			}
+			if (usedCar.isSelected()) {
+				// look at the make combo box (if it is equal "All makes" then no changes in the query)
+				if (makeSelected.compareTo("All Makes") != 0) {
+					usedCarQuery += " WHERE make = '" + makeSelected + "'";
+					// look at the model (inside this "if" because if we are not entered here, then no model is automatically not selected
+					if (modelSelected.compareTo("All Models") != 0) {
+						usedCarQuery += " AND model = '" + modelSelected + "'";
+					}
+				}
+				// look at the year
+				if (yearSelected.compareTo(OPTION) != 0) {
+					yearInt = Integer.parseInt(yearSelected);
+					usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE car_year >= " + yearInt;
+				}
+				// look at the price
+				if (priceSelected.compareTo(OPTION2) != 0) {
+					priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
+					usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE net_price <= " + priceInt;
+				}
+				// look at sold or not sold
+				if (soldSelected.compareTo("Sold or not") != 0) {
+					if (soldSelected.compareTo("Not sold") == 0)
+						usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE sold = 0";
+					else
+						usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE sold = 1";
+				}
+			}
+			
+			// CASE BOTH
+			if (newCar.isSelected() && usedCar.isSelected()) {
 				try {
 					Statement stat = conn.createStatement();
 					ResultSet rs = stat.executeQuery(newCarQuery);
 					carPanel.removeAll();
 					createPanelList (rs);
+					
+					System.out.println("CASE BOTH: \n");
+					System.out.println("\t" + newCarQuery);
+					System.out.println("\n\t" + usedCarQuery);
+					stat = conn.createStatement();
+					rs = stat.executeQuery(usedCarQuery);
+					//carPanel.removeAll();
+					createPanelListUsed(rs);
+					
 					scPanel.revalidate();
 					scPanel.repaint();
 					
@@ -530,8 +575,39 @@ public class SearchCarPanel extends JPanel{
 				} catch (SQLException ex) {
 					// TODO Auto-generated catch block
 					ex.printStackTrace();
-				}	
-			}	
+				}
+			}
+			// CASE NEW
+			else if (newCar.isSelected() && !usedCar.isSelected()) {
+				Statement stat;
+				try {
+					stat = conn.createStatement();
+					ResultSet rs = stat.executeQuery(newCarQuery);
+					carPanel.removeAll();
+					createPanelList (rs);
+					scPanel.revalidate();
+					scPanel.repaint();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}
+			// CASE USED
+			else {
+				Statement stat;
+				try {
+					stat = conn.createStatement();
+					ResultSet rs = stat.executeQuery(usedCarQuery);
+					carPanel.removeAll();
+					createPanelListUsed (rs);
+					scPanel.revalidate();
+					scPanel.repaint();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -651,6 +727,123 @@ public class SearchCarPanel extends JPanel{
 			e.printStackTrace();
 		}
 	}
+	
+	// method for creating a panel for each result
+		public void createPanelListUsed (ResultSet rs) {
+			
+			try {
+				while (rs.next()) {
+					// create panel
+					JPanel currentCarPanel = new JPanel ();
+					currentCarPanel.setLayout(new BoxLayout(currentCarPanel, BoxLayout.X_AXIS));
+					currentCarPanel.setPreferredSize(new Dimension (800, 200));
+					
+					// create panel and label for the car image
+					JLabel imageLabel = new JLabel();
+					String car_id = rs.getString("immatriculation");
+					imageLabel.setIcon(AppResources.scaleProfileImage(car_id, false));
+					
+					// create support panel 
+					JPanel informationPanel = new JPanel();
+					//informationPanel.setPreferredSize(new Dimension (300, 50));
+					informationPanel.setLayout(new BoxLayout(informationPanel, BoxLayout.Y_AXIS));
+					
+					//create first row panel
+					JPanel firstRow = new JPanel();
+					firstRow.setLayout(new BorderLayout());
+					JPanel support = new JPanel ();
+					JPanel support2 = new JPanel();
+					JLabel make = new JLabel(rs.getString("make"));
+					make.setFont(new Font ("Helvetica", Font.BOLD, 20));
+					make.setIcon(new ImageIcon ("icons/used.png"));
+					make.setHorizontalTextPosition(SwingConstants.RIGHT);
+					JLabel model = new JLabel (rs.getString("model"));
+					model.setFont(new Font ("Helvetica", Font.PLAIN, 20));
+					int calcPrice = (rs.getInt("net_price") );
+					NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+					String priceFormatted = currencyFormat.format(calcPrice);
+					JLabel price = new JLabel (priceFormatted);
+					price.setFont(new Font ("Helvetica", Font.BOLD, 20));
+					support.add(make);
+					support.add(model);
+					support2.add(price);
+					firstRow.add(support, BorderLayout.WEST);
+					firstRow.add(support2, BorderLayout.EAST);
+					informationPanel.add(firstRow);
+					
+					// create second row panel
+					JPanel secondRow = new JPanel();
+					secondRow.setLayout(new BorderLayout());
+					String forLabel = "<html>   <p style=\"padding-left:5px;\"><b> "+ rs.getInt("mileage") + " km</b> <br> <b>" + rs.getString("car_type") + "</b> with <b>" + rs.getInt("doors") + " doors </b> and <b>" + rs.getInt("seats") + " seats </b>";
+					JPanel support3 = new JPanel(); 
+					
+					
+					// create third row panel
+					
+					String query = "select engine.horsepower, engine.fuel, engine.transmission, color.color_name FROM used_car \n" + 
+							"inner join engine on used_car.engine = engine.engine_id \n" + 
+							"inner join used_painting on used_car.immatriculation = used_painting.immatriculation\n" + 
+							"inner join color on used_painting.color_code = color.color_code\n" + 
+							"WHERE used_car.immatriculation = '" + car_id + "'";
+					Statement stat= conn.createStatement();
+					ResultSet rs2 = stat.executeQuery(query);
+					String horsepower = "", fuel = "", transmission = "";
+					String colorString = "";
+					boolean firstColor = true;
+					while(rs2.next()) {
+						
+						horsepower = rs2.getString("horsepower");
+						fuel = rs2.getString("fuel");
+						transmission = rs2.getString("transmission");
+						if(firstColor) {
+							colorString+= rs2.getString("color_name");
+							firstColor = false;
+						}
+						else
+							colorString+= ", " + rs2.getString("color_name");
+					}
+					
+					forLabel += "<br>Powered by a <b>" + fuel + "</b> engine with <b>" + horsepower + " kw</b> and <b>" + transmission + "</b> transmission.";
+					forLabel += "<br> Colored in <b>" + colorString + "</b>. </p> </html>";
+					
+					JLabel info1 = new JLabel(forLabel);
+					info1.setFont(info1.getFont().deriveFont(Font.PLAIN, 15));
+					support3.add(info1);
+					secondRow.add(support3, BorderLayout.WEST);
+					informationPanel.add(secondRow);
+					
+					// third Row
+					JPanel lastRow = new JPanel();
+					lastRow.setLayout(new BorderLayout());
+					JPanel support10 = new JPanel ();
+					JPanel support11 = new JPanel();
+					JButton jenson = new JButton("View car");
+					jenson.setFont(new Font ("Helvetica", Font.BOLD, 15));
+					jenson.setIcon(new ImageIcon ("icons/eye.png"));
+					jenson.setHorizontalTextPosition(SwingConstants.RIGHT);
+					JLabel soldOrNotSold =  new JLabel ();;
+					if (rs.getInt("sold") == 1) 
+						soldOrNotSold.setIcon(new ImageIcon ("icons/jenson.png"));
+					else
+						soldOrNotSold.setIcon(new ImageIcon ("icons/sale.png"));
+						
+					support10.add(jenson);
+					support11.add(soldOrNotSold);
+					lastRow.add(support11, BorderLayout.WEST);
+					lastRow.add(support10, BorderLayout.EAST);
+					informationPanel.add(lastRow);
+					
+					
+					currentCarPanel.add(imageLabel);
+					currentCarPanel.add(informationPanel);
+					currentCarPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+					carPanel.add(currentCarPanel);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	
 	public int calculatePrice (int car_id) {
 		int result = 0;
