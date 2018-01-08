@@ -26,7 +26,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private JLabel nameTF, surnameTF, taxTF, addressTF;
 	private JButton backBtn, statsBtn, deleteBtn, modifyBtn;
 	private ImageIcon modifyIcon;
-	private JButton modNameBtn, modSurnameBtn, modAddressBtn;
 	private JPanel infoPanel;
 	private ArrayList<JButton> buttons;
 	
@@ -514,21 +513,49 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		}
 			
 		switch(fieldName) {
-		case "name": updateValueInDB("c_name", newValue);
+		case "name": 
+			 int result = JOptionPane.showConfirmDialog(null, "Changing this field will cause the tax code to be recalculated accordingly.", 
+		               "WARNING!", JOptionPane.WARNING_MESSAGE);
+		      if (result == JOptionPane.OK_OPTION) {
+		    	  alterPrimaryKey(newValue, surnameTF.getText());
+		      }
+			//updateValueInDB("c_name", newValue);
 		break;
-		case "surname": updateValueInDB("c_surname", newValue);
+		case "surname": 
+			
+			updateValueInDB("c_surname", newValue);
 		break;
 		case "address":
 			AddressEditPanel panel = new AddressEditPanel();
-			 int result = JOptionPane.showConfirmDialog(null, panel, 
+			 int answer = JOptionPane.showConfirmDialog(null, panel, 
 		               "Please update the address of this customer", JOptionPane.OK_CANCEL_OPTION);
-		      if (result == JOptionPane.OK_OPTION) {
+		      if (answer == JOptionPane.OK_OPTION) {
 		         System.out.println("Postcode: " + panel.zipTF.getText());
 		         System.out.println("City: " + panel.cityTF.getText());
 		         System.out.println("Street: " + panel.streetTF.getText());
 		      }
 		      break;
 		}
+	}
+	
+	private void alterPrimaryKey(String name, String surname) {
+		
+		System.out.println("Previous tax code: " + customerPkey);
+        System.out.println("New tax code: " + new PartialTaxCodeCalc(name, surname) + customerPkey.substring(6));
+        String newTaxCode = new PartialTaxCodeCalc(name, surname).refactor() + customerPkey.substring(6);
+        Connection conn = DatabaseConnection.getDBConnection().getConnection();
+        Statement s = null;
+        try {
+			s = conn.createStatement();
+			String query = "UPDATE customer SET tax_code = '" + newTaxCode + "' WHERE tax_code = '" + customerPkey + "'";
+			s.executeUpdate(query);
+			JOptionPane.showMessageDialog(null, "Values updated! Spera che funzioni ancora tutto, sennò son cazzi");
+			MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(newTaxCode));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	
@@ -555,7 +582,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			
 		}
 		
-		
 		return true;
 	}
 	
@@ -579,6 +605,13 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
 	
 	////////////////////////////////////INNER CLASSES///////////////////////////////////////////////////
 	
