@@ -657,7 +657,7 @@ public class SearchCarPanel extends JPanel{
 				// create second row panel
 				JPanel secondRow = new JPanel();
 				secondRow.setLayout(new BorderLayout());
-				String forLabel = "<html>   <p style=\"padding-left:5px;\"><b>" + rs.getString("car_type") + "</b> with <b>" + rs.getInt("doors") + " doors </b> and <b>" + rs.getInt("seats") + " seats </b>";
+				String forLabel = "<html>   <p style=\"padding-left:5px;\"><b>" + Character.toUpperCase(rs.getString("car_type").charAt(0)) + rs.getString("car_type").substring(1) + "</b> with <b>" + rs.getInt("doors") + " doors </b> and <b>" + rs.getInt("seats") + " seats </b>";
 				JPanel support3 = new JPanel(); 
 				
 				
@@ -686,8 +686,8 @@ public class SearchCarPanel extends JPanel{
 						colorString+= ", " + rs2.getString("color_name");
 				}
 				
-				forLabel += "<br>Powered by a <b>" + fuel + "</b> engine with <b>" + horsepower + " kw</b> and <b>" + transmission + "</b> transmission.";
-				forLabel += "<br> Colored in <b>" + colorString + "</b>. </p> </html>";
+				forLabel += "<br>Powered by a <b>" + fuel + "</b> engine with <b>" + horsepower + " kw</b> and <b>" + transmission + "</b> transmission";
+				forLabel += "<br> Colored in <b>" + colorString + "</b> </p> </html>";
 				
 				JLabel info1 = new JLabel(forLabel);
 				info1.setFont(info1.getFont().deriveFont(Font.PLAIN, 15));
@@ -774,7 +774,7 @@ public class SearchCarPanel extends JPanel{
 					// create second row panel
 					JPanel secondRow = new JPanel();
 					secondRow.setLayout(new BorderLayout());
-					String forLabel = "<html>   <p style=\"padding-left:5px;\"><b> "+ rs.getInt("mileage") + " km</b> <br> <b>" + rs.getString("car_type") + "</b> with <b>" + rs.getInt("doors") + " doors </b> and <b>" + rs.getInt("seats") + " seats </b>";
+					String forLabel = "<html>   <p style=\"padding-left:5px;\"><b> "+ rs.getInt("mileage") + " km</b> <br> <b>" + Character.toUpperCase(rs.getString("car_type").charAt(0)) + rs.getString("car_type").substring(1) + "</b> with <b>" + rs.getInt("doors") + " doors </b> and <b>" + rs.getInt("seats") + " seats </b>";
 					JPanel support3 = new JPanel(); 
 					
 					
@@ -803,8 +803,8 @@ public class SearchCarPanel extends JPanel{
 							colorString+= ", " + rs2.getString("color_name");
 					}
 					
-					forLabel += "<br>Powered by a <b>" + fuel + "</b> engine with <b>" + horsepower + " kw</b> and <b>" + transmission + "</b> transmission.";
-					forLabel += "<br> Colored in <b>" + colorString + "</b>. </p> </html>";
+					forLabel += "<br>Powered by a <b>" + fuel + "</b> engine with <b>" + horsepower + " kw</b> and <b>" + transmission + "</b> transmission";
+					forLabel += "<br> Colored in <b>" + colorString + "</b> </p> </html>";
 					
 					JLabel info1 = new JLabel(forLabel);
 					info1.setFont(info1.getFont().deriveFont(Font.PLAIN, 15));
