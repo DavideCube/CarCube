@@ -522,8 +522,12 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			//updateValueInDB("c_name", newValue);
 		break;
 		case "surname": 
-			
-			updateValueInDB("c_surname", newValue);
+			result = JOptionPane.showConfirmDialog(null, "Changing this field will cause the tax code to be recalculated accordingly.", 
+		               "WARNING!", JOptionPane.WARNING_MESSAGE);
+		      if (result == JOptionPane.OK_OPTION) {
+		    	  alterPrimaryKey(nameTF.getText(), newValue);
+		      }
+			//updateValueInDB("c_surname", newValue);
 		break;
 		case "address":
 			AddressEditPanel panel = new AddressEditPanel();
