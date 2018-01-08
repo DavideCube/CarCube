@@ -33,13 +33,13 @@ import atunibz.dcube.DBProject.configuration.AppResources;
 
 public class SearchCarPanel extends JPanel{
 	private Connection conn;
-	private JPanel scPanel, titlePanel, researchPanel;
+	private JPanel scPanel, titlePanel, researchPanel, buttonPanel;
 	private JPanel carPanel;
 	private JScrollPane pane;
 	private JCheckBox newCar, usedCar;
 	private JComboBox<String> make, model, price, year, sold;
 	private String[] allMakes, allModels;
-	private JButton search, advancedSearch;
+	private JButton search, advancedSearch, back;
 	private static final String OPTION = "From year";
 	private static final String OPTION2 = "Price up to";
 	
@@ -157,6 +157,16 @@ public class SearchCarPanel extends JPanel{
 		bigContainer.add(pane);
 		bigContainer.setOpaque(false);
 		scPanel.add(bigContainer);
+		
+		// buttonPanel
+		scPanel.add((Box.createRigidArea(new Dimension(0, 20))));
+		buttonPanel = new JPanel();
+		buttonPanel.setOpaque(false);
+		// back
+		back = AppResources.iconButton("Go back     ", "icons/back.png");
+		back.addActionListener(new BackListener());
+		buttonPanel.add(back);
+		scPanel.add(buttonPanel);
 		
 		
 		add(scPanel);
@@ -465,6 +475,17 @@ public class SearchCarPanel extends JPanel{
 		
 	}
 	
+	// listener for back button
+	private class BackListener implements ActionListener  {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainPanel.getMainPanel().swapPanel(new LogoPanel());
+			
+		}
+		
+	}
+	
 	//Listener for the advanced search button
 	private class AdvancedSearchListener implements ActionListener{
 
@@ -480,7 +501,6 @@ public class SearchCarPanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			String totalQuery = null;
 			String newCarQuery = "SELECT * FROM new_car";
 			String usedCarQuery = "SELECT * FROM used_car";
 			// first of all, get all the selected item from the combo boxes
@@ -860,4 +880,5 @@ public class SearchCarPanel extends JPanel{
 		return result;
 		
 	}
+
 }
