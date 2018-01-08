@@ -1,6 +1,7 @@
 package atunibz.dcube.DBProject.GUI;
 
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,15 +13,20 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import atunibz.dcube.DBProject.configuration.AppResources;
@@ -28,6 +34,8 @@ import atunibz.dcube.DBProject.configuration.AppResources;
 public class SearchCarPanel extends JPanel{
 	private Connection conn;
 	private JPanel scPanel, titlePanel, researchPanel;
+	private JPanel carPanel;
+	private JScrollPane pane;
 	private JCheckBox newCar, usedCar;
 	private JComboBox<String> make, model, price, year, sold;
 	private String[] allMakes, allModels;
@@ -114,6 +122,7 @@ public class SearchCarPanel extends JPanel{
 		search.setIcon(new ImageIcon("icons/searchCar.png"));
 		search.setHorizontalTextPosition(SwingConstants.RIGHT);
 		search.setForeground(new Color (255, 128, 0));
+		search.addActionListener(new SearchListener());
 		AppResources.changeFont(search, Font.BOLD, 20);
 		researchQuery();
 		
@@ -133,6 +142,18 @@ public class SearchCarPanel extends JPanel{
 		researchPanel.add(search);
 		
 		scPanel.add(researchPanel);
+		scPanel.add((Box.createRigidArea(new Dimension(0, 10))));
+		
+		// panel that shows the list of cars
+		JPanel bigcarPanel = new JPanel ();
+		carPanel = new JPanel();
+		carPanel.setOpaque(false);
+		carPanel.setLayout(new BoxLayout(carPanel, BoxLayout.Y_AXIS));
+		bigcarPanel.add(carPanel);
+		pane = new JScrollPane(bigcarPanel);
+		pane.setOpaque(false);
+		pane.setPreferredSize(new Dimension (800, 400));
+		scPanel.add(pane);
 		
 		
 		add(scPanel);
@@ -448,6 +469,202 @@ public class SearchCarPanel extends JPanel{
 		public void actionPerformed(ActionEvent e) {
 			MainPanel.getMainPanel().swapPanel(new AdvancedSearchPanel(newCar.isSelected(), usedCar.isSelected(), make.getSelectedIndex(), model.getSelectedIndex(), year.getSelectedIndex(), price.getSelectedIndex(), sold.getSelectedIndex()));	
 		}
+		
+	}
+	
+	private class SearchListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			if (newCar.isSelected() && !usedCar.isSelected()) {
+				String newCarQuery = "SELECT * FROM new_car";
+				// first of all, get all the selected item from the combo boxes
+				String makeSelected = (String) make.getSelectedItem();
+				String modelSelected = (String) model.getSelectedItem();
+				String yearSelected = (String) year.getSelectedItem();
+				String priceSelected = (String) price.getSelectedItem();
+				String soldSelected = (String) sold.getSelectedItem();
+				int yearInt = 0;
+				int priceInt = 0;
+				// evaluate if we are searching in new cars, used cars, or both
+
+				// look at the make combo box (if it is equal "All makes" then no changes in the
+				// query)
+				if (makeSelected.compareTo("All Makes") != 0) {
+					newCarQuery += " WHERE make = '" + makeSelected + "'";
+					// look at the model (inside this "if" because if we are not entered here, then
+					// no model is automatically not selected
+					if (modelSelected.compareTo("All Models") != 0) {
+						newCarQuery += " AND model = '" + modelSelected + "'";
+					}
+				}
+				// look at the year
+				if (yearSelected.compareTo("From year") != 0) {
+					yearInt = Integer.parseInt(yearSelected);
+					newCarQuery += " INTERSECT SELECT * FROM new_car WHERE car_year >= " + yearInt;
+				}
+				// look at the price
+				if (priceSelected.compareTo("Price up to") != 0) {
+					priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
+					newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE base_price <= " + priceInt;
+				}
+				// look at sold or not sold
+				if (soldSelected.compareTo("Sold or not") != 0) {
+					if (soldSelected.compareTo("Not sold") == 0)
+						newCarQuery += " INTERSECT SELECT * FROM new_car WHERE sold = 0";
+					else
+						newCarQuery += " INTERSECT SELECT * FROM new_car WHERE sold = 1";
+				}
+				
+				
+				try {
+					Statement stat = conn.createStatement();
+					ResultSet rs = stat.executeQuery(newCarQuery);
+					carPanel.removeAll();
+					createPanelList (rs);
+					scPanel.revalidate();
+					scPanel.repaint();
+					
+					
+				} catch (SQLException ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}	
+			}	
+		}
+	}
+	
+	// method for creating a panel for each result
+	public void createPanelList (ResultSet rs) {
+		
+		try {
+			while (rs.next()) {
+				// create panel
+				JPanel currentCarPanel = new JPanel ();
+				currentCarPanel.setLayout(new BoxLayout(currentCarPanel, BoxLayout.X_AXIS));
+				currentCarPanel.setPreferredSize(new Dimension (800, 200));
+				
+				// create panel and label for the car image
+				JLabel imageLabel = new JLabel();
+				int car_id = rs.getInt("car_id");
+				imageLabel.setIcon(AppResources.scaleProfileImage(Integer.toString(car_id), true));
+				
+				// create support panel 
+				JPanel informationPanel = new JPanel();
+				//informationPanel.setPreferredSize(new Dimension (300, 50));
+				informationPanel.setLayout(new BoxLayout(informationPanel, BoxLayout.Y_AXIS));
+				
+				//create first row panel
+				JPanel firstRow = new JPanel();
+				firstRow.setLayout(new BorderLayout());
+				JPanel support = new JPanel ();
+				JPanel support2 = new JPanel();
+				JLabel make = new JLabel(rs.getString("make"));
+				make.setFont(new Font ("Helvetica", Font.BOLD, 20));
+				make.setIcon(new ImageIcon ("icons/new.png"));
+				make.setHorizontalTextPosition(SwingConstants.RIGHT);
+				JLabel model = new JLabel (rs.getString("model"));
+				model.setFont(new Font ("Helvetica", Font.PLAIN, 20));
+				int calcPrice = (rs.getInt("base_price") + calculatePrice (car_id));
+				NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+				String priceFormatted = currencyFormat.format(calcPrice);
+				JLabel price = new JLabel (priceFormatted);
+				price.setFont(new Font ("Helvetica", Font.BOLD, 20));
+				support.add(make);
+				support.add(model);
+				support2.add(price);
+				firstRow.add(support, BorderLayout.WEST);
+				firstRow.add(support2, BorderLayout.EAST);
+				informationPanel.add(firstRow);
+				
+				// create second row panel
+				JPanel secondRow = new JPanel();
+				secondRow.setLayout(new BorderLayout());
+				String forLabel = "<html>   <p style=\"padding-left:5px;\"><b>" + rs.getString("car_type") + "</b> with <b>" + rs.getInt("doors") + " doors </b> and <b>" + rs.getInt("seats") + " seats </b>";
+				JPanel support3 = new JPanel(); 
+				
+				
+				// create third row panel
+				
+				String query = "select engine.horsepower, engine.fuel, engine.transmission, color.color_name from new_car \n" + 
+						"inner join engine on new_car.engine = engine.engine_id \n" + 
+						"inner join new_painting on new_car.car_id = new_painting.car_id\n" + 
+						"inner join color on new_painting.color_code = color.color_code\n" + 
+						"WHERE new_car.car_id = " + car_id;
+				Statement stat= conn.createStatement();
+				ResultSet rs2 = stat.executeQuery(query);
+				String horsepower = "", fuel = "", transmission = "";
+				String colorString = "";
+				boolean firstColor = true;
+				while(rs2.next()) {
+					
+					horsepower = rs2.getString("horsepower");
+					fuel = rs2.getString("fuel");
+					transmission = rs2.getString("transmission");
+					if(firstColor) {
+						colorString+= rs2.getString("color_name");
+						firstColor = false;
+					}
+					else
+						colorString+= ", " + rs2.getString("color_name");
+				}
+				
+				forLabel += "<br>Powered by a <b>" + fuel + "</b> engine with <b>" + horsepower + " kw</b> and <b>" + transmission + "</b> transmission.";
+				forLabel += "<br> Colored in <b>" + colorString + "</b>. </p> </html>";
+				
+				JLabel info1 = new JLabel(forLabel);
+				info1.setFont(info1.getFont().deriveFont(Font.PLAIN, 15));
+				support3.add(info1);
+				secondRow.add(support3, BorderLayout.WEST);
+				informationPanel.add(secondRow);
+				
+				// third Row
+				JPanel lastRow = new JPanel();
+				lastRow.setLayout(new BorderLayout());
+				JPanel support10 = new JPanel ();
+				JPanel support11 = new JPanel();
+				JButton jenson = new JButton("View car");
+				jenson.setFont(new Font ("Helvetica", Font.BOLD, 15));
+				jenson.setIcon(new ImageIcon ("icons/eye.png"));
+				jenson.setHorizontalTextPosition(SwingConstants.RIGHT);
+				JLabel soldOrNotSold =  new JLabel ();;
+				if (rs.getInt("sold") == 1) 
+					soldOrNotSold.setIcon(new ImageIcon ("icons/jenson.png"));
+				else
+					soldOrNotSold.setIcon(new ImageIcon ("icons/sale.png"));
+					
+				support10.add(jenson);
+				support11.add(soldOrNotSold);
+				lastRow.add(support11, BorderLayout.WEST);
+				lastRow.add(support10, BorderLayout.EAST);
+				informationPanel.add(lastRow);
+				
+				
+				currentCarPanel.add(imageLabel);
+				currentCarPanel.add(informationPanel);
+				currentCarPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+				carPanel.add(currentCarPanel);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public int calculatePrice (int car_id) {
+		int result = 0;
+		try {
+			String query = "SELECT sum(price) FROM new_equipped INNER JOIN optional ON new_equipped.optional_id = optional.optional_id AND new_equipped.car_id = " + car_id;
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery(query);
+			rs.next();
+			result = rs.getInt("sum");
+		} catch (SQLException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
+		return result;
 		
 	}
 }

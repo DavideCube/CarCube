@@ -19,6 +19,7 @@ public final class AppResources {
 	public static final Font DEFAULT_FONT = new Font("Comic Sans MS", Font.PLAIN, 25);
 	public static final Font BUTTON_FONT = new Font("Comic Sans MS", Font.BOLD, 30);
 	public static final Font LITTLEBUTTON_FONT = new Font("Helvetica", Font.PLAIN, 15);
+
 	
 	//background constants
 	public static final Image DEFAULT_BACKGROUND = backgroundInit();
@@ -79,10 +80,14 @@ public final class AppResources {
 		label.setHorizontalTextPosition(SwingConstants.RIGHT);
 		return label;
 	}
-	public ImageIcon scaleProfileImage (String path) {
+	
+	public static ImageIcon scaleProfileImage (String name, boolean newCar) {
 		BufferedImage buffImg = null;
 		try {
-			buffImg = ImageIO.read(new File(path));
+			if (newCar)
+				buffImg = ImageIO.read(new File("icons/newCars/" + name + ".jpg"));
+			else
+				buffImg = ImageIO.read(new File("icons/usedCars/" + name + ".jpg"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
