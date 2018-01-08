@@ -1321,35 +1321,287 @@ public class AdvancedSearchPanel extends JPanel {
 				
 				
 				// TO BE CONTINUED...
+				// DIMENSION!
+				// look at the car height (inner join)
+				if (maxHeight.compareTo("") != 0) {
+					try {
+						newCarQuery +=" INNER JOIN dimension on new_car.dimension = dimension.dimension_id";
+						maxHeightVal = Integer.parseInt(maxHeight);
+
+						if(newCarQueryWhere.length() > 0)
+							newCarQueryWhere += " AND dimension.car_heigth <= " + maxHeightVal;
+						else
+							newCarQueryWhere += " dimension.car_heigth <= " + maxHorsesVal;
+					} catch(NumberFormatException n) {
+						
+						JOptionPane.showMessageDialog(advancedSearch, "Max Height must be a valid number", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+						return;
+					}
+				}
+
+				// look at the car length (inner join)
+				if (maxLength.compareTo("") != 0) {
+					try {
+						maxLengthVal = Integer.parseInt(maxLength);
+						if(!newCarQuery.contains(" INNER JOIN dimension on new_car.dimension = dimension.dimension_id"))
+							newCarQuery +=" INNER JOIN dimension on new_car.dimension = dimension.dimension_id";
+
+						if (newCarQueryWhere.length() > 0)
+							newCarQueryWhere += " AND dimension.car_length <= " + maxLengthVal;
+						else
+							newCarQueryWhere += " dimension.car_length <= " + maxLengthVal;
+					} catch (NumberFormatException n) {
+
+						JOptionPane.showMessageDialog(advancedSearch, "Max Length must be a valid number", "CarCube",
+								JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+						return;
+					}
+				}
+				
+				// look at the car width (inner join)
+				if (maxWidth.compareTo("") != 0) {
+					try {
+						maxWidthVal = Integer.parseInt(maxWidth);
+
+						if (!newCarQuery.contains(" INNER JOIN dimension on new_car.dimension = dimension.dimension_id"))
+							newCarQuery += " INNER JOIN dimension on new_car.dimension = dimension.dimension_id";
+
+						if (newCarQueryWhere.length() > 0)
+							newCarQueryWhere += " AND dimension.car_width <= " + maxWidthVal;
+						else
+							newCarQueryWhere += " dimension.car_width <= " + maxWidthVal;
+					} catch (NumberFormatException n) {
+
+						JOptionPane.showMessageDialog(advancedSearch, "Max Width must be a valid number", "CarCube",
+								JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+						return;
+					}
+				}
+				
+				//and now check all optionals...
+				for(JCheckBox c : optional) {
+					
+					if(c.isSelected()) {
+						if (!newCarQuery.contains(" INNER JOIN new_equipped on new_car.car_id = new_equipped.car_id INNER JOIN optional on new_equipped.optional_id = optional.optional_id"))
+							newCarQuery += " INNER JOIN new_equipped on new_car.car_id = new_equipped.car_id INNER JOIN optional on new_equipped.optional_id = optional.optional_id";
+						
+						if (newCarQueryWhere.length() > 0)
+							newCarQueryWhere += " AND optional.opt_name = '" + c.getText() + "'";
+						else
+							newCarQueryWhere += " optional.opt_name = '" + c.getText() + "'";
+					}
+					
+				}
+				
+				if (newCarQueryWhere.length() >0)
+					newCarQuery += " WHERE " + newCarQueryWhere;
+				
 			}
 			
-		/*	if (usedCar.isSelected()) {
-				// look at the make combo box (if it is equal "All makes" then no changes in the query)
+			// USED CAR!!!!
+			if (usedCar.isSelected()) {
+
+				// look at the make combo box (if it is equal "All makes" then no changes in the
+				// query)
 				if (makeSelected.compareTo("All Makes") != 0) {
-					usedCarQuery += " WHERE make = '" + makeSelected + "'";
-					// look at the model (inside this "if" because if we are not entered here, then no model is automatically not selected
+					usedCarQueryWhere += "used_car.make = '" + makeSelected + "'";
+					// look at the model (inside this "if" because if we are not entered here, then
+					// no model is automatically not selected
 					if (modelSelected.compareTo("All Models") != 0) {
-						usedCarQuery += " AND model = '" + modelSelected + "'";
+						usedCarQueryWhere += " AND used_car.model = '" + modelSelected + "'";
 					}
 				}
 				// look at the year
-				if (yearSelected.compareTo(OPTION) != 0) {
+				if (yearSelected.compareTo("From year") != 0) {
 					yearInt = Integer.parseInt(yearSelected);
-					usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE car_year >= " + yearInt;
+					if (usedCarQueryWhere.length() > 0)
+						usedCarQueryWhere += " AND used_car.year >=" + yearInt;
+					else
+						usedCarQueryWhere += " used_car.year >=" + yearInt;
 				}
+
 				// look at the price
-				if (priceSelected.compareTo(OPTION2) != 0) {
+				if (priceSelected.compareTo("Price up to") != 0) {
 					priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
-					usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE net_price <= " + priceInt;
+					if (usedCarQueryWhere.length() > 0)
+						usedCarQueryWhere += " AND used_car.net_price <=" + priceInt;
+					else
+						usedCarQueryWhere += " used_car.net_price <=" + priceInt;
 				}
+
 				// look at sold or not sold
 				if (soldSelected.compareTo("Sold or not") != 0) {
-					if (soldSelected.compareTo("Not sold") == 0)
-						usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE sold = 0";
-					else
-						usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE sold = 1";
+
+					if (soldSelected.compareTo("Not sold") == 0) {
+
+						if (usedCarQueryWhere.length() > 0)
+							usedCarQueryWhere += " AND used_car.sold = 0";
+						else
+							usedCarQueryWhere += " used_car.sold = 0";
+					} else {
+						if (usedCarQueryWhere.length() > 0)
+							usedCarQueryWhere += " AND used_car.sold = 1";
+						else
+							usedCarQueryWhere += " used_car.sold = 1";
+					}
 				}
-			}*/
+
+				// Look at doors and seats (there is also one car with 3 seats..... INCREDIBLE
+				// :)
+				// look at the car type
+				if (typeSelected.compareTo(OPTION3) != 0) {
+
+					if (usedCarQueryWhere.length() > 0)
+						usedCarQueryWhere += " AND used_car.car_type = '" + typeSelected + "'";
+					else
+						usedCarQueryWhere += " used_car.car_type = '" + typeSelected + "'";
+				}
+
+				// look at the seats
+				if (seatsSelected.compareTo(OPTION4) != 0) {
+					seats = Integer.parseInt(seatsSelected);
+
+					if (usedCarQueryWhere.length() > 0)
+						usedCarQueryWhere += " AND used_car.seats = " + seats;
+					else
+						usedCarQueryWhere += " used_car.seats = " + seats;
+				}
+
+				// look at the doors
+				if (doorsSelected.compareTo(OPTION5) != 0) {
+					doors = Integer.parseInt(doorsSelected);
+
+					if (usedCarQueryWhere.length() > 0)
+						usedCarQueryWhere += " AND used_car.doors = " + doors;
+					else
+						usedCarQueryWhere += " used_car.doors = " + doors;
+				}
+
+				// Engine joinssss
+				// look at the fuel (inner join)
+				if (fuelsSelected.compareTo(OPTION6) != 0) {
+
+					usedCarQuery += " INNER JOIN engine on used_car.engine = engine.engine_id";
+
+					if (usedCarQueryWhere.length() > 0)
+						usedCarQueryWhere += " AND engine.fuel = '" + fuelsSelected + "'";
+					else
+						usedCarQueryWhere += " engine.fuel = '" + fuelsSelected + "'";
+				}
+
+				// look at the transmission (inner join)
+				if (transmissionSelected.compareTo(OPTION7) != 0) {
+
+					if (!usedCarQuery.contains(" INNER JOIN engine on used_car.engine = engine.engine_id"))
+						usedCarQuery += " INNER JOIN engine on used_car.engine = engine.engine_id";
+
+					if (usedCarQueryWhere.length() > 0)
+						usedCarQueryWhere += " AND engine.transmission = '" + transmissionSelected + "'";
+					else
+						usedCarQueryWhere += " engine.transmission = '" + transmissionSelected + "'";
+				}
+
+				// look at the hoursepower (inner join)
+				if (maxHorses.compareTo("") != 0) {
+					try {
+						maxHorsesVal = Integer.parseInt(maxHorses);
+
+						if (!usedCarQuery.contains(" INNER JOIN engine on used_car.engine = engine.engine_id"))
+							usedCarQuery += " INNER JOIN engine on used_car.engine = engine.engine_id";
+
+						if (usedCarQueryWhere.length() > 0)
+							usedCarQueryWhere += " AND engine.horsepower <= " + maxHorsesVal;
+						else
+							usedCarQueryWhere += " engine.horsepower <= " + maxHorsesVal;
+
+					} catch (NumberFormatException n) {
+
+						JOptionPane.showMessageDialog(advancedSearch, "Max Horses must be a valid number", "CarCube",
+								JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+						return;
+					}
+				}
+
+				// TO BE CONTINUED...
+				// DIMENSION!
+				// look at the car height (inner join)
+				if (maxHeight.compareTo("") != 0) {
+					try {
+						usedCarQuery += " INNER JOIN dimension on used_car.dimension = dimension.dimension_id";
+						maxHeightVal = Integer.parseInt(maxHeight);
+
+						if (usedCarQueryWhere.length() > 0)
+							usedCarQueryWhere += " AND dimension.car_heigth <= " + maxHeightVal;
+						else
+							usedCarQueryWhere += " dimension.car_heigth <= " + maxHorsesVal;
+					} catch (NumberFormatException n) {
+
+						JOptionPane.showMessageDialog(advancedSearch, "Max Height must be a valid number", "CarCube",
+								JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+						return;
+					}
+				}
+
+				// look at the car length (inner join)
+				if (maxLength.compareTo("") != 0) {
+					try {
+						maxLengthVal = Integer.parseInt(maxLength);
+						if (!usedCarQuery
+								.contains(" INNER JOIN dimension on used_car.dimension = dimension.dimension_id"))
+							usedCarQuery += " INNER JOIN dimension on used_car.dimension = dimension.dimension_id";
+
+						if (usedCarQueryWhere.length() > 0)
+							usedCarQueryWhere += " AND dimension.car_length <= " + maxLengthVal;
+						else
+							usedCarQueryWhere += " dimension.car_length <= " + maxLengthVal;
+					} catch (NumberFormatException n) {
+
+						JOptionPane.showMessageDialog(advancedSearch, "Max Length must be a valid number", "CarCube",
+								JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+						return;
+					}
+				}
+
+				// look at the car width (inner join)
+				if (maxWidth.compareTo("") != 0) {
+					try {
+						maxWidthVal = Integer.parseInt(maxWidth);
+
+						if (!usedCarQuery
+								.contains(" INNER JOIN dimension on used_car.dimension = dimension.dimension_id"))
+							usedCarQuery += " INNER JOIN dimension on used_car.dimension = dimension.dimension_id";
+
+						if (usedCarQueryWhere.length() > 0)
+							usedCarQueryWhere += " AND dimension.car_width <= " + maxWidthVal;
+						else
+							usedCarQueryWhere += " dimension.car_width <= " + maxWidthVal;
+					} catch (NumberFormatException n) {
+
+						JOptionPane.showMessageDialog(advancedSearch, "Max Width must be a valid number", "CarCube",
+								JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+						return;
+					}
+				}
+
+				// and now check all optionals...
+				for (JCheckBox c : optional) {
+
+					if (c.isSelected()) {
+						if (!usedCarQuery.contains(
+								" INNER JOIN used_equipped on used_car.immatriculation = used_equipped.immatriculation INNER JOIN optional on used_equipped.optional_id = optional.optional_id"))
+							usedCarQuery += " INNER JOIN used_equipped on used_car.immatriculation = used_equipped.immatriculation INNER JOIN optional on used_equipped.optional_id = optional.optional_id";
+
+						if (usedCarQueryWhere.length() > 0)
+							usedCarQueryWhere += " AND optional.opt_name = '" + c.getText() + "'";
+						else
+							usedCarQueryWhere += " optional.opt_name = '" + c.getText() + "'";
+					}
+
+				}
+
+				if (usedCarQueryWhere.length() >0)
+					usedCarQuery += " WHERE " + usedCarQueryWhere;
+			}
 			
 			// CASE BOTH
 			if (newCar.isSelected() && usedCar.isSelected()) {
@@ -1380,8 +1632,6 @@ public class AdvancedSearchPanel extends JPanel {
 			else if (newCar.isSelected() && !usedCar.isSelected()) {
 				Statement stat;
 				try {
-					if (newCarQueryWhere.length() >0)
-						newCarQuery += " WHERE " + newCarQueryWhere;
 					stat = conn.createStatement();
 					System.out.println(newCarQuery);
 					ResultSet rs = stat.executeQuery(newCarQuery);
