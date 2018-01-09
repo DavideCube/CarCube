@@ -330,10 +330,13 @@ public class AdvancedSearchPanel extends JPanel {
 		colorPanel.add(colorLabelPanel);
 
 		// Content
+		JPanel supportPanel = new JPanel();
+		supportPanel.setOpaque(false);
 		JScrollPane content = new JScrollPane(new ColorsPanel());
+		content.setPreferredSize(new Dimension (520, 188));
 		content.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		content.setPreferredSize(new Dimension(this.getWidth(), 250));
 		content.setOpaque(false);
+		supportPanel.add(content);
 		//JPanel colorContent = new ColorsPanel();
 		//by sbe
 		/*JPanel colorContent = new JPanel();
@@ -344,7 +347,8 @@ public class AdvancedSearchPanel extends JPanel {
 		//by sbe
 		//colorPanel.add(colorContent);
 		//by perez (le option spariscono) scherzavo ora funzionaaaaaa
-		colorPanel.add(content);
+		
+		colorPanel.add(supportPanel);
 		// OPTIONALS PANEL
 		optionalPanel = new JPanel();
 		optionalPanel.setLayout(new BoxLayout(optionalPanel, BoxLayout.Y_AXIS));
