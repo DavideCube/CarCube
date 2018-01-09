@@ -294,6 +294,13 @@ public class AdvancedSearchPanel extends JPanel {
 		thirdRow.add(maxWidth);
 		thirdRow.add(Box.createRigidArea(new Dimension(5, 0)));
 		thirdRow.add(width);
+		
+		JLabel maxHoursepower = new JLabel("Max horsepower (kw):");
+		horsepower = new JTextField(3);
+		thirdRow.add(Box.createRigidArea(new Dimension(5, 0)));
+		thirdRow.add(maxHoursepower);
+		thirdRow.add(Box.createRigidArea(new Dimension(5, 0)));
+		thirdRow.add(horsepower);
 
 		carSpecificData.add(Box.createRigidArea(new Dimension(0, 10)));
 		carSpecificData.add(thirdRow);
@@ -304,13 +311,13 @@ public class AdvancedSearchPanel extends JPanel {
 		fourthRow.setLayout(new BoxLayout(fourthRow, BoxLayout.X_AXIS));
 
 		// max car length
-		JLabel maxHoursepower = new JLabel("Max horsepower (kw):");
+		/*JLabel maxHoursepower = new JLabel("Max horsepower (kw):");
 		horsepower = new JTextField(3);
 
 		fourthRow.add(maxHoursepower);
 		fourthRow.add(Box.createRigidArea(new Dimension(5, 0)));
 		fourthRow.add(horsepower);
-		fourthRow.add(Box.createRigidArea(new Dimension(300, 0)));
+		fourthRow.add(Box.createRigidArea(new Dimension(300, 0)));*/
 
 		carSpecificData.add(Box.createRigidArea(new Dimension(0, 10)));
 		carSpecificData.add(fourthRow);
