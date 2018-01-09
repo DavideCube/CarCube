@@ -39,7 +39,7 @@ public class SearchCarPanel extends JPanel{
 	private JCheckBox newCar, usedCar;
 	private JComboBox<String> make, model, price, year, sold;
 	private String[] allMakes, allModels;
-	private JButton search, advancedSearch, back;
+	private JButton search, advancedSearch, back, addCar;
 	private static final String OPTION = "From year";
 	private static final String OPTION2 = "Price up to";
 	
@@ -166,6 +166,12 @@ public class SearchCarPanel extends JPanel{
 		back = AppResources.iconButton("Go back     ", "icons/back.png");
 		back.addActionListener(new BackListener());
 		buttonPanel.add(back);
+		// add new car
+		addCar = AppResources.iconButton("Add Car    ", "icons/transportation.png");
+		buttonPanel.add(Box.createRigidArea(new Dimension (50,0)));
+		buttonPanel.add(addCar);
+		
+		
 		scPanel.add(buttonPanel);
 		
 		
