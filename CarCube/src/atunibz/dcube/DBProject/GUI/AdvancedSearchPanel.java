@@ -29,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -329,14 +330,21 @@ public class AdvancedSearchPanel extends JPanel {
 		colorPanel.add(colorLabelPanel);
 
 		// Content
-		JPanel colorContent = new JPanel();
+		JScrollPane content = new JScrollPane(new ColorsPanel());
+		content.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		content.setPreferredSize(new Dimension(this.getWidth(), 250));
+		content.setOpaque(false);
+		//JPanel colorContent = new ColorsPanel();
+		//by sbe
+		/*JPanel colorContent = new JPanel();
 		colorContent.setLayout(new BoxLayout(colorContent, BoxLayout.Y_AXIS));
-		colorContent.setOpaque(false);
+		colorContent.setOpaque(false);*/
 
 		// COLORS CONTENT GOES HERE
-
-		colorPanel.add(colorContent);
-
+		//by sbe
+		//colorPanel.add(colorContent);
+		//by perez (le option spariscono) scherzavo ora funzionaaaaaa
+		colorPanel.add(content);
 		// OPTIONALS PANEL
 		optionalPanel = new JPanel();
 		optionalPanel.setLayout(new BoxLayout(optionalPanel, BoxLayout.Y_AXIS));
@@ -350,7 +358,6 @@ public class AdvancedSearchPanel extends JPanel {
 		AppResources.changeFont(optionalLabel, Font.BOLD, 25);
 		optionalLabelPanel.add(optionalLabel);
 		optionalPanel.add(optionalLabelPanel);
-
 		// Content
 		JPanel optionalContent = new JPanel();
 		optionalContent.setLayout(new BoxLayout(optionalContent, BoxLayout.Y_AXIS));
@@ -392,7 +399,7 @@ public class AdvancedSearchPanel extends JPanel {
 
 		optionalPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 		optionalPanel.add(optionalContent);
-
+		
 		// Panel for buttons controls
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
