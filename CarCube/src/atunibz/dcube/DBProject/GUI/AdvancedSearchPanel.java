@@ -1264,9 +1264,9 @@ public class AdvancedSearchPanel extends JPanel {
 				if (yearSelected.compareTo("From year") != 0) {
 					yearInt = Integer.parseInt(yearSelected);
 					if(newCarQueryWhere.length() > 0)
-						newCarQueryWhere += " AND new_car.year >=" + yearInt;
+						newCarQueryWhere += " AND new_car.car_year >=" + yearInt;
 					else
-						newCarQueryWhere += " new_car.year >=" + yearInt;
+						newCarQueryWhere += " new_car.car_year >=" + yearInt;
 				}
 				
 				// look at the price
@@ -1499,9 +1499,9 @@ public class AdvancedSearchPanel extends JPanel {
 				if (yearSelected.compareTo("From year") != 0) {
 					yearInt = Integer.parseInt(yearSelected);
 					if (usedCarQueryWhere.length() > 0)
-						usedCarQueryWhere += " AND used_car.year >=" + yearInt;
+						usedCarQueryWhere += " AND used_car.car_year >=" + yearInt;
 					else
-						usedCarQueryWhere += " used_car.year >=" + yearInt;
+						usedCarQueryWhere += " used_car.car_year >=" + yearInt;
 				}
 
 				// look at the price
