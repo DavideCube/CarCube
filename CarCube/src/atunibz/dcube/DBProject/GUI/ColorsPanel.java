@@ -132,6 +132,7 @@ public class ColorsPanel extends JPanel {
 			this(color.getRed(), color.getGreen(), color.getBlue(), colorName,colorCodeInit);
 		}
 		
+		// get methods
 		public String getColorName() {
 			return color.getColorName();
 		}
