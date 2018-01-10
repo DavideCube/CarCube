@@ -39,6 +39,7 @@ public class addSupplierPanel extends JPanel {
 	private Connection conn;
 
 	public addSupplierPanel() {
+		
 		// Initialise Variables
 		emails = new ArrayList<>();
 		phoneNumbers = new ArrayList<>();
@@ -466,8 +467,13 @@ public class addSupplierPanel extends JPanel {
 
 						if (key.next())
 							addressForeignKey = key.getInt(1);
+						
+						addAddress.close();
+						key.close();
 					}
-
+					
+					stat.close();
+					rs.close();
 					// Check if the
 
 					// Now that we have the address foreign key we can add the new supplier (if the
@@ -497,6 +503,8 @@ public class addSupplierPanel extends JPanel {
 							addMail.setString(2, vatField.getText());
 							
 							addMail.executeUpdate();
+							
+							addMail.close();
 							}
 						}
 						
@@ -512,6 +520,8 @@ public class addSupplierPanel extends JPanel {
 							add.setString(2, vatField.getText());
 							
 							add.executeUpdate();
+							
+							add.close();
 							}
 						}
 						
@@ -527,11 +537,14 @@ public class addSupplierPanel extends JPanel {
 							add.setString(2, vatField.getText());
 							
 							add.executeUpdate();
+							
+							add.close();
 							}
 						}
 						
 						JOptionPane.showMessageDialog(addSupplierrPanel, "Supplier was inserted successfully!");
 						MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
+						addSupplier.close();
 					} else {
 						// Already present
 						JOptionPane.showMessageDialog(addSupplierrPanel, "Supplier already present");

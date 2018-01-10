@@ -389,6 +389,9 @@ public class StakeholdersPanel extends JPanel{
 				else
 					resultList.add(rs.getString(attribute) + "  (" + rs.getString (primaryAttribute) + ")");
 			}
+			
+			st.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -429,6 +432,9 @@ public class StakeholdersPanel extends JPanel{
 				}
 				
 			}
+			
+			st.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

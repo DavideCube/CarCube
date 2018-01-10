@@ -313,14 +313,7 @@ public class AdvancedSearchPanel extends JPanel {
 		fourthRow.setOpaque(false);
 		fourthRow.setLayout(new BoxLayout(fourthRow, BoxLayout.X_AXIS));
 
-		// max car length
-		/*JLabel maxHoursepower = new JLabel("Max horsepower (kw):");
-		horsepower = new JTextField(3);
-
-		fourthRow.add(maxHoursepower);
-		fourthRow.add(Box.createRigidArea(new Dimension(5, 0)));
-		fourthRow.add(horsepower);
-		fourthRow.add(Box.createRigidArea(new Dimension(300, 0)));*/
+		
 
 		carSpecificData.add(Box.createRigidArea(new Dimension(0, 10)));
 		carSpecificData.add(fourthRow);
@@ -353,16 +346,6 @@ public class AdvancedSearchPanel extends JPanel {
 		colors = colPanel.getColorCheckBoxes();
 		colorKeys = colPanel.getColorKeys();
 		
-		//JPanel colorContent = new ColorsPanel();
-		//by sbe
-		/*JPanel colorContent = new JPanel();
-		colorContent.setLayout(new BoxLayout(colorContent, BoxLayout.Y_AXIS));
-		colorContent.setOpaque(false);*/
-
-		// COLORS CONTENT GOES HERE
-		//by sbe
-		//colorPanel.add(colorContent);
-		//by perez (le option spariscono) scherzavo ora funzionaaaaaa
 		
 		colorPanel.add(supportPanel);
 		// OPTIONALS PANEL
@@ -683,6 +666,9 @@ public class AdvancedSearchPanel extends JPanel {
 			while (rs.next()) {
 				tPiccola.add(rs.getString("make"));
 			}
+			
+			stat.close();
+			rs.close();
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -718,7 +704,9 @@ public class AdvancedSearchPanel extends JPanel {
 			while (rs.next()) {
 				tPiccola.add(rs.getString("model"));
 			}
-
+			
+			stat.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -739,7 +727,9 @@ public class AdvancedSearchPanel extends JPanel {
 			while (rs.next()) {
 				carTypes.add(rs.getString("car_type"));
 			}
-
+			
+			stat.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -761,7 +751,9 @@ public class AdvancedSearchPanel extends JPanel {
 			while (rs.next()) {
 				seats.add(rs.getString("seats"));
 			}
-
+			
+			stat.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -783,7 +775,9 @@ public class AdvancedSearchPanel extends JPanel {
 			while (rs.next()) {
 				doors.add(rs.getString("doors"));
 			}
-
+			
+			stat.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -805,7 +799,9 @@ public class AdvancedSearchPanel extends JPanel {
 				AppResources.changeFont(temp, Font.PLAIN, 20);
 				optional.add(temp);
 			}
-
+			
+			stat.close();
+			rs.close();
 		} catch (SQLException e) {
 
 			e.printStackTrace();
@@ -826,7 +822,9 @@ public class AdvancedSearchPanel extends JPanel {
 			while (rs.next()) {
 				fuels.add(rs.getString("fuel"));
 			}
-
+			
+			stat.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -848,7 +846,9 @@ public class AdvancedSearchPanel extends JPanel {
 			while (rs.next()) {
 				transmissions.add(rs.getString("transmission"));
 			}
-
+			
+			stat.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1202,7 +1202,9 @@ public class AdvancedSearchPanel extends JPanel {
 				search.setEnabled(true);
 
 			search.setText(rowcount + ((rowcount == 1) ? " car" : " cars"));
-
+			
+			stat.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1866,6 +1868,8 @@ public class AdvancedSearchPanel extends JPanel {
 							colorString+= ", " + rs2.getString("color_name");
 					}
 					
+					stat.close();
+					rs2.close();
 					forLabel += "<br>Powered by a <b>" + fuel + "</b> engine with <b>" + horsepower + " kw</b> and <b>" + transmission + "</b> transmission";
 					forLabel += "<br> Colored in <b>" + colorString + "</b> </p> </html>";
 					
@@ -1901,6 +1905,8 @@ public class AdvancedSearchPanel extends JPanel {
 					currentCarPanel.add(informationPanel);
 					currentCarPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 					carPanel.add(currentCarPanel);
+					
+					rs.close();
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -1982,7 +1988,8 @@ public class AdvancedSearchPanel extends JPanel {
 							else
 								colorString+= ", " + rs2.getString("color_name");
 						}
-						
+						stat.close();
+						rs2.close();
 						forLabel += "<br>Powered by a <b>" + fuel + "</b> engine with <b>" + horsepower + " kw</b> and <b>" + transmission + "</b> transmission";
 						forLabel += "<br> Colored in <b>" + colorString + "</b> </p> </html>";
 						
@@ -2018,6 +2025,7 @@ public class AdvancedSearchPanel extends JPanel {
 						currentCarPanel.add(informationPanel);
 						currentCarPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 						carPanel.add(currentCarPanel);
+						rs.close();
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -2033,6 +2041,9 @@ public class AdvancedSearchPanel extends JPanel {
 				ResultSet rs = stat.executeQuery(query);
 				rs.next();
 				result = rs.getInt("sum");
+				
+				stat.close();
+				rs.close();
 			} catch (SQLException ex) {
 				// TODO Auto-generated catch block
 				ex.printStackTrace();

@@ -484,8 +484,13 @@ public class addCustomerPanel extends JPanel {
 
 					if (key.next())
 						addressForeignKey = key.getInt(1);
+					
+					addAddress.close();
+					key.close();
 				}
-
+				
+				rs.close();
+				stat.close();
 				// Check if the
 
 				// Now that we have the address foreign key we can add the new customer (if the
@@ -516,8 +521,11 @@ public class addCustomerPanel extends JPanel {
 						addMail.setString(2, taxField.getText());
 						
 						addMail.executeUpdate();
+						
+						addMail.close();
 						}
 					}
+					
 					
 					//... we continue with its phone numbers ...
 					for(JTextField currentPhone : phoneNumbers) {
@@ -531,6 +539,8 @@ public class addCustomerPanel extends JPanel {
 						add.setString(2, taxField.getText());
 						
 						add.executeUpdate();
+						
+						add.close();
 						}
 					}
 					
@@ -546,6 +556,8 @@ public class addCustomerPanel extends JPanel {
 						add.setString(2, taxField.getText());
 						
 						add.executeUpdate();
+						
+						add.close();
 						}
 					}
 					

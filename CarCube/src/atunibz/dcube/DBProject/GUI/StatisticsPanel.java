@@ -165,7 +165,8 @@ public class StatisticsPanel extends JPanel{
 			rs.next();
 			count = rs.getInt("count");
 			
-	
+			st.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -185,7 +186,8 @@ public class StatisticsPanel extends JPanel{
 			rs.next();
 			count = rs.getInt("sum");
 			
-	
+			st.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -203,7 +205,8 @@ public class StatisticsPanel extends JPanel{
 			rs.next();
 			count = rs.getInt("count");
 			
-	
+			st.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -227,7 +230,9 @@ public class StatisticsPanel extends JPanel{
 			else
 				result = "No car was sold";
 			
-	
+			
+			st.close();
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

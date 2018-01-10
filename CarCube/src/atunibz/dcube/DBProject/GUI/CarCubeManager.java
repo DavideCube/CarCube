@@ -25,8 +25,6 @@ public class CarCubeManager {
 		frame.setVisible(true);
 		frame.setResizable(true);	
 		addPath("jars/postgresql-42.1.4.jar");
-		Connection conn = DatabaseConnection.getDBConnection().getConnection();
-		
 
 	}
 	
