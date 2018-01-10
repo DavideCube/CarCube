@@ -15,6 +15,7 @@ import javax.swing.border.BevelBorder;;
 
 public class ColorsPanel extends JPanel {
 	
+	
 	private ArrayList<ColorCheckBox> boxes;
 	private ArrayList<String> colorKeys;
 	private Map<String, Color> colorMap;
