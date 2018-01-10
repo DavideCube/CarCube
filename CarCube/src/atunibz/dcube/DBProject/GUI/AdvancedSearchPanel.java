@@ -39,7 +39,6 @@ import atunibz.dcube.DBProject.configuration.AppResources;
 
 public class AdvancedSearchPanel extends JPanel {
 
-	
 	private Connection conn;
 	// private JScrollPane mainPane;
 	private JPanel advancedSearch, titlePanel;
