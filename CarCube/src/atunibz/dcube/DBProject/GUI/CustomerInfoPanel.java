@@ -21,6 +21,8 @@ import atunibz.dcube.DBProject.configuration.AppResources;
 public class CustomerInfoPanel extends BackgroundedPanel {
 	
 	private String customerPkey;
+	private String addressFKey;
+	private AddressEditPanel addressEditPanel;
 	private IconLabel nameLbl, surnameLbl, taxLbl, addressLbl;
 	private int numberOfPhones, numberOfMails, numberOfFaxes;
 	private JLabel nameTF, surnameTF, taxTF, addressTF;
@@ -33,6 +35,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		System.out.println("THERMHOSIFooooNE");
 		this.setOpaque(false);
 		this.customerPkey = customerPkey;
+		this.addressEditPanel = new AddressEditPanel();
 		getNumberOfContacts();
 		initComponents();
 		configLayout();
@@ -189,7 +192,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		deleteBtn = new JButton("Delete");
 		modifyBtn = new JButton("Modify");
 		
-		
 		try {
 			modifyIcon = new ImageIcon(ImageIO.read(new File("icons/contacts/modify.png")));
 			modifyBtn.setIcon(modifyIcon);
@@ -223,9 +225,15 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		String address = null;
 		try {
 			Statement stmnt = conn.createStatement();
-			ResultSet rs = stmnt.executeQuery("select a.street, a.civic_number, a.city, a.postcode, a.nation from address a, customer c where a.address_id = c.address and c.tax_code = '" + customerPkey + "'");
+			ResultSet rs = stmnt.executeQuery("select a.street, a.civic_number, a.city, a.postcode, a.nation, a.address_id from address a, customer c where a.address_id = c.address and c.tax_code = '" + customerPkey + "'");
 			while(rs.next()) {
 				address = rs.getString(1) + " Street n." + rs.getInt(2) + " , " + rs.getString(3) + " - " + rs.getString(4) + " , " + rs.getString(5);
+				addressEditPanel.streetTF.setText(rs.getString(1));
+				addressEditPanel.civNumTF.setText(rs.getInt(2) + "");
+				addressEditPanel.cityTF.setText(rs.getString(3));
+				addressEditPanel.zipTF.setText(rs.getString(4));
+				addressEditPanel.nationTF.setText(rs.getString(5));
+				this.addressFKey = rs.getString(6);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -357,16 +365,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		return c.gridy;
 		}
 	}
-	
-	private void activeModifyMode() {
-		//TODO
-		infoPanel.remove(nameTF);
-		infoPanel.remove(addressTF);
-		infoPanel.remove(surnameTF);
-		repaint();
-		revalidate();
-	}
-	
 	
 	private void configLayout() {
 			
@@ -530,13 +528,17 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			//updateValueInDB("c_surname", newValue);
 		break;
 		case "address":
-			AddressEditPanel panel = new AddressEditPanel();
-			 int answer = JOptionPane.showConfirmDialog(null, panel, 
-		               "Please update the address of this customer", JOptionPane.OK_CANCEL_OPTION);
+			 int answer = JOptionPane.showConfirmDialog(null, addressEditPanel, 
+		               "Update address", JOptionPane.OK_CANCEL_OPTION);
 		      if (answer == JOptionPane.OK_OPTION) {
-		         System.out.println("Postcode: " + panel.zipTF.getText());
-		         System.out.println("City: " + panel.cityTF.getText());
-		         System.out.println("Street: " + panel.streetTF.getText());
+		    	 if(addressEditPanel.sanitizeInput())
+		    		 updateAddress(addressEditPanel.zipTF.getText(), addressEditPanel.streetTF.getText(), addressEditPanel.cityTF.getText(), Integer.parseInt(addressEditPanel.civNumTF.getText()), addressEditPanel.nationTF.getText());
+		    	 else
+		    		 JOptionPane.showMessageDialog(null,
+		    				    "Only alphanumerics characters allowed. Postcode can contain only digits and"
+		    				    + "civic number must be nonnegative. Moreover, all fields must be non-blank.",
+		    				    "Invalid input",
+		    				    JOptionPane.WARNING_MESSAGE);
 		      }
 		      break;
 		}
@@ -599,9 +601,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		}
 		try {
 			s = con.createStatement();
+			System.out.println("ZIP: " + newZIP + "\nStreet: " + newStreet + "\nCity: " + newCity + "\nN: " + newCivicNumber + "\nNation: " + newNation);
 			String sql = "UPDATE address " + 
-						 "SET postcode = " + newZIP + ", street = '" + newStreet + "', city = '" + newCity + "', civic_number = " + newCivicNumber + ", nation = '" + newNation + "' " + 
-						 "WHERE address_id = customer.address AND customer.tax_code = " + customerPkey;
+						 "SET postcode = '" + newZIP + "', street = '" + newStreet + "', city = '" + newCity + "', civic_number = " + newCivicNumber + ", nation = '" + newNation + "' " + 
+						 "WHERE address_id in (SELECT customer.address FROM customer WHERE customer.tax_code = '" + customerPkey + "')";
 			System.out.println(sql);
 			s.executeUpdate(sql);
 		}
@@ -638,35 +641,46 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			this.add(new JLabel("Postcode: "), gbc);
 			gbc.gridx = 1;
 			this.add(zipTF, gbc);
-			zipTF.setText("customer's zip");
 			
 			gbc.gridx = 0;
 			gbc.gridy = 1;
 			this.add(new JLabel("Street: "), gbc);
 			gbc.gridx = 1;
 			this.add(streetTF, gbc);
-			streetTF.setText("customer's street");
 			
 			gbc.gridx = 0;
 			gbc.gridy = 2;
 			this.add(new JLabel("City: "), gbc);
 			gbc.gridx = 1;
 			this.add(cityTF, gbc);
-			cityTF.setText("customer's city");
 			
 			gbc.gridx = 0;
 			gbc.gridy = 3;
 			this.add(new JLabel("Civic number: "), gbc);
 			gbc.gridx = 1;
 			this.add(civNumTF, gbc);
-			civNumTF.setText("customer's civ num");
 			
 			gbc.gridx = 0;
 			gbc.gridy = 4;
 			this.add(new JLabel("Nation: "), gbc);
 			gbc.gridx = 1;
 			this.add(nationTF, gbc);
-			nationTF.setText("customer's nation");
+		}
+		
+		public boolean sanitizeInput() {
+			
+			if((!zipTF.getText().matches("\\d+")) || zipTF.getText().length() > 5)
+				return false;
+			if(!streetTF.getText().matches("[A-Za-z0-9]+") || streetTF.getText().length() > 30)
+				return false;
+			if(!cityTF.getText().matches("[A-Za-z0-9]+") || cityTF.getText().length() > 20)
+				return false;
+			if(!civNumTF.getText().matches("\\d+") || civNumTF.getText().length() <= 0 || Integer.parseInt(civNumTF.getText()) <= 0)
+				return false;
+			if(!nationTF.getText().matches("[A-Za-z0-9]+") || nationTF.getText().length() > 30)
+				return false;
+			
+			return true;
 		}
 	}
 	
