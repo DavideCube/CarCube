@@ -18,7 +18,6 @@ public class ColorsPanel extends JPanel {
 	private ArrayList<ColorCheckBox> boxes;
 	private ArrayList<String> colorKeys;
 	private Map<String, Color> colorMap;
-	private int numberOfColors = 0;
 	private String giveMeColors = "select * from color";
 	private GridBagConstraints c;
 	private Connection conn = DatabaseConnection.getDBConnection().getConnection();
@@ -29,7 +28,7 @@ public class ColorsPanel extends JPanel {
 		boxes = new ArrayList<>();
 		c = new GridBagConstraints();
 		this.populateColorMap();
-		numberOfColors = colorMap.size();
+		colorMap.size();
 		this.populateColorBoxes();
 		this.setLayout(new GridBagLayout());
 		this.populateGrid(7 , 19);
