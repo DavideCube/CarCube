@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -294,7 +295,9 @@ public class StatisticsPanel extends JPanel{
 			if (!dateFrom.after(dateTo)) {
 				String from = sdf.format(datePicker.getModel().getValue());
 				String to = sdf.format(datePicker2.getModel().getValue());
-				sales1.setText("Total incomes: " + totalRevenues(from, to) + ".00 €");
+				NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+				String priceFormatted = currencyFormat.format(totalRevenues(from,to));
+				sales1.setText("Total incomes: " + priceFormatted);
 				sales2.setText("New cars sold: " + carSold (false, from, to));
 				sales3.setText("Used cars sold: " + carSold (true, from, to));
 				sales4.setText("Most sold car make: " + mostSold ("make", from, to));

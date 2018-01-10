@@ -33,7 +33,6 @@ public class ColorsPanel extends JPanel {
 		this.populateColorBoxes();
 		this.setLayout(new GridBagLayout());
 		this.populateGrid(7 , 19);
-	//	this.add(new ColorCheckBox(15, 150, 0, "Green"));
 		
 	}
 	
@@ -83,9 +82,7 @@ public class ColorsPanel extends JPanel {
 		int index = 0;
 		while(it.hasNext()) {
 			Map.Entry<String, Color> pair = (Map.Entry)it.next();
-			System.out.println(pair.getKey() + " - " + pair.getValue().toString());
 			ColorCheckBox colorBox = new ColorCheckBox(pair.getValue(), pair.getKey(), colorKeys.get(index));
-			//this.add(colorBox);
 			boxes.add(colorBox);
 
 		}
