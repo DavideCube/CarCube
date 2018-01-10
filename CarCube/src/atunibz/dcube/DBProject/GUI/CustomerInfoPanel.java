@@ -21,7 +21,6 @@ import atunibz.dcube.DBProject.configuration.AppResources;
 public class CustomerInfoPanel extends BackgroundedPanel {
 	
 	private String customerPkey;
-	private String addressFKey;
 	private AddressEditPanel addressEditPanel;
 	private IconLabel nameLbl, surnameLbl, taxLbl, addressLbl;
 	private int numberOfPhones, numberOfMails, numberOfFaxes;
@@ -239,7 +238,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				addressEditPanel.cityTF.setText(rs.getString(3));
 				addressEditPanel.zipTF.setText(rs.getString(4));
 				addressEditPanel.nationTF.setText(rs.getString(5));
-				this.addressFKey = rs.getString(6);
+				rs.getString(6);
 			}
 			stmnt.close();
 		} catch (SQLException e) {
