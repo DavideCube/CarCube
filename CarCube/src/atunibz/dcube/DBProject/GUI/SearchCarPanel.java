@@ -761,8 +761,9 @@ public class SearchCarPanel extends JPanel{
 				currentCarPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 				carPanel.add(currentCarPanel);
 				
-				rs.close();
+				
 			}
+			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -882,8 +883,9 @@ public class SearchCarPanel extends JPanel{
 					currentCarPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 					carPanel.add(currentCarPanel);
 					
-					rs.close();
+					
 				}
+				rs.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
