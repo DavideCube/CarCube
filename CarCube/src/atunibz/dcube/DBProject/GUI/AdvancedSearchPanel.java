@@ -34,6 +34,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import atunibz.dcube.DBProject.GUI.ColorsPanel.ColorCheckBox;
 import atunibz.dcube.DBProject.configuration.AppResources;
 
 public class AdvancedSearchPanel extends JPanel {
@@ -54,7 +55,9 @@ public class AdvancedSearchPanel extends JPanel {
 	private static final String OPTION5 = "All doors";
 	private static final String OPTION6 = "All fuels";
 	private static final String OPTION7 = "All transmissions";
-	private ArrayList<JCheckBox> colors, optional;
+	private ArrayList<JCheckBox> optional;
+	private ArrayList<ColorCheckBox> colors;
+	private ArrayList<String> colorKeys;
 	private JButton back, search;
 
 	public AdvancedSearchPanel(boolean newCarSel, boolean usedCarSel, int selectedMake, int selectedModel,
@@ -339,11 +342,17 @@ public class AdvancedSearchPanel extends JPanel {
 		// Content
 		JPanel supportPanel = new JPanel();
 		supportPanel.setOpaque(false);
-		JScrollPane content = new JScrollPane(new ColorsPanel());
+		ColorsPanel colPanel = new ColorsPanel();
+		JScrollPane content = new JScrollPane(colPanel);
 		content.setPreferredSize(new Dimension (520, 188));
 		content.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		content.setOpaque(false);
 		supportPanel.add(content);
+		
+		//Get colors and keys
+		colors = colPanel.getColorCheckBoxes();
+		colorKeys = colPanel.getColorKeys();
+		
 		//JPanel colorContent = new ColorsPanel();
 		//by sbe
 		/*JPanel colorContent = new JPanel();
@@ -482,7 +491,7 @@ public class AdvancedSearchPanel extends JPanel {
 		fuel.addActionListener(new ChangedListener());
 		transmissions.addActionListener(new ChangedListener());
 		search.addActionListener(new SearchListener());
-
+		
 		height.getDocument().addDocumentListener(new changedTextListener());
 		length.getDocument().addDocumentListener(new changedTextListener());
 		width.getDocument().addDocumentListener(new changedTextListener());
@@ -491,6 +500,10 @@ public class AdvancedSearchPanel extends JPanel {
 			//listener on optionals
 		for(JCheckBox c : optional)
 			c.addActionListener(new ChangedListener() );
+		
+		for(ColorCheckBox current : colors) {
+			current.getCheckBox().addActionListener(new ChangedListener() );
+		}
 	}
 
 	// listener for the chechboxes
@@ -872,7 +885,7 @@ public class AdvancedSearchPanel extends JPanel {
 		String maxWidth = width.getText();
 		String maxHorses = horsepower.getText();
 
-		// color still need to be added
+		
 		// optionals are available in the ArrayList optional
 
 		int yearInt = 0;
@@ -1013,6 +1026,17 @@ public class AdvancedSearchPanel extends JPanel {
 				}
 				
 			}
+			
+			//Colors: now we just print
+			for(int i = 0; i < colors.size(); i++) {
+				if(colors.get(i).getCheckBox().isSelected())
+					newCarQuery += " INTERSECT SELECT new_car.make, new_car.model FROM new_car inner join new_painting on new_car.car_id = new_painting.car_id " + 
+							"inner join color on new_painting.color_code = color.color_code WHERE color.color_code = '"
+							+ colorKeys.get(i) + "'";
+					//System.out.println("Color selected: " + colorKeys.get(i));
+			}
+			
+			System.out.println("Reasearch query: " + newCarQuery);
 		}
 
 		if (usedCar.isSelected()) {
@@ -1142,6 +1166,14 @@ public class AdvancedSearchPanel extends JPanel {
 							+ c.getText() + "'";
 				}
 				
+			}
+			
+			for(int i = 0; i < colors.size(); i++) {
+				if(colors.get(i).getCheckBox().isSelected())
+					usedCarQuery += " INTERSECT SELECT used_car.make, used_car.model FROM used_car inner join used_painting on used_car.immatriculation = used_painting.immatriculation " + 
+							"inner join color on used_painting.color_code = color.color_code WHERE color.color_code = '"
+							+ colorKeys.get(i) + "'";
+					//System.out.println("Color selected: " + colorKeys.get(i));
 			}
 		}
 		
@@ -1397,22 +1429,54 @@ public class AdvancedSearchPanel extends JPanel {
 				}
 				
 				//and now check all optionals...
+				String optionaQuery = "";
+				String innerQuery0 = "";
 				for(JCheckBox c : optional) {
 					
 					if(c.isSelected()) {
-						if (!newCarQuery.contains(" INNER JOIN new_equipped on new_car.car_id = new_equipped.car_id INNER JOIN optional on new_equipped.optional_id = optional.optional_id"))
-							newCarQuery += " INNER JOIN new_equipped on new_car.car_id = new_equipped.car_id INNER JOIN optional on new_equipped.optional_id = optional.optional_id";
 						
-						if (newCarQueryWhere.length() > 0)
-							newCarQueryWhere += " AND optional.opt_name = '" + c.getText() + "'";
+						if(optionaQuery.length() == 0) {
+							optionaQuery = " INTERSECT "+ newCarQuery + " WHERE car_id IN (";
+							
+						}
+						
+						if(innerQuery0.length() > 0 )
+							innerQuery0 += " intersect SELECT new_car.car_id FROM new_car inner join new_equipped on new_car.car_id = new_equipped.car_id inner join optional on new_equipped.optional_id = optional.optional_id where optional.opt_name = '" + c.getText() + "'";
 						else
-							newCarQueryWhere += " optional.opt_name = '" + c.getText() + "'";
+							innerQuery0 += " SELECT new_car.car_id FROM new_car inner join new_equipped on new_car.car_id = new_equipped.car_id inner join optional on new_equipped.optional_id = optional.optional_id where optional.opt_name = '" + c.getText() + "'";
 					}
 					
 				}
 				
+				String colorQuery = "";
+				String innerQuery = "";
+				
+				for(int i = 0; i < colors.size(); i++) {
+					
+					if(colors.get(i).getCheckBox().isSelected()) {
+						
+						if(colorQuery.length() == 0) {
+							colorQuery = " INTERSECT "+ newCarQuery + " WHERE car_id IN (";
+							
+						}
+						
+						if(innerQuery.length() > 0 )
+							innerQuery += " intersect SELECT new_car.car_id FROM new_car inner join new_painting on new_car.car_id = new_painting.car_id inner join color on new_painting.color_code = color.color_code where color.color_code = '" + colorKeys.get(i) + "'";
+						else
+							innerQuery += " SELECT new_car.car_id FROM new_car inner join new_painting on new_car.car_id = new_painting.car_id inner join color on new_painting.color_code = color.color_code where color.color_code = '" + colorKeys.get(i) + "'";
+					}
+						
+				}
 				if (newCarQueryWhere.length() >0)
 					newCarQuery += " WHERE " + newCarQueryWhere;
+				
+				if(colorQuery.length() > 0)
+					newCarQuery += colorQuery + innerQuery + ")";
+				
+				if(optionaQuery.length() > 0)
+					newCarQuery += optionaQuery + innerQuery0 + ")";
+				
+				System.out.println("New car Query: " + newCarQuery);
 				
 			}
 			
@@ -1602,23 +1666,53 @@ public class AdvancedSearchPanel extends JPanel {
 				}
 
 				// and now check all optionals...
-				for (JCheckBox c : optional) {
-
-					if (c.isSelected()) {
-						if (!usedCarQuery.contains(
-								" INNER JOIN used_equipped on used_car.immatriculation = used_equipped.immatriculation INNER JOIN optional on used_equipped.optional_id = optional.optional_id"))
-							usedCarQuery += " INNER JOIN used_equipped on used_car.immatriculation = used_equipped.immatriculation INNER JOIN optional on used_equipped.optional_id = optional.optional_id";
-
-						if (usedCarQueryWhere.length() > 0)
-							usedCarQueryWhere += " AND optional.opt_name = '" + c.getText() + "'";
+				String optionaQuery = "";
+				String innerQuery0 = "";
+				for(JCheckBox c : optional) {
+					
+					if(c.isSelected()) {
+						
+						if(optionaQuery.length() == 0) {
+							optionaQuery = " INTERSECT "+ usedCarQuery + " WHERE immatriculation IN (";
+							
+						}
+						
+						if(innerQuery0.length() > 0 )
+							innerQuery0 += " intersect SELECT used_car.immatriculation FROM used_car inner join used_equipped on used_car.immatriculation = used_equipped.immatriculation inner join optional on used_equipped.optional_id = optional.optional_id where optional.opt_name = '" + c.getText() + "'";
 						else
-							usedCarQueryWhere += " optional.opt_name = '" + c.getText() + "'";
+							innerQuery0 += " SELECT used_car.immatriculation FROM used_car inner join used_equipped on used_car.immatriculation = used_equipped.immatriculation inner join optional on used_equipped.optional_id = optional.optional_id where optional.opt_name = '" + c.getText() + "'";
 					}
-
+					
 				}
 
+				String colorQuery = "";
+				String innerQuery = "";
+				
+				for(int i = 0; i < colors.size(); i++) {
+					
+					if(colors.get(i).getCheckBox().isSelected()) {
+						
+						if(colorQuery.length() == 0) {
+							colorQuery = " INTERSECT "+ usedCarQuery + " WHERE immatriculation IN (";
+							
+						}
+						
+						if(innerQuery.length() > 0 )
+							innerQuery += " intersect SELECT used_car.immatriculation FROM used_car inner join used_painting on used_car.immatriculation = used_painting.immatriculation inner join color on used_painting.color_code = color.color_code where color.color_code = '" + colorKeys.get(i) + "'";
+						else
+							innerQuery += " SELECT used_car.immatriculation FROM used_car inner join used_painting on used_car.immatriculation = used_painting.immatriculation inner join color on used_painting.color_code = color.color_code where color.color_code = '" + colorKeys.get(i) + "'";
+					}
+						
+				}
 				if (usedCarQueryWhere.length() >0)
 					usedCarQuery += " WHERE " + usedCarQueryWhere;
+				
+				if(colorQuery.length() > 0)
+					usedCarQuery += colorQuery + innerQuery + ")";
+				if(optionaQuery.length() > 0)
+					usedCarQuery += optionaQuery + innerQuery0 + ")";
+				
+				System.out.println("Used car Query: " + usedCarQuery);
 			}
 			
 			// CASE BOTH
@@ -1628,6 +1722,10 @@ public class AdvancedSearchPanel extends JPanel {
 					ResultSet rs = stat.executeQuery(newCarQuery);
 					carPanel.removeAll();
 					createPanelList (rs);
+					
+					//closing statement and result sets
+					stat.close();
+					rs.close();
 					
 					System.out.println("CASE BOTH: \n");
 					System.out.println("\t" + newCarQuery);
@@ -1640,6 +1738,9 @@ public class AdvancedSearchPanel extends JPanel {
 					advancedSearch.revalidate();
 					advancedSearch.repaint();
 					
+					//closing statement and result sets
+					stat.close();
+					rs.close();
 					
 				} catch (SQLException ex) {
 					// TODO Auto-generated catch block
@@ -1657,6 +1758,11 @@ public class AdvancedSearchPanel extends JPanel {
 					createPanelList (rs);
 					advancedSearch.revalidate();
 					advancedSearch.repaint();
+					
+					//closing statement and result sets
+					stat.close();
+					rs.close();
+					
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -1673,6 +1779,10 @@ public class AdvancedSearchPanel extends JPanel {
 					createPanelListUsed (rs);
 					advancedSearch.revalidate();
 					advancedSearch.repaint();
+					
+					//closing statement and result sets
+					stat.close();
+					rs.close();
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

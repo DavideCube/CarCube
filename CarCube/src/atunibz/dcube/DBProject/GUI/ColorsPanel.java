@@ -16,6 +16,7 @@ import javax.swing.border.BevelBorder;;
 public class ColorsPanel extends JPanel {
 	
 	private ArrayList<ColorCheckBox> boxes;
+	private ArrayList<String> colorKeys;
 	private Map<String, Color> colorMap;
 	private int numberOfColors = 0;
 	private String giveMeColors = "select * from color";
@@ -23,6 +24,7 @@ public class ColorsPanel extends JPanel {
 	private Connection conn = DatabaseConnection.getDBConnection().getConnection();
 	
 	public ColorsPanel(){
+		colorKeys = new ArrayList<>();
 		colorMap = new LinkedHashMap<>();
 		boxes = new ArrayList<>();
 		c = new GridBagConstraints();
@@ -62,6 +64,7 @@ public class ColorsPanel extends JPanel {
 				Color c = this.getColor(rs.getString(3));
 				String name = rs.getString(2);
 				colorMap.put(name, c);
+				colorKeys.add(rs.getString("color_code"));
 				//get the color from the string
 				//get the color name
 				//insert color in map
@@ -76,14 +79,14 @@ public class ColorsPanel extends JPanel {
 
 	private void populateColorBoxes() {
 		Iterator it = colorMap.entrySet().iterator();
+		int index = 0;
 		while(it.hasNext()) {
 			Map.Entry<String, Color> pair = (Map.Entry)it.next();
 			System.out.println(pair.getKey() + " - " + pair.getValue().toString());
-			ColorCheckBox colorBox = new ColorCheckBox(pair.getValue(), pair.getKey());
+			ColorCheckBox colorBox = new ColorCheckBox(pair.getValue(), pair.getKey(), colorKeys.get(index));
 			//this.add(colorBox);
 			boxes.add(colorBox);
-			
-			
+
 		}
 	}
 	
@@ -103,14 +106,18 @@ public class ColorsPanel extends JPanel {
 		return boxes;
 	}
 	
+	public ArrayList<String> getColorKeys(){
+		return colorKeys;
+	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	private class ColorCheckBox extends JPanel{
+	public class ColorCheckBox extends JPanel{
 		private ColorBox color;
 		private JCheckBox cb;
-		public ColorCheckBox(int r, int g, int b, String colorName){
-			
+		private String colorCode = null;
+		public ColorCheckBox(int r, int g, int b, String colorName, String colorCodeInit){
+			colorCode = colorCodeInit;
 			color = new ColorBox(r, g, b);
 			cb = new JCheckBox();
 			FlowLayout layout = new FlowLayout();
@@ -124,8 +131,8 @@ public class ColorsPanel extends JPanel {
 			color.setToolTipText(colorName);
 		}
 		
-		public ColorCheckBox(Color color, String colorName) {
-			this(color.getRed(), color.getGreen(), color.getBlue(), colorName);
+		public ColorCheckBox(Color color, String colorName, String colorCodeInit) {
+			this(color.getRed(), color.getGreen(), color.getBlue(), colorName,colorCodeInit);
 		}
 		
 		public String getColorName() {
@@ -134,6 +141,10 @@ public class ColorsPanel extends JPanel {
 		
 		public JCheckBox getCheckBox() {
 			return cb;
+		}
+		
+		public String getColorCode() {
+			return colorCode;
 		}
 	}
 	
