@@ -617,8 +617,19 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	Statement s;
 	String sql;
 	switch(type){
-	case("phone"): sql = "UPDATE phone_contact SET phone_number = '" + newVal + "' WHERE owner_customer = '" + customerPkey + "'";
+	case("phone"): 	
+			sql = "UPDATE phone_contact SET phone_number = '" + newVal + "' WHERE owner_customer = '" + customerPkey + "'";
 			System.out.println("Phone number updated. New number: " + newVal);
+	break;
+	
+	case("mail"): 
+			sql = "UPDATE mail_contact SET mail = '" + newVal + "' WHERE owner_customer = '" + customerPkey + "'";
+			System.out.println("Mail updated. New mail: " + newVal);
+	break;
+	
+	case("fax"): 
+			sql = "UPDATE fax_contact SET fax = '" + newVal + "' WHERE owner_customer = '" + customerPkey + "'";
+			System.out.println("Fax updated. New fax: " + newVal);
 	break;
 			
 	}
