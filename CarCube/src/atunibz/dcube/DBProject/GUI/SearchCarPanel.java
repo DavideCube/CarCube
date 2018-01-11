@@ -168,6 +168,7 @@ public class SearchCarPanel extends JPanel{
 		buttonPanel.add(back);
 		// add new car
 		addCar = AppResources.iconButton("Add Car    ", "icons/transportation.png");
+		addCar.addActionListener(new AddCarListener());
 		buttonPanel.add(Box.createRigidArea(new Dimension (50,0)));
 		buttonPanel.add(addCar);
 		
@@ -493,6 +494,17 @@ public class SearchCarPanel extends JPanel{
 			
 		}
 		
+	}
+	
+	// listener for back button
+	private class AddCarListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainPanel.getMainPanel().swapPanel(new AddCarPanel());
+
+		}
+
 	}
 	
 	//Listener for the advanced search button
