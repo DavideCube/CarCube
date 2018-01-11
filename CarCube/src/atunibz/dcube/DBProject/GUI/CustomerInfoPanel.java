@@ -612,6 +612,30 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		}
 	}
 	
+	private void updateContactInDB(String type, String newVal) {
+	Connection con = DatabaseConnection.getDBConnection().getConnection();
+	Statement s;
+	String sql;
+	switch(type){
+	case("phone"): sql = "UPDATE phone_contact SET phone_number = '" + newVal + "' WHERE owner_customer = '" + customerPkey + "'";
+			System.out.println("Phone number updated. New number: " + newVal);
+	break;
+			
+	}
+	try {
+		s = con.createStatement();
+		//System.out.println("ZIP: " + newZIP + "\nStreet: " + newStreet + "\nCity: " + newCity + "\nN: " + newCivicNumber + "\nNation: " + newNation);
+		String sql = "UPDATE address " + 
+			 "SET postcode = '" + newZIP + "', street = '" + newStreet + "', city = '" + newCity + "', civic_number = " + newCivicNumber + ", nation = '" + newNation + "' " + 
+			 "WHERE address_id in (SELECT customer.address FROM customer WHERE customer.tax_code = '" + customerPkey + "')";
+		System.out.println(sql);
+		s.executeUpdate(sql);
+		s.close();
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+	}
+}
 	
 	
 	
