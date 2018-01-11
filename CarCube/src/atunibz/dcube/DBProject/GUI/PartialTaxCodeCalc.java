@@ -52,9 +52,9 @@ public class PartialTaxCodeCalc {
 		
 		//if the name has at least 4 consonants
 		if(nameCons.length() >= 4) {
-			nameLetters += nameVow.toCharArray()[0];
-			nameLetters += nameVow.toCharArray()[2];
-			nameLetters += nameVow.toCharArray()[3];
+			nameLetters += nameCons.toCharArray()[0];
+			nameLetters += nameCons.toCharArray()[2];
+			nameLetters += nameCons.toCharArray()[3];
 		}
 		else {
 			int namIndex = (nameCons.toCharArray().length >= 3) ? 3 : nameCons.toCharArray().length;

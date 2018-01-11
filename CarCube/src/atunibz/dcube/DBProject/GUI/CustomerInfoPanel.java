@@ -514,23 +514,24 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			if(fieldName.compareTo("address" )!= 0) {
 				newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
 		}
-			
+		
+		String newPkey = "";
 		switch(fieldName) {
 		case "name": 
 			 int result = JOptionPane.showConfirmDialog(null, "Changing this field will cause the tax code to be recalculated accordingly.", 
 		               "WARNING!", JOptionPane.WARNING_MESSAGE);
 		      if (result == JOptionPane.OK_OPTION) {
-		    	  alterPrimaryKey(newValue, surnameTF.getText());
+		    	  newPkey = alterPrimaryKey(newValue, surnameTF.getText());
 		      }
-			//updateValueInDB("c_name", newValue);
+			updateNameInDB("c_name", newValue, newPkey);
 		break;
 		case "surname": 
 			result = JOptionPane.showConfirmDialog(null, "Changing this field will cause the tax code to be recalculated accordingly.", 
 		               "WARNING!", JOptionPane.WARNING_MESSAGE);
 		      if (result == JOptionPane.OK_OPTION) {
-		    	  alterPrimaryKey(nameTF.getText(), newValue);
+		    	  newPkey = alterPrimaryKey(nameTF.getText(), newValue);
 		      }
-			//updateValueInDB("c_surname", newValue);
+			updateNameInDB("c_surname", newValue, newPkey);
 		break;
 		case "address":
 			 int answer = JOptionPane.showConfirmDialog(null, addressEditPanel, 
@@ -548,7 +549,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		}
 	}
 	
-	private void alterPrimaryKey(String name, String surname) {
+	private String alterPrimaryKey(String name, String surname) {
 		
 		System.out.println("Previous tax code: " + customerPkey);
         System.out.println("New tax code: " + new PartialTaxCodeCalc(name, surname) + customerPkey.substring(6));
@@ -560,17 +561,28 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			String query = "UPDATE customer SET tax_code = '" + newTaxCode + "' WHERE tax_code = '" + customerPkey + "'";
 			s.executeUpdate(query);
 			s.close();
-			JOptionPane.showMessageDialog(null, "Values updated! Spera che funzioni ancora tutto, sennò son cazzi");
-			MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(newTaxCode));
+			//JOptionPane.showMessageDialog(null, "Values updated! New tax code: " + newTaxCode);
+			//MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(newTaxCode));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if(e.getMessage().contains("duplicate key value violates unique constraint")) {//improbabile caso di due customer con lo stesso tax code, ma non si sa mai
+		    	 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "This modification causes two customers to have the same tax code. Choose another name/surname.", "CarCube - ERROR", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+		    	 return null;
+
+			}
+			else
+		    	 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Error while communicating with database. You will be redirected to the main panel.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+				 MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
+
 		}
+        
+        return newTaxCode;
 		
 	}
 	
 	
-	private boolean updateValueInDB(String colName, String newVal) {
+	private boolean updateNameInDB(String colName, String newVal, String newPkey) {
+		//requires new primary key: the primary key is modified before this method is invoked.
 		Connection con = DatabaseConnection.getDBConnection().getConnection();
 		Statement s;
 		if(colName.compareTo("c_name") == 0 || colName.compareTo("c_surname") == 0){
@@ -578,12 +590,12 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				s = con.createStatement();
 				String sql = "UPDATE customer " +
 						"SET " + colName + " = " + "'" + newVal + "' " +
-						"WHERE tax_code = " + "'" + customerPkey + "'";
-				System.out.println("Query: " + sql);
+						"WHERE tax_code = " + "'" + newPkey + "'";
+				
 				s.executeUpdate(sql);
 				s.close();
 		    	JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Value updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-				MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
+				MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(newPkey));
 
 			} catch (SQLException e) {
 				e.printStackTrace();
