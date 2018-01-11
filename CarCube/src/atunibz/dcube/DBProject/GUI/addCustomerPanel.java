@@ -28,6 +28,7 @@ import atunibz.dcube.DBProject.configuration.AppResources;
 
 public class addCustomerPanel extends JPanel {
 
+	
 	private JPanel addCustomerPanel, titlePanel, descriptionPanel, formPanel;
 	JPanel emailPanel, phonePanel, faxPanel;
 	private JLabel mainDescriptionLabel;
