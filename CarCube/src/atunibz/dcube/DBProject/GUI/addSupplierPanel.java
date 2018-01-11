@@ -38,7 +38,7 @@ public class addSupplierPanel extends JPanel {
 	private JButton back, add;
 	private Connection conn;
 
-	public addSupplierPanel() {
+	public addSupplierPanel(boolean fromCarPanels) {
 		
 		// Initialise Variables
 		emails = new ArrayList<>();
@@ -249,13 +249,13 @@ public class addSupplierPanel extends JPanel {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		// back
 		back = AppResources.iconButton("Go back     ", "icons/back.png");
-		back.addActionListener(new BackListener());
+		back.addActionListener(new BackListener(fromCarPanels));
 		buttonPanel.add(back);
 		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 
 		// Add
 		add = AppResources.iconButton("Add     ", "icons/truck.png");
-		add.addActionListener(new AddListener());
+		add.addActionListener(new AddListener(fromCarPanels));
 		buttonPanel.add(add);
 
 		buttonPanel.setOpaque(false);
@@ -268,9 +268,20 @@ public class addSupplierPanel extends JPanel {
 
 	// listener to go back to the stakeholder panel
 	private class BackListener implements ActionListener {
+		boolean fromCarPanels;
+		
+		public BackListener(boolean carPanels) {
+			fromCarPanels = carPanels;
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
+			
+			if(fromCarPanels) {
+				
+			}
+			else	
+				MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 
 		}
 
@@ -375,7 +386,12 @@ public class addSupplierPanel extends JPanel {
 	
 	// listener for the add supplier button
 		private class AddListener implements ActionListener {
-
+			boolean fromCarPanels;
+			
+			public AddListener(boolean fromCar) {
+				fromCarPanels = fromCar;
+			}
+			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -543,8 +559,11 @@ public class addSupplierPanel extends JPanel {
 						}
 						
 						JOptionPane.showMessageDialog(addSupplierrPanel, "Supplier was inserted successfully!");
-						MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 						addSupplier.close();
+						if(fromCarPanels) {
+							
+						} else
+							MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 					} else {
 						// Already present
 						JOptionPane.showMessageDialog(addSupplierrPanel, "Supplier already present");

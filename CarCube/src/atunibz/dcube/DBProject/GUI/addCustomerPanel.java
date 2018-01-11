@@ -38,7 +38,7 @@ public class addCustomerPanel extends JPanel {
 	private JButton back, add;
 	private Connection conn;
 
-	public addCustomerPanel() {
+	public addCustomerPanel(boolean fromCarPanels) {
 
 		// Initialise Variables
 		emails = new ArrayList<>();
@@ -263,13 +263,13 @@ public class addCustomerPanel extends JPanel {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		// back
 		back = AppResources.iconButton("Go back     ", "icons/back.png");
-		back.addActionListener(new BackListener());
+		back.addActionListener(new BackListener(fromCarPanels));
 		buttonPanel.add(back);
 		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 
 		// Add
 		add = AppResources.iconButton("Add     ", "icons/user.png");
-		add.addActionListener(new AddListener());
+		add.addActionListener(new AddListener(fromCarPanels));
 		buttonPanel.add(add);
 
 		buttonPanel.setOpaque(false);
@@ -282,9 +282,21 @@ public class addCustomerPanel extends JPanel {
 
 	// listener to go back to the stakeholder panel
 	private class BackListener implements ActionListener {
+		
+		boolean fromCarPanels;
+		
+		public BackListener(boolean carPanels) {
+			fromCarPanels = carPanels;
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
+			
+			if(fromCarPanels) {
+				
+			}
+			else	
+				MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 
 		}
 
@@ -389,7 +401,13 @@ public class addCustomerPanel extends JPanel {
 	
 	// listener for the add customer button
 	private class AddListener implements ActionListener {
-
+		
+		boolean fromCarPanels;
+		
+		public AddListener(boolean fromCar) {
+			fromCarPanels = fromCar;
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 
@@ -562,7 +580,10 @@ public class addCustomerPanel extends JPanel {
 					}
 					
 					JOptionPane.showMessageDialog(addCustomerPanel, "Customer was inserted successfully!");
-					MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
+					if(fromCarPanels) {
+						
+					} else
+						MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 				} else {
 					// Already present
 					JOptionPane.showMessageDialog(addCustomerPanel, "Customer already present");
