@@ -501,7 +501,7 @@ public class SearchCarPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			MainPanel.getMainPanel().swapPanel(new AddCarPanel());
+			MainPanel.getMainPanel().swapPanel(new AddCarPanel(true));
 
 		}
 

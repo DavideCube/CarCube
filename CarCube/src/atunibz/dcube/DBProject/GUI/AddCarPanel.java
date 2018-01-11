@@ -6,10 +6,15 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -28,9 +33,10 @@ public class AddCarPanel extends JPanel{
 	private ButtonGroup group;
 	private String [] supplierList, customerList;
 	private JButton newSupplier, newCustomer;
+	private JLabel iconLabel;
 	
 	// Constructor
-	public AddCarPanel () {
+	public AddCarPanel (boolean supplier) {
 		
 		// open the connection with the database
 		conn = DatabaseConnection.getDBConnection().getConnection();
@@ -57,8 +63,12 @@ public class AddCarPanel extends JPanel{
 		// panel that contains the radio buttons with associated group (only one can be selected)
 		JPanel radioBoxPanel = new JPanel();
 		radioBoxPanel.setOpaque(false);
-		newCar = new JRadioButton("New", true);
+		newCar = new JRadioButton("New");
 		usedCar = new JRadioButton("Used");
+		if (supplier) 
+			newCar.setSelected(true);
+		else
+			usedCar.setSelected(true);
 		radioBoxPanel.add(newCar);
 		radioBoxPanel.add(Box.createRigidArea(new Dimension (10, 0)));
 		radioBoxPanel.add(usedCar);
@@ -77,8 +87,9 @@ public class AddCarPanel extends JPanel{
 		JLabel fromSupLabel = new JLabel ("From Supplier");
 		fromSupLabel.setAlignmentX(CENTER_ALIGNMENT);
 		AppResources.changeFont(fromSupLabel, Font.BOLD, 20);
-		supplierList = new String []{"Prova", "Ciao", "Athos"};
+		supplierList = getStakeholderQuery ("supplier");
 		supplierChoice = new JComboBox <String>(supplierList);
+		supplierChoice.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		newSupplier = AppResources.iconButton("", "icons/addSup.png");
 		JPanel support = new JPanel ();
 		support.setOpaque(false);
@@ -95,11 +106,19 @@ public class AddCarPanel extends JPanel{
 		JLabel fromCusLabel = new JLabel ("From Customer");
 		fromCusLabel.setAlignmentX(CENTER_ALIGNMENT);
 		AppResources.changeFont(fromCusLabel, Font.BOLD, 20);
-		customerList = new String []{"Prova", "Ciao", "Athos"};
+		customerList = getStakeholderQuery ("customer");
 		customerChoice = new JComboBox <String>(customerList);
+		customerChoice.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		newCustomer = AppResources.iconButton("", "icons/user.png");
-		customerChoice.setEnabled(false);
-		newCustomer.setEnabled(false);
+		// control in which case we are
+		if (supplier) {
+			customerChoice.setEnabled(false);
+			newCustomer.setEnabled(false);
+		}
+		else {
+			supplierChoice.setEnabled(false);
+			newSupplier.setEnabled(false);
+		}
 		JPanel support2 = new JPanel ();
 		support2.setOpaque(false);
 		support2.add(customerChoice);
@@ -108,8 +127,21 @@ public class AddCarPanel extends JPanel{
 		fromCustomerPanel.add(fromCusLabel);
 		fromCustomerPanel.add(support2);
 		
+		// icon Panel
+		JPanel iconPanel = new JPanel();
+		iconPanel.setOpaque(false);
+		iconLabel = new JLabel();
+		if (supplier)
+			iconLabel.setIcon(new ImageIcon("icons/left.png"));
+		else
+			iconLabel.setIcon(new ImageIcon("icons/right.png"));
+		iconPanel.add(iconLabel);
+		
+		
 		sellerPanel.add(fromSupplierPanel);
-		sellerPanel.add(Box.createRigidArea(new Dimension (300,0)));
+		sellerPanel.add(Box.createRigidArea(new Dimension (115,0)));
+		sellerPanel.add(iconPanel);
+		sellerPanel.add(Box.createRigidArea(new Dimension (115,0)));
 		sellerPanel.add(fromCustomerPanel);
 		addCarPanel.add(sellerPanel);
 		
@@ -120,11 +152,7 @@ public class AddCarPanel extends JPanel{
 		newCar.addActionListener(new RadioButtonListener ());
 		usedCar.addActionListener(new RadioButtonListener ());
 		
-		
-		
-		
-		
-		
+
 		add(addCarPanel);
 	}
 	
@@ -138,17 +166,41 @@ public class AddCarPanel extends JPanel{
 				newCustomer.setEnabled(false);
 				supplierChoice.setEnabled(true);
 				newSupplier.setEnabled(true);
+				iconLabel.setIcon(new ImageIcon("icons/left.png"));
 			}
 			else {
 				customerChoice.setEnabled(true);
 				newCustomer.setEnabled(true);
 				supplierChoice.setEnabled(false);
 				newSupplier.setEnabled(false);
+				iconLabel.setIcon(new ImageIcon("icons/right.png"));
 			}
-				
-			
 		}
-		
+	}
+	//  method for retrieving the list of suppliers and customers
+	public String [] getStakeholderQuery (String table) {
+		ArrayList <String> resultList = null;
+		try {
+			Statement st = conn.createStatement();
+			String sql = "SELECT * FROM " + table;
+			resultList = new ArrayList <String>();
+			ResultSet rs = st.executeQuery(sql);
+	
+			while(rs.next()) {
+				if (table.compareTo("customer") == 0)
+					resultList.add(rs.getString("c_name") + " " + rs.getString("c_surname") +"  (" + rs.getString ("tax_code") + ")");
+				else 
+					resultList.add(rs.getString("name")  +"  (" + rs.getString ("vat") + ")");
+			}
+			
+			st.close();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String [] result = resultList.toArray(new String[resultList.size()]);
+		return result;
 	}
 	
 
