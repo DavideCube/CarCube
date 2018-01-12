@@ -545,7 +545,26 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		    	 else
 		    	 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fields must respect the given constraints. \nOnly alphanumerics characters are allowed.\nMoreover, each field must be nonblank.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 		      }
-		      break;
+		break;
+		case "phone":
+			
+			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's phone:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+			System.out.println("Number inserted: " + newValue);
+			updateContactInDB("phone", newValue);
+		break;
+		
+		case "mail":
+			
+			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+		
+		break;
+		
+		case "fax":
+			
+			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+		
+		break;
+		
 		}
 	}
 	
@@ -625,9 +644,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	}
 	
 	private void updateContactInDB(String type, String newVal) {
+	System.out.println("UPDATING SOMETHING\n");
 	Connection con = DatabaseConnection.getDBConnection().getConnection();
 	Statement s;
-	String sql;
+	String sql = null;
 	switch(type){
 	case("phone"): 	
 			sql = "UPDATE phone_contact SET phone_number = '" + newVal + "' WHERE owner_customer = '" + customerPkey + "'";
@@ -647,13 +667,8 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	}
 	try {
 		s = con.createStatement();
-		//System.out.println("ZIP: " + newZIP + "\nStreet: " + newStreet + "\nCity: " + newCity + "\nN: " + newCivicNumber + "\nNation: " + newNation);
-	//	String sql = "UPDATE address " + 
-		//	 "SET postcode = '" + newZIP + "', street = '" + newStreet + "', city = '" + newCity + "', civic_number = " + newCivicNumber + ", nation = '" + newNation + "' " + 
-		//	 "WHERE address_id in (SELECT customer.address FROM customer WHERE customer.tax_code = '" + customerPkey + "')";
-		//System.out.println(sql);
-	//	s.executeUpdate(sql);
-		//s.close();
+	    s.executeUpdate(sql);
+		s.close();
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
