@@ -582,7 +582,7 @@ public class addCustomerPanel extends JPanel {
 					
 					JOptionPane.showMessageDialog(addCustomerPanel, "Customer was inserted successfully!");
 					if(fromCarPanels) {
-						
+						MainPanel.getMainPanel().swapPanel(new AddCarPanel(false, taxField.getText()));
 					} else
 						MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 				} else {
