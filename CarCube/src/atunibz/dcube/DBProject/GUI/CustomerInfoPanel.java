@@ -551,6 +551,8 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's phone:", "Edit data", JOptionPane.QUESTION_MESSAGE);
 			//System.out.println("Number inserted: " + newValue);
 			updateContactInDB("phone", newValue, sourceId);
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Phone number updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+   		 	MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey));
 		break;
 		
 		case "mail":
@@ -644,7 +646,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	}
 	
 	private void updateContactInDB(String type, String newVal, String buttonName) {
-	System.out.println("UPDATING SOMETHING\n");
 	Connection con = DatabaseConnection.getDBConnection().getConnection();
 	Statement s;
 	String sql = null;
@@ -662,9 +663,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	case("phone"):
 			
 			sql = "UPDATE phone_contact SET phone_number = '" + newVal + "' WHERE owner_customer = '" + customerPkey + "' AND phone_number = '" + previous + "'";
-			System.out.println("Phone number updated. New number: " + newVal);
-			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Phone number updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-   		 	MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey));
+			//System.out.println("Phone number updated. New number: " + newVal);
 	break;
 	
 	case("mail"): 
