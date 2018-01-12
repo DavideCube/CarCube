@@ -36,7 +36,7 @@ public class AddCarPanel extends JPanel{
 	private JLabel iconLabel;
 	
 	// Constructor
-	public AddCarPanel (boolean supplier) {
+	public AddCarPanel (boolean supplier, String primaryKey) {
 		
 		// open the connection with the database
 		conn = DatabaseConnection.getDBConnection().getConnection();
@@ -90,6 +90,8 @@ public class AddCarPanel extends JPanel{
 		supplierList = getStakeholderQuery ("supplier");
 		supplierChoice = new JComboBox <String>(supplierList);
 		supplierChoice.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		if (primaryKey.compareTo("") == 0)
+			supplierChoice.setSelectedIndex(0);
 		newSupplier = AppResources.iconButton("", "icons/addSup.png");
 		JPanel support = new JPanel ();
 		support.setOpaque(false);
@@ -109,6 +111,8 @@ public class AddCarPanel extends JPanel{
 		customerList = getStakeholderQuery ("customer");
 		customerChoice = new JComboBox <String>(customerList);
 		customerChoice.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		if (primaryKey.compareTo("") == 0)
+			customerChoice.setSelectedIndex(0);
 		newCustomer = AppResources.iconButton("", "icons/user.png");
 		// control in which case we are
 		if (supplier) {
@@ -148,9 +152,11 @@ public class AddCarPanel extends JPanel{
 		
 		
 		
-		// LISTENER TIME
+		// IT'S LISTENER TIME
 		newCar.addActionListener(new RadioButtonListener ());
 		usedCar.addActionListener(new RadioButtonListener ());
+		newSupplier.addActionListener(new AddStakeholderListener());
+		newCustomer.addActionListener(new AddStakeholderListener());
 		
 
 		add(addCarPanel);
@@ -201,6 +207,21 @@ public class AddCarPanel extends JPanel{
 		}
 		String [] result = resultList.toArray(new String[resultList.size()]);
 		return result;
+	}
+	
+	// action listener for adding a new supplier if it is not already present in the combo box "supplierList"
+	private class AddStakeholderListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton selected = (JButton) e.getSource();
+			if (selected == newSupplier)
+				MainPanel.getMainPanel().swapPanel(new addSupplierPanel(true));
+			else
+				MainPanel.getMainPanel().swapPanel(new addCustomerPanel(true));
+			
+		}
+		
 	}
 	
 

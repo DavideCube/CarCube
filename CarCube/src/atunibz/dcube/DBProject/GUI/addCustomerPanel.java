@@ -294,7 +294,7 @@ public class addCustomerPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			
 			if(fromCarPanels) {
-				
+				MainPanel.getMainPanel().swapPanel(new AddCarPanel(false, ""));
 			}
 			else	
 				MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
