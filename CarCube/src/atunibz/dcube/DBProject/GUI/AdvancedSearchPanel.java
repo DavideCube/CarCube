@@ -1885,6 +1885,7 @@ public class AdvancedSearchPanel extends JPanel {
 					JPanel support10 = new JPanel ();
 					JPanel support11 = new JPanel();
 					JButton jenson = new JButton("View car");
+					jenson.addActionListener(new viewCarListener(car_id));
 					jenson.setFont(new Font ("Helvetica", Font.BOLD, 15));
 					jenson.setIcon(new ImageIcon ("icons/eye.png"));
 					jenson.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -1913,6 +1914,22 @@ public class AdvancedSearchPanel extends JPanel {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		private class viewCarListener implements ActionListener{
+			
+			String id;
+			
+			public viewCarListener(int idInit) {
+				id = "" + idInit;
+			}
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,true ));
+				
+			}
+			
 		}
 		
 		// method for creating a panel for each result
@@ -2006,6 +2023,7 @@ public class AdvancedSearchPanel extends JPanel {
 						JPanel support10 = new JPanel ();
 						JPanel support11 = new JPanel();
 						JButton jenson = new JButton("View car");
+						jenson.addActionListener(new viewUsedCarListener(car_id));
 						jenson.setFont(new Font ("Helvetica", Font.BOLD, 15));
 						jenson.setIcon(new ImageIcon ("icons/eye.png"));
 						jenson.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -2034,7 +2052,23 @@ public class AdvancedSearchPanel extends JPanel {
 					e.printStackTrace();
 				}
 			}
-		
+			private class viewUsedCarListener implements ActionListener{
+				
+				String id;
+				
+				public viewUsedCarListener(String idInit) {
+					id = idInit;
+				}
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					
+					MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,false ));
+					
+				}
+				
+			}
+			
 		public int calculatePrice (int car_id) {
 			int result = 0;
 			try {
