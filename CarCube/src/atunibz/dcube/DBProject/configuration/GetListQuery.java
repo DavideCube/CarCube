@@ -103,5 +103,127 @@ public class GetListQuery {
 		Arrays.sort(result);
 		return result;
 	}
+	
+	// Get all fuels type from db (there is no filter)
+	public static String[] getFuels() {
+
+		ArrayList<String> fuels = new ArrayList<String>();
+
+		String query = "SELECT DISTINCT fuel from engine";
+
+		try {
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery(query);
+			while (rs.next()) {
+				fuels.add(rs.getString("fuel"));
+			}
+
+			stat.close();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return fuels.toArray(new String[fuels.size()]);
+	}
+	
+	// Get all fuels type from db (there is no filter)
+	public static String[] getTransmissions() {
+
+		ArrayList<String> transmissions = new ArrayList<String>();
+
+		String query = "SELECT DISTINCT transmission from engine";
+
+		try {
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery(query);
+			while (rs.next()) {
+				transmissions.add(rs.getString("transmission"));
+			}
+
+			stat.close();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String [] result = transmissions.toArray(new String[transmissions.size()]);
+		Arrays.sort(result);
+		return result;
+	}
+	
+	// Get all seats from db (there is no filter)
+	public static String[] getSeats() {
+
+		ArrayList<String> seats = new ArrayList<String>();
+
+		String query = "SELECT seats from new_car UNION DISTINCT SELECT seats from used_car ORDER BY seats";
+
+		try {
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery(query);
+			while (rs.next()) {
+				seats.add(rs.getString("seats"));
+			}
+
+			stat.close();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return seats.toArray(new String[seats.size()]);
+	}
+
+	// Get all doors from db (there is no filter)
+	public static String[] getDoors() {
+
+		ArrayList<String> doors = new ArrayList<String>();
+
+		String query = "SELECT doors from new_car UNION DISTINCT SELECT doors from used_car ORDER BY doors";
+
+		try {
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery(query);
+			while (rs.next()) {
+				doors.add(rs.getString("doors"));
+			}
+
+			stat.close();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return doors.toArray(new String[doors.size()]);
+	}
+	
+	// Get all wheel drive type from db (there is no filter)
+	public static String[] getWheelDrive() {
+
+		ArrayList<String> wheeldrive = new ArrayList<String>();
+
+		String query = "SELECT DISTINCT wheel_drive from engine";
+
+		try {
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery(query);
+			while (rs.next()) {
+				wheeldrive.add(rs.getString("wheel_drive"));
+			}
+
+			stat.close();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return wheeldrive.toArray(new String[wheeldrive.size()]);
+	}
 
 }

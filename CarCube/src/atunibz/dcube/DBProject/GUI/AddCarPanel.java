@@ -33,12 +33,13 @@ public class AddCarPanel extends JPanel{
 	private JPanel addCarPanel, titlePanel, sellerPanel, fromCustomerPanel, fromSupplierPanel;
 	private Connection conn;
 	private JRadioButton newCar, usedCar;
-	private JComboBox <String> supplierChoice, customerChoice, make, model, type, year;
+	private JComboBox <String> supplierChoice, customerChoice, make, model, type, year, fuel, trans, wDrive;
 	private ButtonGroup group;
-	private String [] supplierList, customerList, makesList, modelsList, typesList;
+	private String [] supplierList, customerList, makesList, modelsList, typesList, fuelList, transList, wDriveList;
 	private JButton newSupplier, newCustomer;
 	private JLabel iconLabel;
-	private JTextField makeField, modelField, typeField, doorsField, seatsField;
+	private JTextField makeField, modelField, typeField, doorsField, seatsField, priceField, fuelField;
+	private JTextField capacityField, hPowerField, euroField;
 
 	
 	// Constructor
@@ -214,7 +215,7 @@ public class AddCarPanel extends JPanel{
 		thirdRowGeneralPanel.add(Box.createRigidArea(new Dimension(1,0)));
 		thirdRowGeneralPanel.add(type);
 		thirdRowGeneralPanel.add(typeField);
-		// third row
+		// fourth row
 		JPanel fourthRowGeneralPanel = new JPanel();
 		fourthRowGeneralPanel.setOpaque(false);
 		JLabel yearLabel = new JLabel("Year");
@@ -226,26 +227,125 @@ public class AddCarPanel extends JPanel{
 		year.setSelectedIndex(0);
 		JLabel doorsLabel = new JLabel("Doors");
 		AppResources.changeFont(doorsLabel, Font.PLAIN, 18);
-		doorsField = new JTextField(2);
+		doorsField = new JTextField(1);
 		JLabel seatsLabel = new JLabel("Seats");
 		AppResources.changeFont(seatsLabel, Font.PLAIN, 18);
-		seatsField = new JTextField(2);
+		seatsField = new JTextField(1);
+		fourthRowGeneralPanel.add(Box.createRigidArea(new Dimension(1,0)));
 		fourthRowGeneralPanel.add(yearLabel);
 		fourthRowGeneralPanel.add(year);
+		fourthRowGeneralPanel.add(Box.createRigidArea(new Dimension(28,0)));
 		fourthRowGeneralPanel.add(doorsLabel);
 		fourthRowGeneralPanel.add(doorsField);
+		fourthRowGeneralPanel.add(Box.createRigidArea(new Dimension(28,0)));
 		fourthRowGeneralPanel.add(seatsLabel);
 		fourthRowGeneralPanel.add(seatsField);
-		
-		
+		// fifth row
+		JPanel fifthRowGeneralPanel = new JPanel();
+		fifthRowGeneralPanel.setOpaque(false);
+		JLabel priceLabel = new JLabel("Select purchase price");
+		AppResources.changeFont(priceLabel, Font.PLAIN, 18);
+		priceField = new JTextField(10);
+		JLabel euroLabel = new JLabel(" €");
+		AppResources.changeFont(euroLabel, Font.PLAIN, 18);
+		fifthRowGeneralPanel.add(priceLabel);
+		fifthRowGeneralPanel.add(Box.createRigidArea(new Dimension(15,0)));
+		fifthRowGeneralPanel.add(priceField);
+		fifthRowGeneralPanel.add(euroLabel);
+
 		generalDataPanel.add(titleGeneralLabel);
 		generalDataPanel.add(firstRowGeneralPanel);
 		generalDataPanel.add(secondRowGeneralPanel);
 		generalDataPanel.add(thirdRowGeneralPanel);
 		generalDataPanel.add(fourthRowGeneralPanel);
+		generalDataPanel.add(fifthRowGeneralPanel);
 		
+		
+		// ENGINE DATA
+		JPanel enginePanel = new JPanel();
+		enginePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+		enginePanel.setOpaque(false);
+		enginePanel.setLayout(new BoxLayout(enginePanel, BoxLayout.Y_AXIS));
+		JLabel titleEngineLabel = new JLabel ("Engine");
+		titleEngineLabel.setAlignmentX(CENTER_ALIGNMENT);
+		AppResources.changeFont(titleEngineLabel, Font.BOLD, 30);
+		// first row
+		JPanel firstRowEnginePanel = new JPanel ();
+		firstRowEnginePanel.setOpaque(false);
+		JLabel fuelLabel = new JLabel ("Fuel");
+		AppResources.changeFont(fuelLabel, Font.PLAIN, 18);
+		fuelList = GetListQuery.getFuels();
+		fuel = new JComboBox <String> (fuelList);
+		fuel.setPrototypeDisplayValue("XXXXXXXXXXXXXXX");
+		fuel.setSelectedIndex(0);
+		fuelField = new JTextField(10);
+		firstRowEnginePanel.add(fuelLabel);
+		firstRowEnginePanel.add(Box.createRigidArea(new Dimension(1,0)));
+		firstRowEnginePanel.add(fuel);
+		firstRowEnginePanel.add(fuelField);
+		// second row
+		JPanel secondRowEnginePanel = new JPanel();
+		secondRowEnginePanel.setOpaque(false);
+		JLabel transmissionLabel = new JLabel("Transmission");
+		AppResources.changeFont(transmissionLabel, Font.PLAIN, 18);
+		transList = GetListQuery.getTransmissions();
+		trans = new JComboBox<String>(transList);
+		trans.setPrototypeDisplayValue("XXXXXXXXXXXXXXX");
+		trans.setSelectedIndex(0);
+		secondRowEnginePanel.add(transmissionLabel);
+		secondRowEnginePanel.add(Box.createRigidArea(new Dimension(63,0)));
+		secondRowEnginePanel.add(trans);
+		// third row
+		JPanel thirdRowEnginePanel = new JPanel();
+		thirdRowEnginePanel.setOpaque(false);
+		JLabel wheelDriveLabel = new JLabel("Wheel Drive");
+		AppResources.changeFont(wheelDriveLabel, Font.PLAIN, 18);
+		wDriveList = GetListQuery.getWheelDrive();
+		wDrive = new JComboBox<String>(wDriveList);
+		wDrive.setPrototypeDisplayValue("XXXXXXXXXXXXXXX");
+		wDrive.setSelectedIndex(0);
+		thirdRowEnginePanel.add(wheelDriveLabel);
+		thirdRowEnginePanel.add(Box.createRigidArea(new Dimension(63,0)));
+		thirdRowEnginePanel.add(wDrive);
+		
+		// fourth and fifth row
+		JPanel fourthRowEnginePanel = new JPanel();
+		fourthRowEnginePanel.setOpaque(false);
+		JPanel fifthRowEnginePanel = new JPanel();
+		fifthRowEnginePanel.setOpaque(false);
+		JLabel capacityLabel = new JLabel("Capacity");
+		AppResources.changeFont(capacityLabel, Font.PLAIN, 18);
+		capacityField = new JTextField (6);
+		JLabel kwLabel = new JLabel("kw");
+		AppResources.changeFont(kwLabel, Font.PLAIN, 18);
+		JLabel hPowerLabel = new JLabel("Horsepower");
+		AppResources.changeFont(hPowerLabel, Font.PLAIN, 18);
+		hPowerField = new JTextField (11);
+		JLabel euroL = new JLabel("Euro");
+		AppResources.changeFont(euroL, Font.PLAIN, 18);
+		euroField = new JTextField (1);
+		fourthRowEnginePanel.add(hPowerLabel);
+		fourthRowEnginePanel.add(Box.createRigidArea(new Dimension(70,0)));
+		fourthRowEnginePanel.add(hPowerField);
+		fourthRowEnginePanel.add(Box.createRigidArea(new Dimension(1,0)));
+		fourthRowEnginePanel.add(kwLabel);
+		fifthRowEnginePanel.add(capacityLabel);
+		fifthRowEnginePanel.add(Box.createRigidArea(new Dimension(10,0)));
+		fifthRowEnginePanel.add(capacityField);
+		fifthRowEnginePanel.add(Box.createRigidArea(new Dimension(96,0)));
+		fifthRowEnginePanel.add(euroL);
+		fifthRowEnginePanel.add(Box.createRigidArea(new Dimension(10,0)));
+		fifthRowEnginePanel.add(euroField);
+		
+		enginePanel.add(titleEngineLabel);
+		enginePanel.add(firstRowEnginePanel);
+		enginePanel.add(secondRowEnginePanel);
+		enginePanel.add(thirdRowEnginePanel);
+		enginePanel.add(fourthRowEnginePanel);
+		enginePanel.add(fifthRowEnginePanel);
 		
 		bigHorizontalPanel.add(generalDataPanel);
+		bigHorizontalPanel.add(enginePanel);
 		addCarPanel.add(bigHorizontalPanel);
 		
 		

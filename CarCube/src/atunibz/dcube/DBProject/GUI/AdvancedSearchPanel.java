@@ -226,7 +226,7 @@ public class AdvancedSearchPanel extends JPanel {
 		seats = new JComboBox<String>();
 		seats.addItem(OPTION4);
 
-		allSeats = getSeats();
+		allSeats = GetListQuery.getSeats();
 		for (String s : allSeats)
 			seats.addItem(s);
 
@@ -236,7 +236,7 @@ public class AdvancedSearchPanel extends JPanel {
 		doors = new JComboBox<String>();
 		doors.addItem(OPTION5);
 
-		allDoors = getDoors();
+		allDoors = GetListQuery.getDoors();
 		for (String s : allDoors)
 			doors.addItem(s);
 
@@ -246,7 +246,7 @@ public class AdvancedSearchPanel extends JPanel {
 		fuel = new JComboBox<String>();
 		fuel.addItem(OPTION6);
 
-		allFuel = getFuels();
+		allFuel = GetListQuery.getFuels();
 
 		for (String s : allFuel)
 			fuel.addItem(s);
@@ -257,7 +257,7 @@ public class AdvancedSearchPanel extends JPanel {
 		transmissions = new JComboBox<String>();
 		transmissions.addItem(OPTION7);
 
-		allTransmissions = getTransmissions();
+		allTransmissions = GetListQuery.getTransmissions();
 
 		for (String s : allTransmissions)
 			transmissions.addItem(s);
@@ -644,53 +644,7 @@ public class AdvancedSearchPanel extends JPanel {
 	}
 
 
-	// Get all seats from db (there is no filter)
-	public String[] getSeats() {
-
-		ArrayList<String> seats = new ArrayList<String>();
-
-		String query = "SELECT seats from new_car UNION DISTINCT SELECT seats from used_car ORDER BY seats";
-
-		try {
-			Statement stat = conn.createStatement();
-			ResultSet rs = stat.executeQuery(query);
-			while (rs.next()) {
-				seats.add(rs.getString("seats"));
-			}
-			
-			stat.close();
-			rs.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return seats.toArray(new String[seats.size()]);
-	}
-
-	// Get all doors from db (there is no filter)
-	public String[] getDoors() {
-
-		ArrayList<String> doors = new ArrayList<String>();
-
-		String query = "SELECT doors from new_car UNION DISTINCT SELECT doors from used_car ORDER BY doors";
-
-		try {
-			Statement stat = conn.createStatement();
-			ResultSet rs = stat.executeQuery(query);
-			while (rs.next()) {
-				doors.add(rs.getString("doors"));
-			}
-			
-			stat.close();
-			rs.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return doors.toArray(new String[doors.size()]);
-	}
+	
 
 	public void populateOptionalsCheckBoxes() {
 
@@ -715,53 +669,6 @@ public class AdvancedSearchPanel extends JPanel {
 
 	}
 
-	// Get all fuels type from db (there is no filter)
-	public String[] getFuels() {
-
-		ArrayList<String> fuels = new ArrayList<String>();
-
-		String query = "SELECT DISTINCT fuel from engine";
-
-		try {
-			Statement stat = conn.createStatement();
-			ResultSet rs = stat.executeQuery(query);
-			while (rs.next()) {
-				fuels.add(rs.getString("fuel"));
-			}
-			
-			stat.close();
-			rs.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return fuels.toArray(new String[fuels.size()]);
-	}
-
-	// Get all fuels type from db (there is no filter)
-	public String[] getTransmissions() {
-
-		ArrayList<String> transmissions = new ArrayList<String>();
-
-		String query = "SELECT DISTINCT transmission from engine";
-
-		try {
-			Statement stat = conn.createStatement();
-			ResultSet rs = stat.executeQuery(query);
-			while (rs.next()) {
-				transmissions.add(rs.getString("transmission"));
-			}
-			
-			stat.close();
-			rs.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return transmissions.toArray(new String[transmissions.size()]);
-	}
 
 	// it could be a long story...
 	// ... and in fact it is! But, luckily, it is similar to that of
