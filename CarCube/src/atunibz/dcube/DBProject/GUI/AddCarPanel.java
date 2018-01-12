@@ -33,12 +33,12 @@ public class AddCarPanel extends JPanel{
 	private JPanel addCarPanel, titlePanel, sellerPanel, fromCustomerPanel, fromSupplierPanel;
 	private Connection conn;
 	private JRadioButton newCar, usedCar;
-	private JComboBox <String> supplierChoice, customerChoice, make, model;
+	private JComboBox <String> supplierChoice, customerChoice, make, model, type, year;
 	private ButtonGroup group;
-	private String [] supplierList, customerList, makesList;
+	private String [] supplierList, customerList, makesList, modelsList, typesList;
 	private JButton newSupplier, newCustomer;
 	private JLabel iconLabel;
-	private JTextField makeField;
+	private JTextField makeField, modelField, typeField, doorsField, seatsField;
 
 	
 	// Constructor
@@ -177,19 +177,72 @@ public class AddCarPanel extends JPanel{
 		JPanel firstRowGeneralPanel = new JPanel ();
 		firstRowGeneralPanel.setOpaque(false);
 		JLabel makeLabel = new JLabel ("Make");
-		AppResources.changeFont(makeLabel, Font.PLAIN, 20);
+		AppResources.changeFont(makeLabel, Font.PLAIN, 18);
 		makesList = GetListQuery.getMakes(2);
 		make = new JComboBox <String> (makesList);
+		make.setPrototypeDisplayValue("XXXXXXXXXXXXXXX");
 		make.setSelectedIndex(0);
 		makeField = new JTextField(10);
 		firstRowGeneralPanel.add(makeLabel);
+		firstRowGeneralPanel.add(Box.createRigidArea(new Dimension(1,0)));
 		firstRowGeneralPanel.add(make);
 		firstRowGeneralPanel.add(makeField);
 		//second row
+		JPanel secondRowGeneralPanel = new JPanel ();
+		secondRowGeneralPanel.setOpaque(false);
+		JLabel modelLabel = new JLabel ("Model");
+		AppResources.changeFont(modelLabel, Font.PLAIN, 18);
+		modelsList = GetListQuery.getModels(2, (String) make.getSelectedItem());
+		model = new JComboBox <String> (modelsList);
+		model.setPrototypeDisplayValue("XXXXXXXXXXXXXXX");
+		model.setSelectedIndex(0);
+		modelField = new JTextField(10);
+		secondRowGeneralPanel.add(modelLabel);
+		secondRowGeneralPanel.add(model);
+		secondRowGeneralPanel.add(modelField);
+		// third row
+		JPanel thirdRowGeneralPanel = new JPanel();
+		thirdRowGeneralPanel.setOpaque(false);
+		JLabel typeLabel = new JLabel("Type");
+		AppResources.changeFont(typeLabel, Font.PLAIN, 18);
+		typesList = GetListQuery.getCarTypes();
+		type = new JComboBox<String>(typesList);
+		type.setPrototypeDisplayValue("XXXXXXXXXXXXXXX");
+		type.setSelectedIndex(0);
+		typeField = new JTextField(10);
+		thirdRowGeneralPanel.add(typeLabel);
+		thirdRowGeneralPanel.add(Box.createRigidArea(new Dimension(1,0)));
+		thirdRowGeneralPanel.add(type);
+		thirdRowGeneralPanel.add(typeField);
+		// third row
+		JPanel fourthRowGeneralPanel = new JPanel();
+		fourthRowGeneralPanel.setOpaque(false);
+		JLabel yearLabel = new JLabel("Year");
+		AppResources.changeFont(yearLabel, Font.PLAIN, 18);
+		year = new JComboBox<String>();
+		for (int i = 0; i <=68; i++) {
+			year.addItem(Integer.toString(2018 - i));
+		}
+		year.setSelectedIndex(0);
+		JLabel doorsLabel = new JLabel("Doors");
+		AppResources.changeFont(doorsLabel, Font.PLAIN, 18);
+		doorsField = new JTextField(2);
+		JLabel seatsLabel = new JLabel("Seats");
+		AppResources.changeFont(seatsLabel, Font.PLAIN, 18);
+		seatsField = new JTextField(2);
+		fourthRowGeneralPanel.add(yearLabel);
+		fourthRowGeneralPanel.add(year);
+		fourthRowGeneralPanel.add(doorsLabel);
+		fourthRowGeneralPanel.add(doorsField);
+		fourthRowGeneralPanel.add(seatsLabel);
+		fourthRowGeneralPanel.add(seatsField);
 		
 		
 		generalDataPanel.add(titleGeneralLabel);
 		generalDataPanel.add(firstRowGeneralPanel);
+		generalDataPanel.add(secondRowGeneralPanel);
+		generalDataPanel.add(thirdRowGeneralPanel);
+		generalDataPanel.add(fourthRowGeneralPanel);
 		
 		
 		bigHorizontalPanel.add(generalDataPanel);
@@ -207,6 +260,7 @@ public class AddCarPanel extends JPanel{
 		usedCar.addActionListener(new RadioButtonListener ());
 		newSupplier.addActionListener(new AddStakeholderListener());
 		newCustomer.addActionListener(new AddStakeholderListener());
+		make.addActionListener(new MakeListener());
 		
 
 		add(addCarPanel);
@@ -297,5 +351,27 @@ public class AddCarPanel extends JPanel{
 		}
 	}
 	
+	// listener for the change item make field
+	private class MakeListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// Change model accordingly
+			JComboBox selectedCombo = (JComboBox) arg0.getSource();
+			String selectedMake = (String) selectedCombo.getSelectedItem();
+			model.removeAllItems();
+			model.addItem("All Models");
+
+			if (selectedMake != null && selectedMake.compareTo("All Makes") != 0) {
+				modelsList = GetListQuery.getModels(2, (String) make.getSelectedItem()); // See method comments for
+																							// more info
+				for (String s : modelsList)
+					model.addItem(s);
+			}
+
+			
+		}
+
+	}
 
 }

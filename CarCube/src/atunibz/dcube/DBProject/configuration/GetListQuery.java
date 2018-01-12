@@ -77,5 +77,31 @@ public class GetListQuery {
 		Arrays.sort(result);
 		return result;
 	}
+	
+	// Get all car types from db (there is no filter)
+	public static String[] getCarTypes() {
+
+		ArrayList<String> carTypes = new ArrayList<String>();
+
+		String query = "SELECT car_type from new_car UNION DISTINCT SELECT car_type from used_car ORDER BY car_type";
+
+		try {
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery(query);
+			while (rs.next()) {
+				carTypes.add(rs.getString("car_type"));
+			}
+
+			stat.close();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String [] result = carTypes.toArray(new String[carTypes.size()]);
+		Arrays.sort(result);
+		return result;
+	}
 
 }

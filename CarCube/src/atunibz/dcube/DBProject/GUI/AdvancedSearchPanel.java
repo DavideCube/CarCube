@@ -216,7 +216,7 @@ public class AdvancedSearchPanel extends JPanel {
 		carTypes = new JComboBox<String>();
 		carTypes.addItem(OPTION3);
 
-		allCarTypes = getCarTypes();
+		allCarTypes = GetListQuery.getCarTypes();
 		for (String s : allCarTypes)
 			carTypes.addItem(s);
 
@@ -643,29 +643,6 @@ public class AdvancedSearchPanel extends JPanel {
 		
 	}
 
-	// Get all car types from db (there is no filter)
-	public String[] getCarTypes() {
-
-		ArrayList<String> carTypes = new ArrayList<String>();
-
-		String query = "SELECT car_type from new_car UNION DISTINCT SELECT car_type from used_car ORDER BY car_type";
-
-		try {
-			Statement stat = conn.createStatement();
-			ResultSet rs = stat.executeQuery(query);
-			while (rs.next()) {
-				carTypes.add(rs.getString("car_type"));
-			}
-			
-			stat.close();
-			rs.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return carTypes.toArray(new String[carTypes.size()]);
-	}
 
 	// Get all seats from db (there is no filter)
 	public String[] getSeats() {
