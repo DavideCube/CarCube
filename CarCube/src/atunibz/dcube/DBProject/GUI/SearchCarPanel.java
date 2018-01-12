@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -30,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import atunibz.dcube.DBProject.configuration.AppResources;
+import atunibz.dcube.DBProject.configuration.GetListQuery;
 
 public class SearchCarPanel extends JPanel{
 	private Connection conn;
@@ -70,7 +70,7 @@ public class SearchCarPanel extends JPanel{
 		//MAKE combobox with strange things
 		make = new JComboBox<String>();
 		
-		allMakes = getMakes(2); //See method comments for more info
+		allMakes = GetListQuery.getMakes(2); //See method comments for more info
 		make.addItem("All Makes");
 		for(String s: allMakes)
 			make.addItem(s);
@@ -205,7 +205,7 @@ public class SearchCarPanel extends JPanel{
 				param = 2;
 			
 			
-			allMakes = getMakes(param); //See method comments for more info
+			allMakes = GetListQuery.getMakes(param); //See method comments for more info
 			make.removeAllItems();
 			make.addItem("All Makes");
 			for(String s: allMakes)
@@ -314,34 +314,6 @@ public class SearchCarPanel extends JPanel{
 			}
 			
 		}
-	
-	//Get all makes from DBDBDBDBDBDB
-	//Commento serio: 0 = new car; 1 = used car; 2 = boat cars;
-	public String[] getMakes(int typeOfQuery) {
-		
-		ArrayList<String> tPiccola = new ArrayList<String>();
-		String getMakes = null;
-		switch(typeOfQuery) {
-		case 0: getMakes = "SELECT DISTINCT make FROM new_car"; break;
-		case 1: getMakes = "SELECT DISTINCT make FROM used_car"; break;
-		case 2: getMakes = "SELECT DISTINCT make FROM new_car UNION DISTINCT SELECT DISTINCT make FROM used_car"; break;
-		}
-		
-		try {
-			Statement stat = conn.createStatement();
-			ResultSet rs = stat.executeQuery(getMakes);
-			while(rs.next()) {
-				tPiccola.add(rs.getString("make"));
-			}
-			stat.close();
-			rs.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return tPiccola.toArray(new String[tPiccola.size()]);
-
-	}
 	
 	// Get all models from DBDBDBDBDBDB
 	// Commento serio: 0 = new car; 1 = used car; 2 = boat cars;

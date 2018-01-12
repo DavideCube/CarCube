@@ -30,11 +30,12 @@ public class AddCarPanel extends JPanel{
 	private JPanel addCarPanel, titlePanel, sellerPanel, fromCustomerPanel, fromSupplierPanel;
 	private Connection conn;
 	private JRadioButton newCar, usedCar;
-	private JComboBox <String> supplierChoice, customerChoice;
+	private JComboBox <String> supplierChoice, customerChoice, make, model;
 	private ButtonGroup group;
 	private String [] supplierList, customerList;
 	private JButton newSupplier, newCustomer;
 	private JLabel iconLabel;
+
 	
 	// Constructor
 	public AddCarPanel (boolean supplier, String primaryKey) {
@@ -159,6 +160,7 @@ public class AddCarPanel extends JPanel{
 		JPanel bigHorizontalPanel = new JPanel();
 		bigHorizontalPanel.setOpaque(false);
 		bigHorizontalPanel.setLayout(new BoxLayout(bigHorizontalPanel, BoxLayout.X_AXIS));
+		
 		// START WITH GENERAL DATA
 		JPanel generalDataPanel = new JPanel();
 		generalDataPanel.setOpaque(false);
@@ -166,6 +168,16 @@ public class AddCarPanel extends JPanel{
 		JLabel titleGeneralLabel = new JLabel ("General data");
 		titleGeneralLabel.setAlignmentX(CENTER_ALIGNMENT);
 		AppResources.changeFont(titleGeneralLabel, Font.BOLD, 30);
+		// first row
+		JPanel firstRowGeneralPanel = new JPanel ();
+		firstRowGeneralPanel.setOpaque(false);
+		JLabel makeLabel = new JLabel ("Make");
+		AppResources.changeFont(makeLabel, Font.PLAIN, 20);
+		
+		make = new JComboBox <String> ();
+		
+		
+		
 		
 		
 		
@@ -227,6 +239,7 @@ public class AddCarPanel extends JPanel{
 		Arrays.sort(result);
 		return result;
 	}
+	
 	
 	// method for retrieving the index from the primaryKey String (tax code or vat)
 	public int getIndexOfKey (boolean supplier, String primaryKey) {

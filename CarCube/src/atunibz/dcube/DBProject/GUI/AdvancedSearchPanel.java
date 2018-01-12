@@ -36,6 +36,7 @@ import javax.swing.event.DocumentListener;
 
 import atunibz.dcube.DBProject.GUI.ColorsPanel.ColorCheckBox;
 import atunibz.dcube.DBProject.configuration.AppResources;
+import atunibz.dcube.DBProject.configuration.GetListQuery;
 
 public class AdvancedSearchPanel extends JPanel {
 
@@ -137,7 +138,7 @@ public class AdvancedSearchPanel extends JPanel {
 
 		make = new JComboBox<String>();
 
-		allMakes = getMakes(param); // See method comments for more info
+		allMakes = GetListQuery.getMakes(param); // See method comments for more info
 		make.addItem("All Makes");
 		for (String s : allMakes)
 			make.addItem(s);
@@ -514,7 +515,7 @@ public class AdvancedSearchPanel extends JPanel {
 			else
 				param = 2;
 
-			allMakes = getMakes(param); // See method comments for more info
+			allMakes = GetListQuery.getMakes(param); // See method comments for more info
 			make.removeAllItems();
 			make.addItem("All Makes");
 			for (String s : allMakes)
@@ -642,41 +643,7 @@ public class AdvancedSearchPanel extends JPanel {
 		
 	}
 
-	// Get all makes from DBDBDBDBDBDB
-	// Commento serio: 0 = new car; 1 = used car; 2 = boat cars;
-	public String[] getMakes(int typeOfQuery) {
-
-		ArrayList<String> tPiccola = new ArrayList<String>();
-		String getMakes = null;
-		switch (typeOfQuery) {
-		case 0:
-			getMakes = "SELECT DISTINCT make FROM new_car";
-			break;
-		case 1:
-			getMakes = "SELECT DISTINCT make FROM used_car";
-			break;
-		case 2:
-			getMakes = "SELECT DISTINCT make FROM new_car UNION DISTINCT SELECT DISTINCT make FROM used_car";
-			break;
-		}
-
-		try {
-			Statement stat = conn.createStatement();
-			ResultSet rs = stat.executeQuery(getMakes);
-			while (rs.next()) {
-				tPiccola.add(rs.getString("make"));
-			}
-			
-			stat.close();
-			rs.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return tPiccola.toArray(new String[tPiccola.size()]);
-
-	}
+	
 
 	// Get all models from DBDBDBDBDBDB
 	// Commento serio: 0 = new car; 1 = used car; 2 = boat cars;
