@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -21,9 +22,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import atunibz.dcube.DBProject.configuration.AppResources;
+import atunibz.dcube.DBProject.configuration.GetListQuery;
 
 // Panel for adding a new car in the database
 public class AddCarPanel extends JPanel{
@@ -32,9 +35,10 @@ public class AddCarPanel extends JPanel{
 	private JRadioButton newCar, usedCar;
 	private JComboBox <String> supplierChoice, customerChoice, make, model;
 	private ButtonGroup group;
-	private String [] supplierList, customerList;
+	private String [] supplierList, customerList, makesList;
 	private JButton newSupplier, newCustomer;
 	private JLabel iconLabel;
+	private JTextField makeField;
 
 	
 	// Constructor
@@ -163,6 +167,7 @@ public class AddCarPanel extends JPanel{
 		
 		// START WITH GENERAL DATA
 		JPanel generalDataPanel = new JPanel();
+		generalDataPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		generalDataPanel.setOpaque(false);
 		generalDataPanel.setLayout(new BoxLayout(generalDataPanel, BoxLayout.Y_AXIS));
 		JLabel titleGeneralLabel = new JLabel ("General data");
@@ -173,8 +178,23 @@ public class AddCarPanel extends JPanel{
 		firstRowGeneralPanel.setOpaque(false);
 		JLabel makeLabel = new JLabel ("Make");
 		AppResources.changeFont(makeLabel, Font.PLAIN, 20);
+		makesList = GetListQuery.getMakes(2);
+		make = new JComboBox <String> (makesList);
+		make.setSelectedIndex(0);
+		makeField = new JTextField(10);
+		firstRowGeneralPanel.add(makeLabel);
+		firstRowGeneralPanel.add(make);
+		firstRowGeneralPanel.add(makeField);
+		//second row
 		
-		make = new JComboBox <String> ();
+		
+		generalDataPanel.add(titleGeneralLabel);
+		generalDataPanel.add(firstRowGeneralPanel);
+		
+		
+		bigHorizontalPanel.add(generalDataPanel);
+		addCarPanel.add(bigHorizontalPanel);
+		
 		
 		
 		

@@ -151,7 +151,7 @@ public class AdvancedSearchPanel extends JPanel {
 		model = new JComboBox<String>();
 		// listeners are added at the end in order to avoiding null pointer exceptions
 		model.addItem("All Models");
-		allModels = getModels(param); // see comment above
+		allModels = GetListQuery.getModels(param, (String) make.getSelectedItem()); // see comment above
 
 		for (String s : allModels)
 			model.addItem(s);
@@ -522,7 +522,7 @@ public class AdvancedSearchPanel extends JPanel {
 				make.addItem(s);
 
 			// Change model accordingly
-			allModels = getModels(param); // See method comments for more info
+			allModels = GetListQuery.getModels(param, (String) make.getSelectedItem()); // See method comments for more info
 			model.removeAllItems();
 			model.addItem("All Models");
 			for (String s : allModels)
@@ -556,7 +556,7 @@ public class AdvancedSearchPanel extends JPanel {
 			model.addItem("All Models");
 
 			if (selectedMake != null && selectedMake.compareTo("All Makes") != 0) {
-				allModels = getModels(param); // See method comments for more info
+				allModels = GetListQuery.getModels(param, (String) make.getSelectedItem()); // See method comments for more info
 				for (String s : allModels)
 					model.addItem(s);
 			}
@@ -641,44 +641,6 @@ public class AdvancedSearchPanel extends JPanel {
 			MainPanel.getMainPanel().swapPanel(new SearchCarPanel());	
 		}
 		
-	}
-
-	
-
-	// Get all models from DBDBDBDBDBDB
-	// Commento serio: 0 = new car; 1 = used car; 2 = boat cars;
-	public String[] getModels(int typeOfQuery) {
-
-		ArrayList<String> tPiccola = new ArrayList<String>();
-		String getModels = null;
-		String selectedMake = (String) make.getSelectedItem();
-		switch (typeOfQuery) {
-		case 0:
-			getModels = "SELECT DISTINCT model FROM new_car WHERE make='" + selectedMake + "'";
-			break;
-		case 1:
-			getModels = "SELECT DISTINCT model FROM used_car WHERE make='" + selectedMake + "'";
-			break;
-		case 2:
-			getModels = "SELECT DISTINCT model FROM new_car WHERE make = '" + selectedMake
-					+ "' UNION DISTINCT SELECT DISTINCT model FROM used_car WHERE make='" + selectedMake + "'";
-			break;
-		}
-
-		try {
-			Statement stat = conn.createStatement();
-			ResultSet rs = stat.executeQuery(getModels);
-			while (rs.next()) {
-				tPiccola.add(rs.getString("model"));
-			}
-			
-			stat.close();
-			rs.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return tPiccola.toArray(new String[tPiccola.size()]);
 	}
 
 	// Get all car types from db (there is no filter)
