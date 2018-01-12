@@ -561,10 +561,11 @@ public class addSupplierPanel extends JPanel {
 						JOptionPane.showMessageDialog(addSupplierrPanel, "Supplier was inserted successfully!");
 						addSupplier.close();
 						if(fromCarPanels) {
-							
+							MainPanel.getMainPanel().swapPanel(new AddCarPanel(true, vatField.getText()));
 						} else
 							MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 					} else {
+						
 						// Already present
 						JOptionPane.showMessageDialog(addSupplierrPanel, "Supplier already present");
 						return;

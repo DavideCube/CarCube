@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -92,6 +93,9 @@ public class AddCarPanel extends JPanel{
 		supplierChoice.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		if (primaryKey.compareTo("") == 0)
 			supplierChoice.setSelectedIndex(0);
+		else 
+			supplierChoice.setSelectedIndex(getIndexOfKey(true, primaryKey));
+		
 		newSupplier = AppResources.iconButton("", "icons/addSup.png");
 		JPanel support = new JPanel ();
 		support.setOpaque(false);
@@ -113,6 +117,9 @@ public class AddCarPanel extends JPanel{
 		customerChoice.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		if (primaryKey.compareTo("") == 0)
 			customerChoice.setSelectedIndex(0);
+		else 
+			customerChoice.setSelectedIndex(getIndexOfKey(false, primaryKey));
+			
 		newCustomer = AppResources.iconButton("", "icons/user.png");
 		// control in which case we are
 		if (supplier) {
@@ -206,7 +213,30 @@ public class AddCarPanel extends JPanel{
 			e.printStackTrace();
 		}
 		String [] result = resultList.toArray(new String[resultList.size()]);
+		Arrays.sort(result);
 		return result;
+	}
+	
+	// method for retrieving the index from the primaryKey String (tax code or vat)
+	public int getIndexOfKey (boolean supplier, String primaryKey) {
+		int indexSelected = 0;
+		if (!supplier) {
+			for (int i = 0; i < customerList.length; i++) {
+				if (customerList[i].contains(primaryKey)) {
+					indexSelected = i;
+					break;
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < supplierList.length; i++) {
+				if (supplierList[i].contains(primaryKey)) {
+					indexSelected = i;
+					break;
+				}
+			}
+		}
+		return indexSelected;
 	}
 	
 	// action listener for adding a new supplier if it is not already present in the combo box "supplierList"
@@ -221,7 +251,6 @@ public class AddCarPanel extends JPanel{
 				MainPanel.getMainPanel().swapPanel(new addCustomerPanel(true));
 			
 		}
-		
 	}
 	
 
