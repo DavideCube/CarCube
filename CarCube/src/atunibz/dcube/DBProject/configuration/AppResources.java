@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public final class AppResources {
@@ -52,6 +53,11 @@ public final class AppResources {
 		
 		if(o instanceof JLabel) {
 			JLabel lab = (JLabel) o;
+			lab.setFont(myFont);
+		}
+		
+		if(o instanceof JTextField) {
+			JTextField lab = (JTextField) o;
 			lab.setFont(myFont);
 		}
 	}
