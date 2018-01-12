@@ -148,13 +148,24 @@ public class AddCarPanel extends JPanel{
 			iconLabel.setIcon(new ImageIcon("icons/right.png"));
 		iconPanel.add(iconLabel);
 		
-		
 		sellerPanel.add(fromSupplierPanel);
 		sellerPanel.add(Box.createRigidArea(new Dimension (115,0)));
 		sellerPanel.add(iconPanel);
 		sellerPanel.add(Box.createRigidArea(new Dimension (115,0)));
 		sellerPanel.add(fromCustomerPanel);
 		addCarPanel.add(sellerPanel);
+		
+		// START WITH ALL FIELDS TO FILL IN ORDER TO ADD A CAR (BIG PANEL WITH X LAYOUT)
+		JPanel bigHorizontalPanel = new JPanel();
+		bigHorizontalPanel.setOpaque(false);
+		bigHorizontalPanel.setLayout(new BoxLayout(bigHorizontalPanel, BoxLayout.X_AXIS));
+		// START WITH GENERAL DATA
+		JPanel generalDataPanel = new JPanel();
+		generalDataPanel.setOpaque(false);
+		generalDataPanel.setLayout(new BoxLayout(generalDataPanel, BoxLayout.Y_AXIS));
+		JLabel titleGeneralLabel = new JLabel ("General data");
+		titleGeneralLabel.setAlignmentX(CENTER_ALIGNMENT);
+		AppResources.changeFont(titleGeneralLabel, Font.BOLD, 30);
 		
 		
 		
