@@ -565,6 +565,7 @@ public class addSupplierPanel extends JPanel {
 						} else
 							MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 					} else {
+						
 						// Already present
 						JOptionPane.showMessageDialog(addSupplierrPanel, "Supplier already present");
 						return;
