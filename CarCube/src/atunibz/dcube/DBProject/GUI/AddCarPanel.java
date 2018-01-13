@@ -30,7 +30,7 @@ import atunibz.dcube.DBProject.configuration.GetListQuery;
 
 // Panel for adding a new car in the database
 public class AddCarPanel extends JPanel{
-	private JPanel addCarPanel, titlePanel, sellerPanel, fromCustomerPanel, fromSupplierPanel;
+	private JPanel addCarPanel, titlePanel, sellerPanel, fromCustomerPanel, fromSupplierPanel, onlyForUsedPanel;
 	private Connection conn;
 	private JRadioButton newCar, usedCar;
 	private JComboBox <String> supplierChoice, customerChoice, make, model, type, year, fuel, trans, wDrive;
@@ -39,7 +39,8 @@ public class AddCarPanel extends JPanel{
 	private JButton newSupplier, newCustomer;
 	private JLabel iconLabel;
 	private JTextField makeField, modelField, typeField, doorsField, seatsField, priceField, fuelField;
-	private JTextField capacityField, hPowerField, euroField;
+	private JTextField capacityField, hPowerField, euroField, lengthField, heightField, widthField, trunkField, weightField;
+	private JTextField licenseField, mileageField;
 
 	
 	// Constructor
@@ -160,6 +161,7 @@ public class AddCarPanel extends JPanel{
 		sellerPanel.add(Box.createRigidArea(new Dimension (115,0)));
 		sellerPanel.add(fromCustomerPanel);
 		addCarPanel.add(sellerPanel);
+		addCarPanel.add(Box.createRigidArea(new Dimension (0,16)));
 		
 		// START WITH ALL FIELDS TO FILL IN ORDER TO ADD A CAR (BIG PANEL WITH X LAYOUT)
 		JPanel bigHorizontalPanel = new JPanel();
@@ -344,9 +346,86 @@ public class AddCarPanel extends JPanel{
 		enginePanel.add(fourthRowEnginePanel);
 		enginePanel.add(fifthRowEnginePanel);
 		
+		// DIMENSION DATA
+		JPanel dimensionPanel = new JPanel();
+		dimensionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+		dimensionPanel.setOpaque(false);
+		dimensionPanel.setLayout(new BoxLayout(dimensionPanel, BoxLayout.Y_AXIS));
+		JLabel titleDimensionLabel = new JLabel ("Dimensions");
+		titleDimensionLabel.setAlignmentX(CENTER_ALIGNMENT);
+		AppResources.changeFont(titleDimensionLabel, Font.BOLD, 30);
+		// first row
+		JPanel firstRowDimensionPanel = new JPanel ();
+		firstRowDimensionPanel.setOpaque(false);
+		JLabel dimenLabel = new JLabel ("Length  /  Height  /  Width   (cm)");
+		AppResources.changeFont(dimenLabel, Font.PLAIN, 18);
+		JLabel separatorLabel = new JLabel ("/");
+		AppResources.changeFont(separatorLabel, Font.PLAIN, 18);
+		JLabel separatorLabel2 = new JLabel ("/");
+		AppResources.changeFont(separatorLabel2, Font.PLAIN, 18);
+		lengthField = new JTextField(5);
+		heightField = new JTextField(5);
+		widthField = new JTextField(5);
+		firstRowDimensionPanel.add(Box.createRigidArea(new Dimension(60, 0)));
+		firstRowDimensionPanel.add(dimenLabel);
+		firstRowDimensionPanel.add(Box.createRigidArea(new Dimension(60, 0)));
+		// second row
+		JPanel secondRowDimensionPanel = new JPanel ();
+		secondRowDimensionPanel.setOpaque(false);
+		secondRowDimensionPanel.add(lengthField);
+		secondRowDimensionPanel.add(Box.createRigidArea(new Dimension(4, 0)));
+		secondRowDimensionPanel.add(separatorLabel);
+		secondRowDimensionPanel.add(Box.createRigidArea(new Dimension(4, 0)));
+		secondRowDimensionPanel.add(heightField);
+		secondRowDimensionPanel.add(Box.createRigidArea(new Dimension(4, 0)));
+		secondRowDimensionPanel.add(separatorLabel2);
+		secondRowDimensionPanel.add(Box.createRigidArea(new Dimension(4, 0)));
+		secondRowDimensionPanel.add(widthField);
+		// third row
+		JPanel thirdRowDimensionPanel = new JPanel ();
+		thirdRowDimensionPanel.setOpaque(false);
+		JLabel trunkLabel = new JLabel ("Trunk capacity (liters)");
+		AppResources.changeFont(trunkLabel, Font.PLAIN, 18);
+		trunkField = new JTextField (5);
+		thirdRowDimensionPanel.add(trunkLabel);
+		thirdRowDimensionPanel.add(Box.createRigidArea(new Dimension(15, 0)));
+		thirdRowDimensionPanel.add(trunkField);
+		// fourth row
+		JPanel fourthRowDimensionPanel = new JPanel();
+		fourthRowDimensionPanel.setOpaque(false);
+		JLabel weightLabel = new JLabel("Car weight (kg)");
+		AppResources.changeFont(weightLabel, Font.PLAIN, 18);
+		weightField = new JTextField(5);
+		fourthRowDimensionPanel.add(weightLabel);
+		fourthRowDimensionPanel.add(Box.createRigidArea(new Dimension(71, 0)));
+		fourthRowDimensionPanel.add(weightField);
+		JPanel fifthRowDimensionPanel = new JPanel();
+		fifthRowDimensionPanel.setOpaque(false);
+		fifthRowDimensionPanel.add(new JLabel (" "));
+		
+		dimensionPanel.add(titleDimensionLabel);
+		dimensionPanel.add(firstRowDimensionPanel);
+		dimensionPanel.add(secondRowDimensionPanel);
+		dimensionPanel.add(thirdRowDimensionPanel);
+		dimensionPanel.add(fourthRowDimensionPanel);
+		dimensionPanel.add(fifthRowDimensionPanel);
+
 		bigHorizontalPanel.add(generalDataPanel);
 		bigHorizontalPanel.add(enginePanel);
+		bigHorizontalPanel.add(dimensionPanel);
 		addCarPanel.add(bigHorizontalPanel);
+		addCarPanel.add(Box.createRigidArea(new Dimension (0,35)));
+		
+		// LICENSE PLATE AND KILOMETERS FOR USED CAR
+		onlyForUsedPanel = new JPanel();
+		onlyForUsedPanel.setOpaque(false);
+		onlyForUsedPanel.setLayout(new BoxLayout(onlyForUsedPanel, BoxLayout.Y_AXIS));
+		if (!supplier)
+			fillUsedPanel(onlyForUsedPanel);
+		addCarPanel.add(onlyForUsedPanel);
+		
+
+		
 		
 		
 		
@@ -377,6 +456,7 @@ public class AddCarPanel extends JPanel{
 				supplierChoice.setEnabled(true);
 				newSupplier.setEnabled(true);
 				iconLabel.setIcon(new ImageIcon("icons/left.png"));
+				onlyForUsedPanel.removeAll();
 			}
 			else {
 				customerChoice.setEnabled(true);
@@ -384,7 +464,10 @@ public class AddCarPanel extends JPanel{
 				supplierChoice.setEnabled(false);
 				newSupplier.setEnabled(false);
 				iconLabel.setIcon(new ImageIcon("icons/right.png"));
+				fillUsedPanel(onlyForUsedPanel);
 			}
+			revalidate();
+			repaint();
 		}
 	}
 	//  method for retrieving the list of suppliers and customers
@@ -435,6 +518,34 @@ public class AddCarPanel extends JPanel{
 			}
 		}
 		return indexSelected;
+	}
+	
+	// method for filling the onlyForUsedPanel 
+	public void fillUsedPanel (JPanel onlyForUsedPanel) {
+		JPanel titleP = new JPanel();
+		titleP.setOpaque(false);
+		JLabel icon1 = new JLabel (new ImageIcon ("icons/licensePlate.png"));
+		JLabel icon2 = new JLabel (new ImageIcon ("icons/mileage.png"));
+		JLabel presentationLabel = new JLabel ("Insert license plate and mileage of the used car");
+		AppResources.changeFont(presentationLabel, Font.BOLD, 24);
+		titleP.add(icon1);
+		titleP.add(presentationLabel);
+		titleP.add(icon2);
+		onlyForUsedPanel.add(titleP);
+		JPanel supportPanel = new JPanel();
+		supportPanel.setOpaque(false);
+		JLabel licenseLabel = new JLabel ("License plate");
+		AppResources.changeFont(licenseLabel, Font.PLAIN, 18);
+		JLabel mileageLabel = new JLabel ("Mileage (km)");
+		AppResources.changeFont(mileageLabel, Font.PLAIN, 18);
+		licenseField = new JTextField(10);
+		mileageField = new JTextField(10);
+		supportPanel.add(licenseLabel);
+		supportPanel.add(licenseField);
+		supportPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+		supportPanel.add(mileageLabel);
+		supportPanel.add(mileageField);
+		onlyForUsedPanel.add(supportPanel);
 	}
 	
 	// action listener for adding a new supplier if it is not already present in the combo box "supplierList"
