@@ -25,7 +25,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private IconLabel nameLbl, surnameLbl, taxLbl, addressLbl;
 	private int numberOfPhones, numberOfMails, numberOfFaxes;
 	private JLabel nameTF, surnameTF, taxTF, addressTF;
-	private JButton backBtn, statsBtn, deleteBtn, modifyBtn;
+	private JButton backBtn, statsBtn, addBtn, modifyBtn;
 	private ImageIcon modifyIcon;
 	private JPanel infoPanel;
 	private ArrayList<JButton> buttons;
@@ -194,7 +194,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		//buttons
 		backBtn = new JButton("Back");
 		statsBtn = new JButton("Stats");
-		deleteBtn = new JButton("Delete");
+		addBtn = new JButton("Add contact");
 		modifyBtn = new JButton("Modify");
 		
 		try {
@@ -476,7 +476,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		backBtn.addActionListener(new BackListener());
 		btnPanel.add(statsBtn);
 		btnPanel.add(modifyBtn);
-		btnPanel.add(deleteBtn);
+		btnPanel.add(addBtn);
 		c.gridy = offsetY + 2;
 		c.gridx = 1;
 		infoPanel.add(btnPanel, c);
@@ -487,6 +487,8 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		}
 		
 		modifyBtn.addActionListener(new EnableButtonsListener());
+		
+		addBtn.addActionListener(new AddContactListener());
 		
 	}
 	
@@ -522,16 +524,23 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		               "WARNING!", JOptionPane.WARNING_MESSAGE);
 		      if (result == JOptionPane.OK_OPTION) {
 		    	  newPkey = alterPrimaryKey(newValue, surnameTF.getText());
+		    	  updateNameInDB("c_name", newValue, newPkey);
 		      }
-			updateNameInDB("c_name", newValue, newPkey);
+		      else {
+		    	  return;
+		      }
 		break;
 		case "surname": 
 			result = JOptionPane.showConfirmDialog(null, "Changing this field will cause the tax code to be recalculated accordingly.", 
 		               "WARNING!", JOptionPane.WARNING_MESSAGE);
 		      if (result == JOptionPane.OK_OPTION) {
 		    	  newPkey = alterPrimaryKey(nameTF.getText(), newValue);
+		    	  updateNameInDB("c_surname", newValue, newPkey);
 		      }
-			updateNameInDB("c_surname", newValue, newPkey);
+		      else {
+		    	  return;
+		      }
+			
 		break;
 		case "address":
 			 int answer = JOptionPane.showConfirmDialog(null, addressEditPanel, 
@@ -547,6 +556,9 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		    		 return;
 		    	 }
 		      }
+		      else {
+		    	  return;
+		      }
 		break;
 		case "phone":
 			
@@ -555,7 +567,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				if(!newValue.matches("[A-Za-z]+") && (newValue.length() <= 25))
 					updateContactInDB("phone", newValue, sourceId);
 				else {
-					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Invalid input. A phone number cannot contain letters and cannot have more than 25 digits", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Invalid input. Please insert a valid phone number.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 					return;
 
 				}
@@ -760,7 +772,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		public AddressEditPanel() {
 			this.setLayout(new GridBagLayout());
 			GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = gbc.LINE_START;
+			gbc.anchor = GridBagConstraints.LINE_START;
 			zipTF = new JTextField(5);
 			streetTF = new JTextField(10);
 			cityTF = new JTextField(10);
@@ -805,11 +817,11 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				zipTF.setText("");
 				return false;
 			}
-			if(!streetTF.getText().matches("[A-Za-z0-9]+") || streetTF.getText().length() > 30) {
+			if(!streetTF.getText().matches("[A-Za-z0-9\\s]+") || streetTF.getText().length() > 30) {
 				streetTF.setText("");
 				return false;
 			}
-			if(!cityTF.getText().matches("[A-Za-z0-9]+") || cityTF.getText().length() > 20) {
+			if(!cityTF.getText().matches("[A-Za-z0-9\\s]+") || cityTF.getText().length() > 20) {
 				cityTF.setText("");
 				return false;
 			}
@@ -817,13 +829,55 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				civNumTF.setText("");
 				return false;
 			}
-			if(!nationTF.getText().matches("[A-Za-z0-9]+") || nationTF.getText().length() > 30) {
+			if(!nationTF.getText().matches("[A-Za-z0-9\\s]+") || nationTF.getText().length() > 30) {
 				nationTF.setText("");
 				return false;
 			}
 			
 			return true;
 		}
+	}
+	
+	
+	private class AddContactPanel extends JPanel{
+		protected JComboBox comboBox;
+		protected JTextField inputTF;
+		final String[] choices = {"Phone contact", "Mail contact", "Fax contact"};
+		
+		protected AddContactPanel() {
+			comboBox = new JComboBox(choices);
+			inputTF = new JTextField(10);
+			this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+			this.add(comboBox);
+			this.add(Box.createRigidArea(new Dimension(100, 10)));
+			this.add(inputTF);
+		}
+		
+		protected String getContactType() {
+			return (String) comboBox.getSelectedItem();
+		}
+		
+		protected String getUserInput() {
+			return (String)inputTF.getText();
+		}
+		
+		protected boolean sanitizeInput() {
+			String input = inputTF.getText();
+			if(input.compareTo("") == 0)
+				return false;
+			if(getContactType().compareTo("Phone contact") == 0) {
+				return (!input.matches("[A-Za-z]+") && (input.length() <= 25)) ? true : false;
+			}
+			if(getContactType().compareTo("Mail contact") == 0) {
+				return (input.matches("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+") && (input.length() <= 40)) ? true : false;
+			}
+			if(getContactType().compareTo("Fax contact") == 0) {
+				return (!input.matches("[A-Za-z]+") && (input.length() <= 30)) ? true : false;
+			}
+			return false;
+		}
+		
+		
 	}
 	
 	
@@ -911,5 +965,93 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		}
 			
 		}
+	
+	
+	
+	
+	private class AddContactListener implements ActionListener{
+		private AddContactPanel addContactPanel;
+		private Connection conn;
+		private Statement stmnt;
+		private String sql;
+		
+		public AddContactListener() {
+			addContactPanel = new AddContactPanel();
+			conn = DatabaseConnection.getDBConnection().getConnection();
+			try {
+				stmnt = conn.createStatement();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			 int answer = JOptionPane.showConfirmDialog(null, addContactPanel, 
+		               "Add new contact", JOptionPane.OK_CANCEL_OPTION);
+		      if (answer == JOptionPane.OK_OPTION) {
+		    	 if(addContactPanel.sanitizeInput()) {
+
+		    		 String choice = addContactPanel.getContactType();
+		    		 switch(choice) {
+		    		 case("Phone contact"):
+		    			 
+		    			 sql = "INSERT INTO phone_contact VALUES ('" + addContactPanel.getUserInput() + "', NULL, '" + customerPkey + "')";
+		    		 	 try {
+							stmnt.executeUpdate(sql);
+							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Phone contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+				    		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
+				    		return;
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+		    			 
+		    		 break;
+		    		 
+		    		 case("Mail contact"):
+		    			 
+		    			 sql = "INSERT INTO mail_contact VALUES ('" + addContactPanel.getUserInput() + "', NULL, '" + customerPkey + "')";
+		    		 	 try {
+							stmnt.executeUpdate(sql);
+							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Mail contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+				    		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
+				    		return;
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+		    		 	 
+		    		 case("Fax contact"):
+		    			 
+		    			 sql = "INSERT INTO fax_contact VALUES ('" + addContactPanel.getUserInput() + "', NULL, '" + customerPkey + "')";
+		    		 	 try {
+							stmnt.executeUpdate(sql);
+							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fax contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+				    		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
+				    		return;
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+		    			 
+		    		 break;
+		    		 }
+		    		 
+		    		 
+		    		 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), " added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+		    		 MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
+		    	 }
+		    	 else {
+		    		 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fields must respect the given constraints\n and fields cannot be blank.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+		    		 return;
+		    	 }
+		      }
+		      else {
+		    	  return;
+		      }
+		}
+		
+	}
 		
 	}
