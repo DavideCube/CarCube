@@ -1,5 +1,6 @@
 package atunibz.dcube.DBProject.GUI;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -9,8 +10,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -18,6 +22,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,7 +37,7 @@ import atunibz.dcube.DBProject.configuration.GetListQuery;
 
 // Panel for adding a new car in the database
 public class AddCarPanel extends JPanel{
-	private JPanel addCarPanel, titlePanel, sellerPanel, fromCustomerPanel, fromSupplierPanel, onlyForUsedPanel;
+	private JPanel addCarPanel, titlePanel, sellerPanel, fromCustomerPanel, fromSupplierPanel, onlyForUsedPanel, contentOpt;
 	private Connection conn;
 	private JRadioButton newCar, usedCar;
 	private JComboBox <String> supplierChoice, customerChoice, make, model, type, year, fuel, trans, wDrive, serviceType, construction, tireType;
@@ -43,6 +48,7 @@ public class AddCarPanel extends JPanel{
 	private JTextField makeField, modelField, typeField, doorsField, seatsField, priceField, fuelField;
 	private JTextField capacityField, hPowerField, euroField, lengthField, heightField, widthField, trunkField, weightField;
 	private JTextField licenseField, mileageField, aspetRatioField, tireWField, diameterField;
+	private ArrayList<JCheckBox> optionals;
 
 	
 	// Constructor
@@ -543,6 +549,20 @@ public class AddCarPanel extends JPanel{
 		optionalTitlePanel.add(opticon2);
 		optionalPanel.add(optionalTitlePanel);
 		
+		// scroll panel
+		optionals = new ArrayList<JCheckBox>();
+		populateOptionalsCheckBoxes();
+		JPanel container = new JPanel();
+		container.setOpaque(false);
+		contentOpt = new JPanel();
+		contentOpt.setLayout(new BoxLayout(contentOpt, BoxLayout.Y_AXIS));
+		contentOpt.setOpaque(false);
+		JScrollPane pane = new JScrollPane(contentOpt);
+		pane.setPreferredSize(new Dimension (250, 190));
+		container.add(pane);
+		fillOptionalPanel(optionals);
+		optionalPanel.add(container);
+		
 		addCarPanel.add(optionalPanel);
 		
 		
@@ -640,6 +660,40 @@ public class AddCarPanel extends JPanel{
 		return indexSelected;
 	}
 	
+	// method for populating the array list of comboBoxes
+	public void populateOptionalsCheckBoxes() {
+
+		String query = "SELECT *  from optional";
+
+		try {
+			Statement stat = conn.createStatement();
+			ResultSet rs = stat.executeQuery(query);
+			NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+			while (rs.next()) {
+				int price = rs.getInt("price");
+				currencyFormat = NumberFormat.getCurrencyInstance();
+				String priceFormatted = currencyFormat.format(price);
+				JCheckBox temp = new JCheckBox(rs.getString("opt_name") + " - " + priceFormatted);
+				temp.setOpaque(false);
+				AppResources.changeFont(temp, Font.PLAIN, 20);
+				optionals.add(temp);
+			}
+			// sort the array with comparator
+			Collections.sort(optionals, new Comparator <JCheckBox> () {
+				@Override
+				public int compare(JCheckBox o1, JCheckBox o2) {
+					return o1.getText().compareTo(o2.getText());
+				}
+			});
+			stat.close();
+			rs.close();
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+
+	}
+	
 	// method for filling the onlyForUsedPanel 
 	public void fillUsedPanel (JPanel onlyForUsedPanel) {
 		JPanel titleP = new JPanel();
@@ -684,6 +738,20 @@ public class AddCarPanel extends JPanel{
 		}
 	}
 	
+	// method for filling the panel that contains list of checkboxes
+	public void fillOptionalPanel (ArrayList<JCheckBox> optionals) {
+		contentOpt.removeAll();
+		for (JCheckBox c : optionals) {
+			JPanel auxiliaryPanel = new JPanel();
+			auxiliaryPanel.setLayout(new BorderLayout());
+			auxiliaryPanel.add(c, BorderLayout.WEST);
+			contentOpt.add(auxiliaryPanel);
+		}
+		contentOpt.revalidate();
+		contentOpt.repaint();
+		
+	}
+	
 	// listener for the change item make field
 	private class MakeListener implements ActionListener {
 
@@ -705,5 +773,7 @@ public class AddCarPanel extends JPanel{
 		}
 
 	}
+	
+	
 
 }
