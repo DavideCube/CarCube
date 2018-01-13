@@ -22,7 +22,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import atunibz.dcube.DBProject.configuration.AppResources;
@@ -33,14 +35,14 @@ public class AddCarPanel extends JPanel{
 	private JPanel addCarPanel, titlePanel, sellerPanel, fromCustomerPanel, fromSupplierPanel, onlyForUsedPanel;
 	private Connection conn;
 	private JRadioButton newCar, usedCar;
-	private JComboBox <String> supplierChoice, customerChoice, make, model, type, year, fuel, trans, wDrive;
+	private JComboBox <String> supplierChoice, customerChoice, make, model, type, year, fuel, trans, wDrive, serviceType, construction, tireType;
 	private ButtonGroup group;
 	private String [] supplierList, customerList, makesList, modelsList, typesList, fuelList, transList, wDriveList;
 	private JButton newSupplier, newCustomer;
 	private JLabel iconLabel;
 	private JTextField makeField, modelField, typeField, doorsField, seatsField, priceField, fuelField;
 	private JTextField capacityField, hPowerField, euroField, lengthField, heightField, widthField, trunkField, weightField;
-	private JTextField licenseField, mileageField;
+	private JTextField licenseField, mileageField, aspetRatioField, tireWField, diameterField;
 
 	
 	// Constructor
@@ -420,11 +422,128 @@ public class AddCarPanel extends JPanel{
 		onlyForUsedPanel = new JPanel();
 		onlyForUsedPanel.setOpaque(false);
 		onlyForUsedPanel.setLayout(new BoxLayout(onlyForUsedPanel, BoxLayout.Y_AXIS));
-		if (!supplier)
+		if (!supplier) 
 			fillUsedPanel(onlyForUsedPanel);
 		addCarPanel.add(onlyForUsedPanel);
-		
 
+		
+		// TIRE INFORMATION
+		JPanel tirePanel = new JPanel();
+		tirePanel.setOpaque(false);
+		tirePanel.setLayout(new BoxLayout(tirePanel, BoxLayout.Y_AXIS));
+		JPanel tireTitlePanel = new JPanel();
+		tireTitlePanel.setOpaque(false);
+		JLabel icon1 = new JLabel (new ImageIcon ("icons/tire.png"));
+		JLabel icon2 = new JLabel (new ImageIcon ("icons/tire2.png"));
+		JLabel tirePresentationLabel = new JLabel ("Insert information about the car tires");
+		AppResources.changeFont(tirePresentationLabel, Font.BOLD, 24);
+		tireTitlePanel.add(icon1);
+		tireTitlePanel.add(tirePresentationLabel);
+		tireTitlePanel.add(icon2);
+		// firstRow
+		JPanel firstRowTirePanel = new JPanel();
+		firstRowTirePanel.setOpaque(false);
+		JPanel secondRowTirePanel = new JPanel();
+		secondRowTirePanel.setOpaque(false);
+		JPanel thirdRowTirePanel = new JPanel();
+		thirdRowTirePanel.setOpaque(false);
+		JLabel serviceLabel = new JLabel ("Service type");
+		AppResources.changeFont(serviceLabel, Font.PLAIN, 18);
+		JLabel constructionLabel = new JLabel ("Construction");
+		AppResources.changeFont(constructionLabel, Font.PLAIN, 18);
+		JLabel tireTypeLabel = new JLabel ("Type");
+		AppResources.changeFont(tireTypeLabel, Font.PLAIN, 18);
+		String [] tire1 = {"P: Passenger Car", "LT: Light Truck", "ST: Special Trailer"};
+		String [] tire2 = {"R: Radial", "D: diagonal", "B: Bias belt"};
+		String [] tire3 = {"Summer", "Winter", "Universal"};
+		serviceType = new JComboBox <String> (tire1);
+		serviceType.setPrototypeDisplayValue("XXXXXXXXXXXXXXX");
+		serviceType.setSelectedIndex(0);
+		construction = new JComboBox <String> (tire2);
+		construction.setPrototypeDisplayValue("XXXXXXXXXXXXXXX");
+		construction.setSelectedIndex(0);
+		tireType = new JComboBox <String> (tire3);
+		tireType.setPrototypeDisplayValue("XXXXXXXXXXXXXXX");
+		tireType.setSelectedIndex(0);
+		JLabel widthLabel = new JLabel ("Width");
+		AppResources.changeFont(widthLabel, Font.PLAIN, 18);
+		JLabel aspetLabel = new JLabel ("Aspet Ratio");
+		AppResources.changeFont(aspetLabel, Font.PLAIN, 18);
+		JLabel diameterLabel = new JLabel ("Diameter");
+		AppResources.changeFont(diameterLabel, Font.PLAIN, 18);
+		aspetRatioField = new JTextField(2);
+		tireWField= new JTextField(2);
+		diameterField= new JTextField(2);
+		firstRowTirePanel.add(serviceLabel);
+		firstRowTirePanel.add(serviceType);
+		firstRowTirePanel.add(Box.createRigidArea(new Dimension(20,0)));
+		firstRowTirePanel.add(aspetLabel);
+		firstRowTirePanel.add(aspetRatioField);
+		secondRowTirePanel.add(constructionLabel);
+		secondRowTirePanel.add(construction);
+		secondRowTirePanel.add(Box.createRigidArea(new Dimension(64,0)));
+		secondRowTirePanel.add(widthLabel);
+		secondRowTirePanel.add(tireWField);
+		thirdRowTirePanel.add(tireTypeLabel);
+		thirdRowTirePanel.add(Box.createRigidArea(new Dimension(56,0)));
+		thirdRowTirePanel.add(tireType);
+		thirdRowTirePanel.add(Box.createRigidArea(new Dimension(40,0)));
+		thirdRowTirePanel.add(diameterLabel);
+		thirdRowTirePanel.add(diameterField);
+
+
+		tirePanel.add(tireTitlePanel);
+		tirePanel.add(firstRowTirePanel);
+		tirePanel.add(secondRowTirePanel);
+		tirePanel.add(thirdRowTirePanel);
+		addCarPanel.add(tirePanel);
+		addCarPanel.add(Box.createRigidArea(new Dimension (0,35)));
+
+		
+		// COLOR PANEL
+		JPanel colorPanel = new JPanel();
+		colorPanel.setOpaque(false);
+		colorPanel.setLayout(new BoxLayout(colorPanel, BoxLayout.Y_AXIS));
+		JPanel colorTitlePanel = new JPanel();
+		colorTitlePanel.setOpaque(false);
+		JLabel coloricon1 = new JLabel (new ImageIcon ("icons/pantone.png"));
+		JLabel coloricon2 = new JLabel (new ImageIcon ("icons/pantone.png"));
+		JLabel colorPresentationLabel = new JLabel ("Insert the colors of the car");
+		AppResources.changeFont(colorPresentationLabel, Font.BOLD, 24);
+		colorTitlePanel.add(coloricon1);
+		colorTitlePanel.add(colorPresentationLabel);
+		colorTitlePanel.add(coloricon2);
+		colorPanel.add(colorTitlePanel);
+		
+		JPanel supportPanel = new JPanel();
+		supportPanel.setOpaque(false);
+		ColorsPanel colPanel = new ColorsPanel();
+		JScrollPane content = new JScrollPane(colPanel);
+		content.setPreferredSize(new Dimension (520, 188));
+		content.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		content.setOpaque(false);
+		supportPanel.add(content);
+		colorPanel.add(supportPanel);
+		
+		addCarPanel.add(colorPanel);
+		addCarPanel.add(Box.createRigidArea(new Dimension (0,35)));
+		
+		// OPTIONAL PANEL
+		JPanel optionalPanel = new JPanel();
+		optionalPanel.setOpaque(false);
+		optionalPanel.setLayout(new BoxLayout(optionalPanel, BoxLayout.Y_AXIS));
+		JPanel optionalTitlePanel = new JPanel();
+		optionalTitlePanel.setOpaque(false);
+		JLabel opticon1 = new JLabel (new ImageIcon ("icons/opt.png"));
+		JLabel opticon2 = new JLabel (new ImageIcon ("icons/opt.png"));
+		JLabel optPresentationLabel = new JLabel ("Insert the optionals");
+		AppResources.changeFont(optPresentationLabel, Font.BOLD, 24);
+		optionalTitlePanel.add(opticon1);
+		optionalTitlePanel.add(optPresentationLabel);
+		optionalTitlePanel.add(opticon2);
+		optionalPanel.add(optionalTitlePanel);
+		
+		addCarPanel.add(optionalPanel);
 		
 		
 		
@@ -465,6 +584,7 @@ public class AddCarPanel extends JPanel{
 				newSupplier.setEnabled(false);
 				iconLabel.setIcon(new ImageIcon("icons/right.png"));
 				fillUsedPanel(onlyForUsedPanel);
+				
 			}
 			revalidate();
 			repaint();
@@ -546,6 +666,8 @@ public class AddCarPanel extends JPanel{
 		supportPanel.add(mileageLabel);
 		supportPanel.add(mileageField);
 		onlyForUsedPanel.add(supportPanel);
+		onlyForUsedPanel.add(Box.createRigidArea(new Dimension (0,35)));
+
 	}
 	
 	// action listener for adding a new supplier if it is not already present in the combo box "supplierList"
@@ -571,7 +693,6 @@ public class AddCarPanel extends JPanel{
 			JComboBox selectedCombo = (JComboBox) arg0.getSource();
 			String selectedMake = (String) selectedCombo.getSelectedItem();
 			model.removeAllItems();
-			model.addItem("All Models");
 
 			if (selectedMake != null && selectedMake.compareTo("All Makes") != 0) {
 				modelsList = GetListQuery.getModels(2, (String) make.getSelectedItem()); // See method comments for
