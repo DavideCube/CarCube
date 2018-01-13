@@ -542,29 +542,70 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			    	 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Address updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 		    		 MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey));
 		    	 }
-		    	 else
-		    	 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fields must respect the given constraints. \nOnly alphanumerics characters are allowed.\nMoreover, each field must be nonblank.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+		    	 else {
+		    		 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fields must respect the given constraints. \nOnly alphanumerics characters are allowed.\nMoreover, each field must be nonblank.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+		    		 return;
+		    	 }
 		      }
 		break;
 		case "phone":
 			
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's phone:", "Edit data", JOptionPane.QUESTION_MESSAGE);
-			//System.out.println("Number inserted: " + newValue);
-			updateContactInDB("phone", newValue, sourceId);
+			if(newValue.compareTo("") != 0) {
+				if(!newValue.matches("[A-Za-z]+") && (newValue.length() <= 25))
+					updateContactInDB("phone", newValue, sourceId);
+				else {
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Invalid input. A phone number cannot contain letters and cannot have more than 25 digits", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+					return;
+
+				}
+			}
+			else {
+				return;
+			}	
 			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Phone number updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
    		 	MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey));
+   		 	
 		break;
 		
 		case "mail":
-			
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+			if(newValue.compareTo("") != 0) {
+				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+				if(newValue.matches("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+") && (newValue.length() <= 40))
+					updateContactInDB("mail", newValue, sourceId);
+				else {
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Invalid input. Please insert a valid mail address. Svegliati, su.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+					return;
+				}
+				}
+				else {
+					return;
+				}
+				
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Mail address updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+   		 	MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey));
 		
 		break;
 		
 		case "fax":
-			
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
-		
+			if(newValue.compareTo("") != 0) {
+				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+				if(newValue.matches("[A-Za-z]+") && (newValue.length() <= 30))
+					updateContactInDB("fax", newValue, sourceId);
+				else {
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Invalid input. Please insert a valid fax address. Svegliati, su.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+					return;
+
+				}
+				
+				JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fax number updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+   		 		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey));
+				}
+				else {
+					return;
+				}
 		break;
 		
 		}
@@ -659,6 +700,24 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			}
 		}
 	}
+	if(buttonName.contains("Mail")) {
+		String[] mails = getMails();
+		for(int i = 0; i < mails.length; i++) {
+			if(buttonName.contains("" + (i + 1))) {
+				System.out.println("" + (i+1) + " is fucking equal to " + buttonName);
+				previous = mails[i];
+			}
+		}
+	}
+	if(buttonName.contains("Fax")) {
+		String[] faxes = getFaxes();
+		for(int i = 0; i < faxes.length; i++) {
+			if(buttonName.contains("" + (i + 1))) {
+				System.out.println("" + (i+1) + " is fucking equal to " + buttonName);
+				previous = faxes[i];
+			}
+		}
+	}
 	switch(type){
 	case("phone"):
 			
@@ -667,12 +726,12 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	break;
 	
 	case("mail"): 
-			sql = "UPDATE mail_contact SET mail = '" + newVal + "' WHERE owner_customer = '" + customerPkey + "'";
+			sql = "UPDATE mail_contact SET mail = '" + newVal + "' WHERE owner_customer = '" + customerPkey + "' AND mail = '" + previous + "'";
 			System.out.println("Mail updated. New mail: " + newVal);
 	break;
 	
 	case("fax"): 
-			sql = "UPDATE fax_contact SET fax = '" + newVal + "' WHERE owner_customer = '" + customerPkey + "'";
+			sql = "UPDATE fax_contact SET fax = '" + newVal + "' WHERE owner_customer = '" + customerPkey + "' And fax = '" + previous + "'";
 			System.out.println("Fax updated. New fax: " + newVal);
 	break;
 			
