@@ -529,10 +529,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		
 		addBtn.addActionListener(new AddContactListener());
 		
-		//introduce our friend JScrollPane
-		JScrollPane pane = new JScrollPane();
-		this.add(pane, BorderLayout.CENTER);
-		
 	}
 	
 	private void editSimpleField(String sourceId) {
