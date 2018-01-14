@@ -672,7 +672,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			try {
 				stmnt = conn.createStatement();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -687,7 +686,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		    		 switch(choice) {
 		    		 case("Phone contact"):
 		    			 //TODO
-		    			 //sql = "INSERT INTO phone_contact VALUES ('" + addContactPanel.getUserInput() + "', NULL, '" + customerPkey + "')";
+		    			 sql = "INSERT INTO phone_contact VALUES ('" + addContactPanel.getUserInput() + "', '" + supplierPkey + "', NULL)";
 		    		 	 try {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Phone contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
@@ -702,7 +701,8 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		    		 
 		    		 case("Mail contact"):
 		    			 
-		    			 //TODO sql = "INSERT INTO mail_contact VALUES ('" + addContactPanel.getUserInput() + "', NULL, '" + supplierPkey + "')";
+		    			 //TODO 
+		    			 sql = "INSERT INTO mail_contact VALUES ('" + addContactPanel.getUserInput() + "', '" + supplierPkey + "', NULL)";
 		    		 	 try {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Mail contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
@@ -715,7 +715,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		    		 	 
 		    		 case("Fax contact"):
 		    			 //TODO
-		    			 //sql = "INSERT INTO fax_contact VALUES ('" + addContactPanel.getUserInput() + "', NULL, '" + customerPkey + "')";
+		    			 //sql = "INSERT INTO fax_contact VALUES ('" + addContactPanel.getUserInput() + "', '" + customerPkey + "', NULL)";
 		    		 	 try {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fax contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
