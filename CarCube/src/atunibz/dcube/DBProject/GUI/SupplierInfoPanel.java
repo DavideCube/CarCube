@@ -1,6 +1,7 @@
 package atunibz.dcube.DBProject.GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,20 +15,33 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import atunibz.dcube.DBProject.configuration.AppResources;
+
+
+
+
 
 public class SupplierInfoPanel extends BackgroundedPanel {
 	
 	private String supplierPkey;
+	private AddressEditPanel addressEditPanel;
 	private IconLabel nameLbl, addressLbl, vatLbl;
 	private int numberOfPhones, numberOfMails, numberOfFaxes;
 	private JLabel nameTF, addressTF, vatTF;
-	private JButton backBtn, statsBtn, deleteBtn, modifyBtn;
+	private JButton backBtn, statsBtn, addBtn, modifyBtn;
+	
 	public SupplierInfoPanel(String supplierPkey) {
 		this.supplierPkey = supplierPkey;
+		this.addressEditPanel = new AddressEditPanel();
 		getNumberOfContacts();
 		initComponents();
 		configLayout();
@@ -168,9 +182,13 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		vatTF.setText(supplierPkey);
 		//buttons
 		backBtn = new JButton("Back");
+		backBtn.setIcon(new ImageIcon("icons/back.png"));
 		statsBtn = new JButton("Stats");
-		deleteBtn = new JButton("Delete");
+		statsBtn.setIcon(new ImageIcon("icons/graph.png"));
+		addBtn = new JButton("Add contact");
+		addBtn.setIcon(new ImageIcon("icons/plus.png"));
 		modifyBtn = new JButton("Modify");
+		modifyBtn.setIcon(new ImageIcon("icons/modify.png"));
 	}
 	
 	private int addPhoneLabels(GridBagConstraints c, JPanel infoPanel) {
@@ -316,10 +334,125 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		backBtn.addActionListener(new BackListener());
 		btnPanel.add(statsBtn);
 		btnPanel.add(modifyBtn);
-		btnPanel.add(deleteBtn);
-		deleteBtn.addActionListener(new DeleteListener());
+		btnPanel.add(addBtn);
+		addBtn.addActionListener(new DeleteListener());
 		
-		this.add(btnPanel, BorderLayout.SOUTH);
+		this.add(btnPanel, BorderLayout.SOUTH);	
+	}
+	
+	
+	////////////////////////////////////INNER CLASSES///////////////////////////////////////////////////
+	
+	private class AddressEditPanel extends JPanel{
+		JTextField zipTF, streetTF, cityTF, civNumTF, nationTF;
+		
+		public AddressEditPanel() {
+			this.setLayout(new GridBagLayout());
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.anchor = GridBagConstraints.LINE_START;
+			zipTF = new JTextField(5);
+			streetTF = new JTextField(10);
+			cityTF = new JTextField(10);
+			civNumTF = new JTextField(5);
+			nationTF = new JTextField(10);
+			
+			
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			this.add(new JLabel("Postcode: "), gbc);
+			gbc.gridx = 1;
+			this.add(zipTF, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 1;
+			this.add(new JLabel("Street: "), gbc);
+			gbc.gridx = 1;
+			this.add(streetTF, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 2;
+			this.add(new JLabel("City: "), gbc);
+			gbc.gridx = 1;
+			this.add(cityTF, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 3;
+			this.add(new JLabel("Civic number: "), gbc);
+			gbc.gridx = 1;
+			this.add(civNumTF, gbc);
+			
+			gbc.gridx = 0;
+			gbc.gridy = 4;
+			this.add(new JLabel("Nation: "), gbc);
+			gbc.gridx = 1;
+			this.add(nationTF, gbc);
+		}
+		
+		public boolean sanitizeInput() {
+			
+			if((!zipTF.getText().matches("\\d+")) || zipTF.getText().length() > 5) {
+				zipTF.setText("");
+				return false;
+			}
+			if(!streetTF.getText().matches("[A-Za-z0-9\\s]+") || streetTF.getText().length() > 30) {
+				streetTF.setText("");
+				return false;
+			}
+			if(!cityTF.getText().matches("[A-Za-z0-9\\s]+") || cityTF.getText().length() > 20) {
+				cityTF.setText("");
+				return false;
+			}
+			if(!civNumTF.getText().matches("\\d+") || civNumTF.getText().length() <= 0 || Integer.parseInt(civNumTF.getText()) <= 0) {
+				civNumTF.setText("");
+				return false;
+			}
+			if(!nationTF.getText().matches("[A-Za-z0-9\\s]+") || nationTF.getText().length() > 30) {
+				nationTF.setText("");
+				return false;
+			}
+			
+			return true;
+		}
+	}
+	
+	
+	private class AddContactPanel extends JPanel{
+		protected JComboBox comboBox;
+		protected JTextField inputTF;
+		final String[] choices = {"Phone contact", "Mail contact", "Fax contact"};
+		
+		protected AddContactPanel() {
+			comboBox = new JComboBox(choices);
+			inputTF = new JTextField(10);
+			this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+			this.add(comboBox);
+			this.add(Box.createRigidArea(new Dimension(100, 10)));
+			this.add(inputTF);
+		}
+		
+		protected String getContactType() {
+			return (String) comboBox.getSelectedItem();
+		}
+		
+		protected String getUserInput() {
+			return (String)inputTF.getText();
+		}
+		
+		protected boolean sanitizeInput() {
+			String input = inputTF.getText();
+			if(input.compareTo("") == 0)
+				return false;
+			if(getContactType().compareTo("Phone contact") == 0) {
+				return (!input.matches("[A-Za-z]+") && (input.length() <= 25)) ? true : false;
+			}
+			if(getContactType().compareTo("Mail contact") == 0) {
+				return (input.matches("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+") && (input.length() <= 40)) ? true : false;
+			}
+			if(getContactType().compareTo("Fax contact") == 0) {
+				return (!input.matches("[A-Za-z]+") && (input.length() <= 30)) ? true : false;
+			}
+			return false;
+		}
 		
 		
 	}

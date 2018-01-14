@@ -15,8 +15,27 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 
 import atunibz.dcube.DBProject.configuration.AppResources;
+
+
+
+
+
+//Per Cremo:
+
+//     _        _       _ _   _
+//    | |      (_)     (_) | | |       
+//___ | |_ __ _ _   _____| |_| |_ ___  
+/// __| __/ _` | | |_  / | __| __/ _ \ 
+//\__ \ || (_| | |  / /| | |_| || (_) |
+//|___/\__\__,_|_| /___|_|\__|\__\___/ 
+//                              
+//                              
+
+
+
 
 public class CustomerInfoPanel extends BackgroundedPanel {
 	
@@ -28,6 +47,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private JButton backBtn, statsBtn, addBtn, modifyBtn;
 	private ImageIcon modifyIcon;
 	private JPanel infoPanel;
+	private JScrollPane scrollPane;
 	private ArrayList<JButton> buttons;
 	
 	public CustomerInfoPanel(String customerPkey) {
@@ -193,10 +213,17 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		addressTF.setText(this.getCustomerAddress());
 		//buttons
 		backBtn = new JButton("Back");
+		backBtn.setOpaque(false);
+		backBtn.setIcon(new ImageIcon("icons/back.png"));
 		statsBtn = new JButton("Stats");
+		statsBtn.setOpaque(false);
+		statsBtn.setIcon(new ImageIcon("icons/graph.png"));
 		addBtn = new JButton("Add contact");
+		addBtn.setOpaque(false);
+		addBtn.setIcon(new ImageIcon("icons/plus.png"));
 		modifyBtn = new JButton("Modify");
-		
+		modifyBtn.setOpaque(false);
+		//need modify icon many times
 		try {
 			modifyIcon = new ImageIcon(ImageIO.read(new File("icons/contacts/modify.png")));
 			modifyBtn.setIcon(modifyIcon);
@@ -220,6 +247,8 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		buttons = new ArrayList<>();
 		
 		infoPanel = new JPanel();
+		
+		scrollPane = new JScrollPane(infoPanel);
 		
 		
 	}
@@ -330,7 +359,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			infoPanel.add(faxLbl, c);
 			c.gridx = offsetX + 1;
 			infoPanel.add(faxTF, c);
-			//
+			/*
 			c.gridx = ++c.gridx;
 			JButton modFaxBtn = new JButton();
 			modFaxBtn.setIcon(modifyIcon);
@@ -338,7 +367,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			infoPanel.add(modFaxBtn, c);
 			modFaxBtn.setName("modFaxBtn" + 0);
 			buttons.add(modFaxBtn);
-			//
+			*/
 			c.gridy = ++c.gridy;
 			c.gridx = 0;
 			return c.gridy;
@@ -373,9 +402,9 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	
 	private void configLayout() {
 			
-		this.setLayout(new BorderLayout());
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		//add title
-		/*
+		
 		JPanel shPanel = new JPanel();
 		shPanel.setLayout(new BoxLayout(shPanel, BoxLayout.Y_AXIS));
 		shPanel.add((Box.createRigidArea(new Dimension(0, 35))));
@@ -383,8 +412,15 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		JPanel titlePanel = AppResources.carCubePanel();
 		shPanel.add(titlePanel);
 		shPanel.setOpaque(false);
-		//shPanel.add((Box.createRigidArea(new Dimension(0, 30))));
-		this.add(shPanel, BorderLayout.NORTH);*/
+		shPanel.add((Box.createRigidArea(new Dimension(0, 30))));
+		this.add(shPanel);
+		
+		scrollPane.setPreferredSize(new Dimension(100, 400));
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		//temporary border to spot jscrollpane dimension
+		scrollPane.setBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.RED));
+		this.add(scrollPane);
+		
 		infoPanel.setOpaque(false);
 		
 		GridBagLayout l = new GridBagLayout();
@@ -467,10 +503,11 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		c.gridy = offsetY;
 		offsetY = addFaxLabels(c, infoPanel) + 1;
 		
-		this.add(infoPanel, BorderLayout.CENTER);
+		//this.add(infoPanel, BorderLayout.CENTER);
 		
 		//set up buttons
 		JPanel btnPanel = new JPanel();
+		btnPanel.setOpaque(false);
 		btnPanel.setLayout(new FlowLayout());
 		btnPanel.add(backBtn);
 		backBtn.addActionListener(new BackListener());
@@ -479,8 +516,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		btnPanel.add(addBtn);
 		c.gridy = offsetY + 2;
 		c.gridx = 1;
-		infoPanel.add(btnPanel, c);
-		
+		//infoPanel.add(btnPanel, c);
+		this.add(btnPanel);
+		this.add((Box.createRigidArea(new Dimension(0, 30))));
+		this.add((Box.createRigidArea(new Dimension(0, 30))));
 		//disable all buttons
 		for(JButton curr : buttons) {
 			curr.setVisible(false);
@@ -489,6 +528,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		modifyBtn.addActionListener(new EnableButtonsListener());
 		
 		addBtn.addActionListener(new AddContactListener());
+		
+		//introduce our friend JScrollPane
+		JScrollPane pane = new JScrollPane();
+		this.add(pane, BorderLayout.CENTER);
 		
 	}
 	
@@ -967,8 +1010,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		}
 	
 	
-	
-	
 	private class AddContactListener implements ActionListener{
 		private AddContactPanel addContactPanel;
 		private Connection conn;
@@ -1043,7 +1084,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		    		 MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
 		    	 }
 		    	 else {
-		    		 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fields must respect the given constraints\n and fields cannot be blank.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+		    		 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert a valid contact information.\nField cannot be left blank.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 		    		 return;
 		    	 }
 		      }
