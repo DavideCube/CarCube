@@ -56,6 +56,7 @@ public class ViewCarPanel extends JPanel {
 
 	public ViewCarPanel(String id, boolean newCar) {
 
+		
 		// make global for listeners and support methods
 		isNewCar = newCar;
 		carId = id;
