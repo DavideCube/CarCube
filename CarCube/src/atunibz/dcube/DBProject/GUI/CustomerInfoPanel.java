@@ -528,8 +528,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			curr.setVisible(false);
 		}
 		
-		//modifyBtn.addActionListener(new EnableButtonsListener());
-		modifyBtn.addActionListener(new BuyListener());
+		modifyBtn.addActionListener(new EnableButtonsListener());
 		addBtn.addActionListener(new AddContactListener());
 		
 	}
@@ -1007,26 +1006,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		}
 			
 		}
-	// listener for buying a car
-		private class BuyListener implements ActionListener {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JPanel gifPanel = new JPanel();
-				gifPanel.setLayout(new BoxLayout(gifPanel, BoxLayout.Y_AXIS));
-				JLabel myGIF = new JLabel (new ImageIcon("icons/200.gif"));
-				JLabel bought = new JLabel ("Car bought!");
-				myGIF.setAlignmentX(CENTER_ALIGNMENT);
-				bought.setAlignmentX(CENTER_ALIGNMENT);
-				gifPanel.add(myGIF);
-				gifPanel.add(bought);
-				AppResources.changeFont(bought, Font.BOLD, 25);
-				JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube",
-						JOptionPane.PLAIN_MESSAGE);
-				
-			}
-			
-		}
+	
 	
 	private class AddContactListener implements ActionListener{
 		private AddContactPanel addContactPanel;
