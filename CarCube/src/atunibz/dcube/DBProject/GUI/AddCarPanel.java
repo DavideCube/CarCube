@@ -32,7 +32,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
+
 
 import atunibz.dcube.DBProject.configuration.AppResources;
 import atunibz.dcube.DBProject.configuration.GetListQuery;
@@ -52,6 +52,8 @@ public class AddCarPanel extends JPanel{
 	private JTextField capacityField, hPowerField, euroField, lengthField, heightField, widthField, trunkField, weightField;
 	private JTextField licenseField, mileageField, aspetRatioField, tireWField, diameterField;
 	private ArrayList<JCheckBox> optionals;
+	private int totalPrice;
+	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
 	
 	// Constructor
@@ -465,7 +467,7 @@ public class AddCarPanel extends JPanel{
 		JLabel tireTypeLabel = new JLabel ("Type");
 		AppResources.changeFont(tireTypeLabel, Font.PLAIN, 18);
 		String [] tire1 = {"P: Passenger Car", "LT: Light Truck", "ST: Special Trailer"};
-		String [] tire2 = {"R: Radial", "D: diagonal", "B: Bias belt"};
+		String [] tire2 = {"R: Radial", "D: Diagonal", "B: Bias belt"};
 		String [] tire3 = {"Summer", "Winter", "Universal"};
 		serviceType = new JComboBox <String> (tire1);
 		serviceType.setPrototypeDisplayValue("XXXXXXXXXXXXXXX");
@@ -556,7 +558,7 @@ public class AddCarPanel extends JPanel{
 		
 		// scroll panel
 		optionals = new ArrayList<JCheckBox>();
-		populateOptionalsCheckBoxes(0, false);
+		populateOptionalsCheckBoxes();
 		JPanel container = new JPanel();
 		container.setOpaque(false);
 		contentOpt = new JPanel();
@@ -684,14 +686,13 @@ public class AddCarPanel extends JPanel{
 	}
 	
 	// method for populating the array list of comboBoxes
-	public void populateOptionalsCheckBoxes(int optkey, boolean selectAnOpt) {
+	public void populateOptionalsCheckBoxes() {
 		optionals.removeAll(optionals);
 		String query = "SELECT *  from optional";
 
 		try {
 			Statement stat = conn.createStatement();
 			ResultSet rs = stat.executeQuery(query);
-			NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 			while (rs.next()) {
 				int price = rs.getInt("price");
 				currencyFormat = NumberFormat.getCurrencyInstance();
@@ -699,17 +700,8 @@ public class AddCarPanel extends JPanel{
 				JCheckBox temp = new JCheckBox(rs.getString("opt_name") + " - " + priceFormatted);
 				temp.setOpaque(false);
 				AppResources.changeFont(temp, Font.PLAIN, 20);
-				if (selectAnOpt && optkey == rs.getInt("optional_id"))
-					temp.setSelected(true);
 				optionals.add(temp);
 			}
-			// sort the array with comparator
-			Collections.sort(optionals, new Comparator <JCheckBox> () {
-				@Override
-				public int compare(JCheckBox o1, JCheckBox o2) {
-					return o1.getText().compareTo(o2.getText());
-				}
-			});
 			stat.close();
 			rs.close();
 		} catch (SQLException e) {
@@ -766,6 +758,13 @@ public class AddCarPanel extends JPanel{
 	// method for filling the panel that contains list of checkboxes
 	public void fillOptionalPanel (ArrayList<JCheckBox> optionals) {
 		contentOpt.removeAll();
+		// sort the array with comparator
+		Collections.sort(optionals, new Comparator<JCheckBox>() {
+			@Override
+			public int compare(JCheckBox o1, JCheckBox o2) {
+				return o1.getText().compareTo(o2.getText());
+			}
+		});
 		for (JCheckBox c : optionals) {
 			JPanel auxiliaryPanel = new JPanel();
 			auxiliaryPanel.setLayout(new BorderLayout());
@@ -844,11 +843,15 @@ public class AddCarPanel extends JPanel{
 						stat2.setString(1, name);
 						stat2.setInt(2, priceVal);
 						stat2.executeUpdate();
-						int generatedKey = 0;
-						ResultSet r2 = stat2.getGeneratedKeys();
-						if(r2.next())
-							generatedKey = r2.getInt(1);
-						populateOptionalsCheckBoxes(generatedKey, true);
+						// create selected checkbox
+						currencyFormat = NumberFormat.getCurrencyInstance();
+						String priceFormatted = currencyFormat.format(priceVal);
+						JCheckBox temp = new JCheckBox(name + " - " + priceFormatted);
+						temp.setOpaque(false);
+						AppResources.changeFont(temp, Font.PLAIN, 20);
+						temp.setSelected(true);
+						optionals.add(temp);
+						
 						fillOptionalPanel(optionals);
 						
 						stat2.close();
