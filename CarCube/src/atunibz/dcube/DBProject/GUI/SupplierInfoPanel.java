@@ -924,7 +924,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Phone contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				    		MainPanel.getMainPanel().swapPanel(new SupplierInfoPanel(supplierPkey));
-				    		return;
+				    		//return;
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
