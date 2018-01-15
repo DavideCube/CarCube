@@ -41,6 +41,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import atunibz.dcube.DBProject.GUI.ColorsPanel.ColorCheckBox;
 import atunibz.dcube.DBProject.configuration.AppResources;
 import atunibz.dcube.DBProject.configuration.GetListQuery;
 
@@ -60,6 +61,7 @@ public class AddCarPanel extends JPanel{
 	private JTextField licenseField, mileageField, aspetRatioField, tireWField, diameterField;
 	private ArrayList<JCheckBox> optionals;
 	private double totalPrice = 0;
+	private ArrayList<ColorCheckBox> colors;
 	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 	private File fileInserted;
 
@@ -545,6 +547,7 @@ public class AddCarPanel extends JPanel{
 		content.setOpaque(false);
 		supportPanel.add(content);
 		colorPanel.add(supportPanel);
+		colors = colPanel.getColorCheckBoxes();
 		
 		addCarPanel.add(colorPanel);
 		addCarPanel.add(Box.createRigidArea(new Dimension (0,35)));
@@ -640,17 +643,7 @@ public class AddCarPanel extends JPanel{
 		addCarPanel.add(buttonP);
 
 
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
 		
 		// IT'S LISTENER TIME
 		newCar.addActionListener(new RadioButtonListener ());
@@ -662,7 +655,21 @@ public class AddCarPanel extends JPanel{
 		uploadImage.addActionListener(new UploadListener());
 		buyCar.addActionListener(new BuyListener());
 		priceField.getDocument().addDocumentListener(new changedTextListener(true, "Price", priceField));
-		
+		doorsField.getDocument().addDocumentListener(new changedTextListener(false, "Doors", doorsField));
+		seatsField.getDocument().addDocumentListener(new changedTextListener(false, "Seats", seatsField));
+		capacityField.getDocument().addDocumentListener(new changedTextListener(false, "Capacity", capacityField));
+		hPowerField.getDocument().addDocumentListener(new changedTextListener(false, "Horsepower", hPowerField));
+		euroField.getDocument().addDocumentListener(new changedTextListener(false, "Euro", euroField));
+		lengthField.getDocument().addDocumentListener(new changedTextListener(false, "Length", lengthField));
+		heightField.getDocument().addDocumentListener(new changedTextListener(false, "Height", heightField));
+		widthField.getDocument().addDocumentListener(new changedTextListener(false, "Width", widthField));
+		trunkField.getDocument().addDocumentListener(new changedTextListener(false, "Trunk capacity", trunkField));
+		weightField.getDocument().addDocumentListener(new changedTextListener(false, "Weight", weightField));
+		aspetRatioField.getDocument().addDocumentListener(new changedTextListener(false, "Aspet Ratio", aspetRatioField));
+		tireWField.getDocument().addDocumentListener(new changedTextListener(false, "Tire width", tireWField));
+		diameterField.getDocument().addDocumentListener(new changedTextListener(false, "Diameter", diameterField));
+
+
 		for (JCheckBox c : optionals)
 			c.addItemListener(new OptSelectionListener());
 		
@@ -670,32 +677,7 @@ public class AddCarPanel extends JPanel{
 		add(addCarPanel);
 	}
 	
-	private class RadioButtonListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JRadioButton selected = (JRadioButton) e.getSource();
-			if (selected == newCar) {
-				customerChoice.setEnabled(false);
-				newCustomer.setEnabled(false);
-				supplierChoice.setEnabled(true);
-				newSupplier.setEnabled(true);
-				iconLabel.setIcon(new ImageIcon("icons/left.png"));
-				onlyForUsedPanel.removeAll();
-			}
-			else {
-				customerChoice.setEnabled(true);
-				newCustomer.setEnabled(true);
-				supplierChoice.setEnabled(false);
-				newSupplier.setEnabled(false);
-				iconLabel.setIcon(new ImageIcon("icons/right.png"));
-				fillUsedPanel(onlyForUsedPanel);
-				
-			}
-			revalidate();
-			repaint();
-		}
-	}
+	
 	//  method for retrieving the list of suppliers and customers
 	public String [] getStakeholderQuery (String table) {
 		ArrayList <String> resultList = null;
@@ -792,6 +774,7 @@ public class AddCarPanel extends JPanel{
 		AppResources.changeFont(mileageLabel, Font.PLAIN, 18);
 		licenseField = new JTextField(10);
 		mileageField = new JTextField(10);
+		mileageField.getDocument().addDocumentListener(new changedTextListener(false, "Mileage", mileageField));
 		supportPanel.add(licenseLabel);
 		supportPanel.add(licenseField);
 		supportPanel.add(Box.createRigidArea(new Dimension(20, 0)));
@@ -802,19 +785,6 @@ public class AddCarPanel extends JPanel{
 
 	}
 	
-	// action listener for adding a new supplier if it is not already present in the combo box "supplierList"
-	private class AddStakeholderListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JButton selected = (JButton) e.getSource();
-			if (selected == newSupplier)
-				MainPanel.getMainPanel().swapPanel(new addSupplierPanel(true));
-			else
-				MainPanel.getMainPanel().swapPanel(new addCustomerPanel(true));
-			
-		}
-	}
 	
 	// method for filling the panel that contains list of checkboxes
 	public void fillOptionalPanel (ArrayList<JCheckBox> optionals) {
@@ -837,221 +807,8 @@ public class AddCarPanel extends JPanel{
 		
 	}
 	
-	// listener for the change item make field
-	private class MakeListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			// Change model accordingly
-			JComboBox selectedCombo = (JComboBox) arg0.getSource();
-			String selectedMake = (String) selectedCombo.getSelectedItem();
-			model.removeAllItems();
-
-			if (selectedMake != null && selectedMake.compareTo("All Makes") != 0) {
-				modelsList = GetListQuery.getModels(2, (String) make.getSelectedItem()); // See method comments for
-																							// more info
-				for (String s : modelsList)
-					model.addItem(s);
-			}
-
-			
-		}
-
-	}
-	
-	// listener for buying a car
-	private class BuyListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JPanel gifPanel = new JPanel();
-			gifPanel.setLayout(new BoxLayout(gifPanel, BoxLayout.Y_AXIS));
-			JLabel myGIF = new JLabel (new ImageIcon("icons/200.gif"));
-			JLabel bought = new JLabel ("Car bought!");
-			myGIF.setAlignmentX(CENTER_ALIGNMENT);
-			bought.setAlignmentX(CENTER_ALIGNMENT);
-			gifPanel.add(myGIF);
-			gifPanel.add(bought);
-			AppResources.changeFont(bought, Font.BOLD, 25);
-			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube",
-					JOptionPane.PLAIN_MESSAGE);
-			
-		}
-		
-	}
-	// listener for adding another optional
-	private class AddOptionalListener implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			int result = JOptionPane.showConfirmDialog(MainPanel.getMainPanel(), addOptionalPanel, "CarCube", JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, new ImageIcon ("icons/minilogo.png"));
-			if (result == JOptionPane.OK_OPTION) {
-				String name = addOptionalPanel.nameField.getText();
-				String price = addOptionalPanel.priceField.getText();
-				int priceVal = 0;
-				
-				if (name.compareTo("") == 0) {
-					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert a name for the optional", "CarCube",
-							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
-					return;
-				}
-				if (price.compareTo("") == 0) {
-					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert a price for the optional", "CarCube",
-							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
-					return;
-				}
-				try {
-					priceVal = Integer.parseInt(price);
-				} catch (NumberFormatException n) {
-
-					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Price must be a valid number", "CarCube",
-							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
-					return;
-				}
-				try {
-					// control if the optional is already present in the database
-					String query = "SELECT * FROM optional WHERE UPPER(opt_name) = UPPER(?) AND price = ?";
-					PreparedStatement stat = conn.prepareStatement(query);
-					stat.setString(1, name);
-					stat.setInt(2, priceVal);
-					ResultSet rs = stat.executeQuery();
-					// if we have a result, then this optional is already present
-					if (rs.next()) {
-						JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "This specific optional is already present in the Database", "CarCube",
-								JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
-					}
-					else {
-						String insertQuery = "INSERT INTO optional (opt_name, price) VALUES (?, ?)";
-						PreparedStatement stat2 = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
-						stat2.setString(1, name);
-						stat2.setInt(2, priceVal);
-						stat2.executeUpdate();
-						// create selected checkbox
-						currencyFormat = NumberFormat.getCurrencyInstance();
-						String priceFormatted = currencyFormat.format(priceVal);
-						JCheckBox temp = new JCheckBox(name + " - " + priceFormatted);
-						temp.setOpaque(false);
-						AppResources.changeFont(temp, Font.PLAIN, 20);
-						temp.addItemListener(new OptSelectionListener());
-						temp.setSelected(true);
-						optionals.add(temp);
-						priceUpdating();
-						
-						fillOptionalPanel(optionals);
-						
-						stat2.close();
-						JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Optional inserted", "CarCube",
-								JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
-					}
-
-					stat.close();
-					rs.close();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-				
-		}
-		
-	}
-	
-	// listener for uploading an image
-	private class UploadListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// file chooser
-			JFileChooser fileC = new JFileChooser ();
-			fileC.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			fileC.setFileFilter(new FileNameExtensionFilter ("Only JPG files", "jpg"));
-			// response
-			int reply = fileC.showOpenDialog(null);
-			if (reply == JFileChooser.APPROVE_OPTION) {
-				uploadLabel.setText(fileC.getSelectedFile().getName());
-				fileInserted = fileC.getSelectedFile();
-			}
-		}
-	}
-	
-	// document listener for the JTextField components, the changedListener above
-	// would not have worked
-	private class changedTextListener implements DocumentListener {
-		boolean priceTextField;
-		String nameField;
-		JTextField selected;
-		public changedTextListener (boolean priceTextField, String nameField, JTextField selected) {
-			this.priceTextField = priceTextField;
-			this.nameField = nameField;
-			this.selected = selected;
-		}
-		@Override
-		public void changedUpdate(DocumentEvent arg0) {
-			act();
-
-		}
-
-		@Override
-		public void insertUpdate(DocumentEvent arg0) {
-			act();
-
-		}
-
-		@Override
-		public void removeUpdate(DocumentEvent arg0) {
-			act();
-
-		}
-
-		public void act() {
-			try {
-				if (selected.getText().compareTo("") != 0) {
-					int intInserted = 0;
-					if (priceTextField) {
-						totalPrice = Double.parseDouble(priceField.getText());
-						
-						priceUpdating();
-					} else
-						intInserted = Integer.parseInt(selected.getText());
-				}
-				else
-					buyCar.setText("Buy Car");
-					
-
-			} catch (NumberFormatException n) {
-				JOptionPane.showMessageDialog(MainPanel.getMainPanel(), nameField + " must be an integer", "CarCube",
-						JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
-			}
-		}
-
-	}
-	
-	// listener for the selection of an optional
-	private class OptSelectionListener implements ItemListener {
-
-		@Override
-		public void itemStateChanged(ItemEvent e) {
-			JCheckBox selected = (JCheckBox) e.getItem();
-			// first of all, control that another optional with same name is not selected
-			if (selected.isSelected()) {
-				for (JCheckBox c : optionals) {
-					if (c != selected && c.isSelected() && c.getText().substring(0, c.getText().indexOf(" -"))
-							.compareTo(selected.getText().substring(0, selected.getText().indexOf(" -"))) == 0) {
-						JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "This optional is already selected",
-								"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
-						selected.setSelected(false);
-
-					}
-				}
-				
-			}
-			priceUpdating();
-			
-
-		}
-	}
-	
 	// method for calculate totalPrice and set button
-	public void priceUpdating () {
+	public void priceUpdating() {
 		if (priceField.getText().compareTo("") != 0) {
 			totalPrice = Double.parseDouble(priceField.getText());
 			for (JCheckBox c : optionals) {
@@ -1070,16 +827,114 @@ public class AddCarPanel extends JPanel{
 					totalPrice += optionalPrice;
 				}
 			}
-		}
-		else
+		} else
 			totalPrice = 0;
-		
+
 		if (totalPrice == 0) {
 			buyCar.setText("Buy Car");
-		}
-		else
+		} else
 			buyCar.setText("Buy Car - " + currencyFormat.format(totalPrice));
 	}
+	
+	// method for checking all the constraints
+	public boolean respectConstraints () {
+		if (wrongNumber (doorsField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Doors must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (seatsField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Seats must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (priceField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Price must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (hPowerField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Horsepower must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (capacityField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Capacity must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (euroField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Euro must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (lengthField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Length must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (heightField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Height must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (widthField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Width must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (trunkField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Trunk capacity must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (weightField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Weight must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (aspetRatioField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Tire Aspet Ratio must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (tireWField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Tire width must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (wrongNumber (diameterField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Tire Diameter must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (usedCar.isSelected() && wrongNumber (mileageField)) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Mileage must be an integer and cannot be empty","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		if (usedCar.isSelected() && licenseField.getText().equals("")) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert the license plate of the used car","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		// at least one color has to be selected
+		boolean colorSelected = false;
+		for(int i = 0; i < colors.size(); i++) {
+			if(colors.get(i).getCheckBox().isSelected()) {
+				colorSelected = true;
+				break;
+			}
+		}
+		if (!colorSelected) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert at least one color for the car","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		// control image is uploaded
+		if (uploadLabel.getText().equals("") || !uploadLabel.getText().contains(".jpg")) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert a \"jpg\" image for the car","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
+		
+		return true;
+	}
+	
+	// method for seeing if a textField has a correct number
+	public boolean wrongNumber (JTextField textField) {
+		boolean result = false;
+		try {
+			int content = Integer.parseInt(textField.getText());
+		} catch (NumberFormatException e) {
+			result = true;
+		}
+		return result;
+	}
+	
+	
 	
 	
 	
@@ -1111,6 +966,264 @@ public class AddCarPanel extends JPanel{
 		}
 	}
 	
+	///////////////////////////////// LISTENERS /////////////////////////////////////////
+	
+	// listener for radio buttons
+	private class RadioButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JRadioButton selected = (JRadioButton) e.getSource();
+			if (selected == newCar) {
+				customerChoice.setEnabled(false);
+				newCustomer.setEnabled(false);
+				supplierChoice.setEnabled(true);
+				newSupplier.setEnabled(true);
+				iconLabel.setIcon(new ImageIcon("icons/left.png"));
+				onlyForUsedPanel.removeAll();
+			} else {
+				customerChoice.setEnabled(true);
+				newCustomer.setEnabled(true);
+				supplierChoice.setEnabled(false);
+				newSupplier.setEnabled(false);
+				iconLabel.setIcon(new ImageIcon("icons/right.png"));
+				fillUsedPanel(onlyForUsedPanel);
+
+			}
+			revalidate();
+			repaint();
+		}
+	}
+
+	// action listener for adding a new supplier if it is not already present in the
+	// combo box "supplierList"
+	private class AddStakeholderListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton selected = (JButton) e.getSource();
+			if (selected == newSupplier)
+				MainPanel.getMainPanel().swapPanel(new addSupplierPanel(true));
+			else
+				MainPanel.getMainPanel().swapPanel(new addCustomerPanel(true));
+
+		}
+	}
+
+	// listener for the change item make field
+	private class MakeListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// Change model accordingly
+			JComboBox selectedCombo = (JComboBox) arg0.getSource();
+			String selectedMake = (String) selectedCombo.getSelectedItem();
+			model.removeAllItems();
+
+			if (selectedMake != null && selectedMake.compareTo("All Makes") != 0) {
+				modelsList = GetListQuery.getModels(2, (String) make.getSelectedItem()); // See method comments for
+																							// more info
+				for (String s : modelsList)
+					model.addItem(s);
+			}
+
+		}
+
+	}
+
+	// listener for buying a car
+	private class BuyListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JPanel gifPanel = new JPanel();
+			gifPanel.setLayout(new BoxLayout(gifPanel, BoxLayout.Y_AXIS));
+			JLabel myGIF = new JLabel(new ImageIcon("icons/200.gif"));
+			JLabel bought = new JLabel("Car bought!");
+			myGIF.setAlignmentX(CENTER_ALIGNMENT);
+			bought.setAlignmentX(CENTER_ALIGNMENT);
+			gifPanel.add(myGIF);
+			gifPanel.add(bought);
+			AppResources.changeFont(bought, Font.BOLD, 25);
+			//JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube", JOptionPane.PLAIN_MESSAGE);
+			respectConstraints();
+		}
+
+	}
+
+	// listener for adding another optional
+	private class AddOptionalListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			int result = JOptionPane.showConfirmDialog(MainPanel.getMainPanel(), addOptionalPanel, "CarCube",
+					JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, new ImageIcon("icons/minilogo.png"));
+			if (result == JOptionPane.OK_OPTION) {
+				String name = addOptionalPanel.nameField.getText();
+				String price = addOptionalPanel.priceField.getText();
+				int priceVal = 0;
+
+				if (name.compareTo("") == 0) {
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert a name for the optional",
+							"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					return;
+				}
+				if (price.compareTo("") == 0) {
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert a price for the optional",
+							"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					return;
+				}
+				try {
+					priceVal = Integer.parseInt(price);
+				} catch (NumberFormatException n) {
+
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Price must be a valid number", "CarCube",
+							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					return;
+				}
+				try {
+					// control if the optional is already present in the database
+					String query = "SELECT * FROM optional WHERE UPPER(opt_name) = UPPER(?) AND price = ?";
+					PreparedStatement stat = conn.prepareStatement(query);
+					stat.setString(1, name);
+					stat.setInt(2, priceVal);
+					ResultSet rs = stat.executeQuery();
+					// if we have a result, then this optional is already present
+					if (rs.next()) {
+						JOptionPane.showMessageDialog(MainPanel.getMainPanel(),
+								"This specific optional is already present in the Database", "CarCube",
+								JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					} else {
+						String insertQuery = "INSERT INTO optional (opt_name, price) VALUES (?, ?)";
+						PreparedStatement stat2 = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
+						stat2.setString(1, name);
+						stat2.setInt(2, priceVal);
+						stat2.executeUpdate();
+						// create selected checkbox
+						currencyFormat = NumberFormat.getCurrencyInstance();
+						String priceFormatted = currencyFormat.format(priceVal);
+						JCheckBox temp = new JCheckBox(name + " - " + priceFormatted);
+						temp.setOpaque(false);
+						AppResources.changeFont(temp, Font.PLAIN, 20);
+						temp.addItemListener(new OptSelectionListener());
+						temp.setSelected(true);
+						optionals.add(temp);
+						priceUpdating();
+
+						fillOptionalPanel(optionals);
+
+						stat2.close();
+						JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Optional inserted", "CarCube",
+								JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					}
+
+					stat.close();
+					rs.close();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+		}
+
+	}
+
+	// listener for uploading an image
+	private class UploadListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// file chooser
+			JFileChooser fileC = new JFileChooser();
+			fileC.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fileC.setFileFilter(new FileNameExtensionFilter("Only JPG files", "jpg"));
+			// response
+			int reply = fileC.showOpenDialog(null);
+			if (reply == JFileChooser.APPROVE_OPTION) {
+				uploadLabel.setText(fileC.getSelectedFile().getName());
+				fileInserted = fileC.getSelectedFile();
+			}
+		}
+	}
+
+	// document listener for the JTextField components, the changedListener above
+	// would not have worked
+	private class changedTextListener implements DocumentListener {
+		boolean priceTextField;
+		String nameField;
+		JTextField selected;
+
+		public changedTextListener(boolean priceTextField, String nameField, JTextField selected) {
+			this.priceTextField = priceTextField;
+			this.nameField = nameField;
+			this.selected = selected;
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent arg0) {
+			act();
+
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent arg0) {
+			act();
+
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent arg0) {
+			act();
+
+		}
+
+		public void act() {
+			try {
+				if (selected.getText().compareTo("") != 0) {
+					int intInserted = 0;
+					if (priceTextField) {
+						totalPrice = Double.parseDouble(priceField.getText());
+
+						priceUpdating();
+					} else
+						intInserted = Integer.parseInt(selected.getText());
+				} else {
+					if (priceTextField)
+						buyCar.setText("Buy Car");
+				}
+				
+			} catch (NumberFormatException n) {
+				JOptionPane.showMessageDialog(MainPanel.getMainPanel(), nameField + " must be an integer", "CarCube",
+						JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+			}
+		}
+
+	}
+
+	// listener for the selection of an optional
+	private class OptSelectionListener implements ItemListener {
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			JCheckBox selected = (JCheckBox) e.getItem();
+			// first of all, control that another optional with same name is not selected
+			if (selected.isSelected()) {
+				for (JCheckBox c : optionals) {
+					if (c != selected && c.isSelected() && c.getText().substring(0, c.getText().indexOf(" -"))
+							.compareTo(selected.getText().substring(0, selected.getText().indexOf(" -"))) == 0) {
+						JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "This optional is already selected",
+								"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+						selected.setSelected(false);
+
+					}
+				}
+
+			}
+			priceUpdating();
+
+		}
+	}
+
 	
 
 }
