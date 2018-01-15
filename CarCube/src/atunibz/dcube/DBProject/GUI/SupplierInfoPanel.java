@@ -437,11 +437,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		c.gridx = 0;
 		c.gridy = offsetY;
 		offsetY = addFaxLabels(c, infoPanel) + 1;
-		
-		//this.add(infoPanel);
-		
-		//this.add((Box.createRigidArea(new Dimension(0, 30))));
-	//	this.add((Box.createRigidArea(new Dimension(0, 30))));
 		//disable all buttons
 		for(JButton curr : buttons) {
 			curr.setVisible(false);

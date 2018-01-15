@@ -1,4 +1,5 @@
 package atunibz.dcube.DBProject.GUI;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -11,15 +12,32 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class CarCubeManager {
 
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame ("CarCube");
+		JPanel g = new JPanel();
+		g.setLayout(new BoxLayout(g, BoxLayout.Y_AXIS));
+		JLabel myGIF = new JLabel (new ImageIcon("icons/contacts/contact.gif"));
+		//JLabel bought = new JLabel ("STAI ZITTO");
+		myGIF.setAlignmentX(Component.CENTER_ALIGNMENT);
+		//bought.setAlignmentX(CENTER_ALIGNMENT);
+		g.add(myGIF);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setPreferredSize(new Dimension(1435, 865));
+		if(System.getProperty("os.name").contains("Mac")) {
+			frame.getContentPane().add(MainPanel.getMainPanel());
+			MainPanel.getMainPanel().swapPanel(g);
+		}
+		else
+			frame.getContentPane().add(MainPanel.getMainPanel());
 		frame.getContentPane().add(MainPanel.getMainPanel());
 		frame.pack();
 		frame.setVisible(true);
@@ -64,5 +82,21 @@ public class CarCubeManager {
 		}
 		
 		System.out.print("Class loaded.\n");
+		
+		
+		
+		class SPanel extends JPanel{
+			
+			public SPanel(){
+				this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+				JLabel myGIF = new JLabel (new ImageIcon("icons/contacts/contact.gif"));
+				//JLabel bought = new JLabel ("STAI ZITTO");
+				myGIF.setAlignmentX(CENTER_ALIGNMENT);
+				//bought.setAlignmentX(CENTER_ALIGNMENT);
+				this.add(myGIF);
+			}
+		}
+		
+		
 	}
 }
