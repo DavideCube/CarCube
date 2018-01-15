@@ -267,7 +267,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				addressEditPanel.cityTF.setText(rs.getString(3));
 				addressEditPanel.zipTF.setText(rs.getString(4));
 				addressEditPanel.nationTF.setText(rs.getString(5));
-				rs.getString(6);
 			}
 			stmnt.close();
 		} catch (SQLException e) {
@@ -415,7 +414,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		shPanel.add((Box.createRigidArea(new Dimension(0, 30))));
 		this.add(shPanel);
 		
-		scrollPane.setPreferredSize(new Dimension(500, 400));
+		scrollPane.setPreferredSize(new Dimension(600, 400));
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		//temporary border to spot jscrollpane dimension
 		scrollPane.setBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.RED));
