@@ -23,21 +23,10 @@ public class CarCubeManager {
 	public static void main(String[] args) {
 		
 		JFrame frame = new JFrame ("CarCube");
-		JPanel g = new JPanel();
-		g.setLayout(new BoxLayout(g, BoxLayout.Y_AXIS));
-		JLabel myGIF = new JLabel (new ImageIcon("icons/contacts/contact.gif"));
-		//JLabel bought = new JLabel ("STAI ZITTO");
-		myGIF.setAlignmentX(Component.CENTER_ALIGNMENT);
-		//bought.setAlignmentX(CENTER_ALIGNMENT);
-		g.add(myGIF);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setPreferredSize(new Dimension(1435, 865));
-		if(System.getProperty("os.name").contains("Mac")) {
-			frame.getContentPane().add(MainPanel.getMainPanel());
-			MainPanel.getMainPanel().swapPanel(g);
-		}
-		else
-			frame.getContentPane().add(MainPanel.getMainPanel());
+		
+		frame.getContentPane().add(MainPanel.getMainPanel());
 		frame.getContentPane().add(MainPanel.getMainPanel());
 		frame.pack();
 		frame.setVisible(true);
