@@ -416,7 +416,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		modAddressBtn.setName("modAddressBtn");
 		buttons.add(modAddressBtn);
 		
-		
 		//set constraints and add vatcode
 		c.gridx = 0;
 		c.gridy = 3;
@@ -940,11 +939,12 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Mail contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				    		MainPanel.getMainPanel().swapPanel(new SupplierInfoPanel(supplierPkey));
-				    		return;
+				    	//	return;
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+		    		 	break;
 		    		 	 
 		    		 case("Fax contact"):
 		    			 //TODO
@@ -962,8 +962,8 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		    		 }
 		    		 
 		    		 
-		    		 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), " added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-		    		 MainPanel.getMainPanel().swapPanel(new SupplierInfoPanel(supplierPkey));
+		    		 //JOptionPane.showMessageDialog(MainPanel.getMainPanel(), " added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+		    		 //MainPanel.getMainPanel().swapPanel(new SupplierInfoPanel(supplierPkey));
 		    	 }
 		    	 else {
 		    		 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert a valid contact information.\nField cannot be left blank.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
