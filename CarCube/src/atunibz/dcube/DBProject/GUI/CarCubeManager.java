@@ -82,21 +82,5 @@ public class CarCubeManager {
 		}
 		
 		System.out.print("Class loaded.\n");
-		
-		
-		
-		class SPanel extends JPanel{
-			
-			public SPanel(){
-				this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-				JLabel myGIF = new JLabel (new ImageIcon("icons/contacts/contact.gif"));
-				//JLabel bought = new JLabel ("STAI ZITTO");
-				myGIF.setAlignmentX(CENTER_ALIGNMENT);
-				//bought.setAlignmentX(CENTER_ALIGNMENT);
-				this.add(myGIF);
-			}
-		}
-		
-		
 	}
 }

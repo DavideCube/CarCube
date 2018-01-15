@@ -461,7 +461,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 	}
 	
 	
-	
+	//edit fields
 	private void editField(String sourceId) {
 		String fieldName;
 		switch(sourceId) {
