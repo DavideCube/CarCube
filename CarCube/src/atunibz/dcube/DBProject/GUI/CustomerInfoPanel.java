@@ -267,7 +267,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				addressEditPanel.cityTF.setText(rs.getString(3));
 				addressEditPanel.zipTF.setText(rs.getString(4));
 				addressEditPanel.nationTF.setText(rs.getString(5));
-				rs.getString(6);
 			}
 			stmnt.close();
 		} catch (SQLException e) {
@@ -415,11 +414,15 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		shPanel.add((Box.createRigidArea(new Dimension(0, 30))));
 		this.add(shPanel);
 		
-		scrollPane.setPreferredSize(new Dimension(100, 400));
+		//scrollpanematriosked
+		scrollPane.setPreferredSize(new Dimension(600, 400));
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		//temporary border to spot jscrollpane dimension
 		scrollPane.setBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.RED));
-		this.add(scrollPane);
+		JPanel matrioska = new JPanel();
+		matrioska.setOpaque(false);
+		matrioska.add(scrollPane);
+		this.add(matrioska);
 		
 		infoPanel.setOpaque(false);
 		
@@ -531,7 +534,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		
 	}
 	
-	private void editSimpleField(String sourceId) {
+	private void editField(String sourceId) {
 		String fieldName;
 		switch(sourceId) {
 		case "modNameBtn": fieldName = "name";
@@ -940,7 +943,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				curr.setVisible(true);
 			}
 			System.out.println("Button " + source.getName() + " clicked.");
-			editSimpleField(source.getName());
+			editField(source.getName());
 		}
 		
 	}

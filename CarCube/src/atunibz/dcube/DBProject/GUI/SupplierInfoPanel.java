@@ -58,7 +58,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		getNumberOfContacts();
 		initComponents();
 		configLayout();
-		//getQueryResults();
 		
 	}
 	//select count(*) from phone_contact where owner_customer = customerPkey;
@@ -172,6 +171,13 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			ResultSet rs = stmnt.executeQuery("select a.street, a.civic_number, a.city, a.postcode, a.nation from address a, supplier s where a.address_id = s.address and s.vat = '" + supplierPkey + "'");
 			while(rs.next()) {
 				address = rs.getString(1) + " Street n." + rs.getInt(2) + " , " + rs.getString(3) + " - " + rs.getString(4) + " , " + rs.getString(5);
+				addressEditPanel.streetTF.setText(rs.getString(1));
+				addressEditPanel.civNumTF.setText(rs.getInt(2) + "");
+				addressEditPanel.cityTF.setText(rs.getString(3));
+				addressEditPanel.zipTF.setText(rs.getString(4));
+				addressEditPanel.nationTF.setText(rs.getString(5));
+				//rs.getString(6);
+			
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -358,11 +364,15 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		shPanel.add((Box.createRigidArea(new Dimension(0, 30))));
 		this.add(shPanel);
 		
-		scrollPane.setPreferredSize(new Dimension(100, 400));
+		scrollPane.setPreferredSize(new Dimension(600, 400));
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		//temporary border to spot jscrollpane dimension
 		scrollPane.setBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.RED));
-		this.add(scrollPane);
+		
+		JPanel matrioska = new JPanel();
+		matrioska.setOpaque(false);
+		matrioska.add(scrollPane);
+		this.add(matrioska);
 		
 		infoPanel.setOpaque(false);
 		
@@ -457,6 +467,230 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 	}
 	
 	
+	
+	private void editField(String sourceId) {
+		String fieldName;
+		switch(sourceId) {
+		case "modNameBtn": fieldName = "name";
+		break;
+		case "modAddressBtn": fieldName = "address";
+		break;
+		default:
+			if(sourceId.contains("Phone"))
+				fieldName = "phone";
+			else if(sourceId.contains("Mail"))
+				fieldName = "mail";
+			else if(sourceId.contains("Fax"))
+				fieldName = "fax";
+			else
+				fieldName = "termosifone";
+			break;
+		}
+			String newValue = null;
+			if(fieldName.compareTo("name" )== 0) {
+				newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
+		}
+		switch(fieldName) {
+		case "name":
+			if(newValue.compareTo("") != 0)
+		    	  updateNameInDB("name", newValue);
+			else {
+				JOptionPane.showMessageDialog(null, "Name field cannot be blank.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+			}
+		break;
+		case "address":
+			 int answer = JOptionPane.showConfirmDialog(null, addressEditPanel, 
+		               "Update address", JOptionPane.OK_CANCEL_OPTION);
+		      if (answer == JOptionPane.OK_OPTION) {
+		    	 if(addressEditPanel.sanitizeInput()) {
+		    		 updateAddressInDB(addressEditPanel.zipTF.getText(), addressEditPanel.streetTF.getText(), addressEditPanel.cityTF.getText(), Integer.parseInt(addressEditPanel.civNumTF.getText()), addressEditPanel.nationTF.getText());
+			    	 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Address updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+		    		 MainPanel.getMainPanel().swapPanel(new SupplierInfoPanel(this.supplierPkey));
+		    	 }
+		    	 else {
+		    		 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fields must respect the given constraints. \nOnly alphanumerics characters are allowed.\nMoreover, each field must be nonblank.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+		    		 return;
+		    	 }
+		      }
+		      else {
+		    	  return;
+		      }
+		break;
+		case "phone":
+			
+			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's phone:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+			if(newValue.compareTo("") != 0) {
+				if(!newValue.matches("[A-Za-z]+") && (newValue.length() <= 25))
+					updateContactInDB("phone", newValue, sourceId);
+				else {
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Invalid input. Please insert a valid phone number.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+					return;
+
+				}
+			}
+			else {
+				return;
+			}	
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Phone number updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+   		 	MainPanel.getMainPanel().swapPanel(new SupplierInfoPanel(this.supplierPkey));
+   		 	
+		break;
+		
+		case "mail":
+			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+			if(newValue.compareTo("") != 0) {
+				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+				if(newValue.matches("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+") && (newValue.length() <= 40))
+					updateContactInDB("mail", newValue, sourceId);
+				else {
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Invalid input. Please insert a valid mail address. Svegliati, su.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+					return;
+				}
+				}
+				else {
+					return;
+				}
+				
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Mail address updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+   		 	MainPanel.getMainPanel().swapPanel(new SupplierInfoPanel(this.supplierPkey));
+		
+		break;
+		
+		case "fax":
+			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+			if(newValue.compareTo("") != 0) {
+				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+				if(newValue.matches("[A-Za-z]+") && (newValue.length() <= 30))
+					updateContactInDB("fax", newValue, sourceId);
+				else {
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Invalid input. Please insert a valid fax address.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+					return;
+
+				}
+				
+				JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fax number updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+   		 		MainPanel.getMainPanel().swapPanel(new SupplierInfoPanel(this.supplierPkey));
+				}
+				else {
+					return;
+				}
+		break;
+		
+		}
+	}
+	
+	
+	private void updateAddressInDB(String newZIP, String newStreet, String newCity, int newCivicNumber, String newNation) {
+		Connection con = DatabaseConnection.getDBConnection().getConnection();
+		Statement s;
+		try {
+			s = con.createStatement();
+			System.out.println("ZIP: " + newZIP + "\nStreet: " + newStreet + "\nCity: " + newCity + "\nN: " + newCivicNumber + "\nNation: " + newNation);
+			String sql = "UPDATE address " + 
+						 "SET postcode = '" + newZIP + "', street = '" + newStreet + "', city = '" + newCity + "', civic_number = " + newCivicNumber + ", nation = '" + newNation + "' " + 
+						 "WHERE address_id in (SELECT supplier.address FROM supplier WHERE supplier.vat = '" + supplierPkey + "')";
+			System.out.println(sql);
+			s.executeUpdate(sql);
+			s.close();
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void updateContactInDB(String type, String newVal, String buttonName) {
+	Connection con = DatabaseConnection.getDBConnection().getConnection();
+	Statement s;
+	String sql = null;
+	String previous = null;
+	if(buttonName.contains("Phone")) {
+		String[] phones = getPhones();
+		for(int i = 0; i < phones.length; i++) {
+			if(buttonName.contains("" + (i + 1))) {
+				System.out.println("" + (i+1) + " is fucking equal to " + buttonName);
+				previous = phones[i];
+			}
+		}
+	}
+	if(buttonName.contains("Mail")) {
+		String[] mails = getMails();
+		for(int i = 0; i < mails.length; i++) {
+			if(buttonName.contains("" + (i + 1))) {
+				System.out.println("" + (i+1) + " is fucking equal to " + buttonName);
+				previous = mails[i];
+			}
+		}
+	}
+	if(buttonName.contains("Fax")) {
+		String[] faxes = getFaxes();
+		for(int i = 0; i < faxes.length; i++) {
+			if(buttonName.contains("" + (i + 1))) {
+				System.out.println("" + (i+1) + " is fucking equal to " + buttonName);
+				previous = faxes[i];
+			}
+		}
+	}
+	switch(type){
+	case("phone"):
+			
+			sql = "UPDATE phone_contact SET phone_number = '" + newVal + "' WHERE owner_supplier = '" + supplierPkey + "' AND phone_number = '" + previous + "'";
+			//System.out.println("Phone number updated. New number: " + newVal);
+	break;
+	
+	case("mail"): 
+			sql = "UPDATE mail_contact SET mail = '" + newVal + "' WHERE owner_supplier = '" + supplierPkey + "' AND mail = '" + previous + "'";
+			System.out.println("Mail updated. New mail: " + newVal);
+	break;
+	
+	case("fax"): 
+			sql = "UPDATE fax_contact SET fax = '" + newVal + "' WHERE owner_supplier = '" + supplierPkey + "' AND fax = '" + previous + "'";
+			System.out.println("Fax updated. New fax: " + newVal);
+	break;
+			
+	}
+	try {
+		s = con.createStatement();
+	    s.executeUpdate(sql);
+		s.close();
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+	}
+}
+	
+	
+	private boolean updateNameInDB(String colName, String newVal) {
+		//requires new primary key: the primary key is modified before this method is invoked.
+		Connection con = DatabaseConnection.getDBConnection().getConnection();
+		Statement s;
+		if(colName.compareTo("name") == 0){
+			try {
+				s = con.createStatement();
+				String sql = "UPDATE supplier " +
+						"SET " + colName + " = " + "'" + newVal + "' " +
+						"WHERE vat = " + "'" + supplierPkey + "'";
+				
+				s.executeUpdate(sql);
+				s.close();
+		    	JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Value updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+				MainPanel.getMainPanel().swapPanel(new SupplierInfoPanel(supplierPkey));
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	////////////////////////////////////INNER CLASSES///////////////////////////////////////////////////
 	
 	private class AddressEditPanel extends JPanel{
@@ -471,7 +705,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			cityTF = new JTextField(10);
 			civNumTF = new JTextField(5);
 			nationTF = new JTextField(10);
-			
 			
 			gbc.gridx = 0;
 			gbc.gridy = 0;
@@ -591,7 +824,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 				curr.setVisible(true);
 			}
 			System.out.println("Button " + source.getName() + " clicked.");
-			//editSimpleField(source.getName());
+			editField(source.getName());
 		}
 		
 	}
@@ -715,14 +948,13 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		    		 	 
 		    		 case("Fax contact"):
 		    			 //TODO
-		    			 //sql = "INSERT INTO fax_contact VALUES ('" + addContactPanel.getUserInput() + "', '" + customerPkey + "', NULL)";
+		    			 sql = "INSERT INTO fax_contact VALUES ('" + addContactPanel.getUserInput() + "', '" + supplierPkey + "', NULL)";
 		    		 	 try {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fax contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				    		MainPanel.getMainPanel().swapPanel(new SupplierInfoPanel(supplierPkey));
 				    		return;
 						} catch (SQLException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 		    			 
