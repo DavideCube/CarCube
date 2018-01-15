@@ -6,6 +6,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -25,6 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,7 +37,9 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
-
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import atunibz.dcube.DBProject.configuration.AppResources;
 import atunibz.dcube.DBProject.configuration.GetListQuery;
@@ -46,14 +53,15 @@ public class AddCarPanel extends JPanel{
 	private JComboBox <String> supplierChoice, customerChoice, make, model, type, year, fuel, trans, wDrive, serviceType, construction, tireType;
 	private ButtonGroup group;
 	private String [] supplierList, customerList, makesList, modelsList, typesList, fuelList, transList, wDriveList;
-	private JButton newSupplier, newCustomer;
-	private JLabel iconLabel;
+	private JButton newSupplier, newCustomer, uploadImage, buyCar;
+	private JLabel iconLabel, uploadLabel;
 	private JTextField makeField, modelField, typeField, doorsField, seatsField, priceField, fuelField;
 	private JTextField capacityField, hPowerField, euroField, lengthField, heightField, widthField, trunkField, weightField;
 	private JTextField licenseField, mileageField, aspetRatioField, tireWField, diameterField;
 	private ArrayList<JCheckBox> optionals;
-	private int totalPrice;
+	private double totalPrice = 0;
 	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+	private File fileInserted;
 
 	
 	// Constructor
@@ -381,9 +389,9 @@ public class AddCarPanel extends JPanel{
 		lengthField = new JTextField(5);
 		heightField = new JTextField(5);
 		widthField = new JTextField(5);
-		firstRowDimensionPanel.add(Box.createRigidArea(new Dimension(60, 0)));
+		firstRowDimensionPanel.add(Box.createRigidArea(new Dimension(44, 0)));
 		firstRowDimensionPanel.add(dimenLabel);
-		firstRowDimensionPanel.add(Box.createRigidArea(new Dimension(60, 0)));
+		firstRowDimensionPanel.add(Box.createRigidArea(new Dimension(44, 0)));
 		// second row
 		JPanel secondRowDimensionPanel = new JPanel ();
 		secondRowDimensionPanel.setOpaque(false);
@@ -585,9 +593,56 @@ public class AddCarPanel extends JPanel{
 		optionalPanel.add(description1);
 		optionalPanel.add(description2);
 		optionalPanel.add(addOptPanel);
+	
+		addCarPanel.add(optionalPanel);
+		addCarPanel.add(Box.createRigidArea(new Dimension (0,35)));
+		
+		// PANEL FOR INSERTING IMAGE
+		JPanel imagePanel = new JPanel();
+		imagePanel.setOpaque(false);
+		imagePanel.setLayout(new BoxLayout(imagePanel, BoxLayout.Y_AXIS));
+		JPanel imageTitlePanel = new JPanel();
+		imageTitlePanel.setOpaque(false);
+		JLabel myicon1 = new JLabel (new ImageIcon ("icons/add-image.png"));
+		JLabel myicon2 = new JLabel (new ImageIcon ("icons/add-image.png"));
+		JLabel imageLabel = new JLabel ("Select a picture for the car");
+		AppResources.changeFont(imageLabel, Font.BOLD, 24);
+		imageTitlePanel.add(myicon1);
+		imageTitlePanel.add(imageLabel);
+		imageTitlePanel.add(myicon2);
+		imagePanel.add(imageTitlePanel);
+		// button for inserting image
+		JPanel imagefirstRow = new JPanel ();
+		imagefirstRow.setOpaque(false);
+		uploadImage = new JButton("Upload image");
+		AppResources.changeFont(uploadImage, Font.PLAIN, 15);
+		imagefirstRow.add(uploadImage);
+		JPanel imagesecondRow = new JPanel ();
+		imagesecondRow.setOpaque(false);
+		uploadLabel = new JLabel (" ");
+		AppResources.changeFont(uploadLabel, Font.PLAIN, 15);
+		imagesecondRow.add(uploadLabel);
+		imagePanel.add(imagefirstRow);
+		imagePanel.add(imagesecondRow);
+
+		addCarPanel.add(imagePanel);
+		addCarPanel.add(Box.createRigidArea(new Dimension (0,35)));
 
 		
-		addCarPanel.add(optionalPanel);
+		// button for adding a car
+		JPanel buttonP = new JPanel ();
+		buttonP.setOpaque(false);
+		buyCar = AppResources.iconButton("Buy Car", "icons/money-bag2.png");
+		AppResources.changeFont(buyCar, Font.BOLD, 30);
+		buyCar.setForeground(new Color (255, 128, 0));
+		buttonP.add(buyCar);
+		
+		addCarPanel.add(buttonP);
+
+
+		
+		
+		
 		
 		
 		
@@ -604,6 +659,12 @@ public class AddCarPanel extends JPanel{
 		newCustomer.addActionListener(new AddStakeholderListener());
 		make.addActionListener(new MakeListener());
 		addOptButton.addActionListener(new AddOptionalListener());
+		uploadImage.addActionListener(new UploadListener());
+		buyCar.addActionListener(new BuyListener());
+		priceField.getDocument().addDocumentListener(new changedTextListener(true, "Price", priceField));
+		
+		for (JCheckBox c : optionals)
+			c.addItemListener(new OptSelectionListener());
 		
 
 		add(addCarPanel);
@@ -797,6 +858,27 @@ public class AddCarPanel extends JPanel{
 		}
 
 	}
+	
+	// listener for buying a car
+	private class BuyListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JPanel gifPanel = new JPanel();
+			gifPanel.setLayout(new BoxLayout(gifPanel, BoxLayout.Y_AXIS));
+			JLabel myGIF = new JLabel (new ImageIcon("icons/200.gif"));
+			JLabel bought = new JLabel ("Car bought!");
+			myGIF.setAlignmentX(CENTER_ALIGNMENT);
+			bought.setAlignmentX(CENTER_ALIGNMENT);
+			gifPanel.add(myGIF);
+			gifPanel.add(bought);
+			AppResources.changeFont(bought, Font.BOLD, 25);
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube",
+					JOptionPane.PLAIN_MESSAGE);
+			
+		}
+		
+	}
 	// listener for adding another optional
 	private class AddOptionalListener implements ActionListener {
 
@@ -849,8 +931,10 @@ public class AddCarPanel extends JPanel{
 						JCheckBox temp = new JCheckBox(name + " - " + priceFormatted);
 						temp.setOpaque(false);
 						AppResources.changeFont(temp, Font.PLAIN, 20);
+						temp.addItemListener(new OptSelectionListener());
 						temp.setSelected(true);
 						optionals.add(temp);
+						priceUpdating();
 						
 						fillOptionalPanel(optionals);
 						
@@ -870,6 +954,136 @@ public class AddCarPanel extends JPanel{
 		}
 		
 	}
+	
+	// listener for uploading an image
+	private class UploadListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// file chooser
+			JFileChooser fileC = new JFileChooser ();
+			fileC.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fileC.setFileFilter(new FileNameExtensionFilter ("Only JPG files", "jpg"));
+			// response
+			int reply = fileC.showOpenDialog(null);
+			if (reply == JFileChooser.APPROVE_OPTION) {
+				uploadLabel.setText(fileC.getSelectedFile().getName());
+				fileInserted = fileC.getSelectedFile();
+			}
+		}
+	}
+	
+	// document listener for the JTextField components, the changedListener above
+	// would not have worked
+	private class changedTextListener implements DocumentListener {
+		boolean priceTextField;
+		String nameField;
+		JTextField selected;
+		public changedTextListener (boolean priceTextField, String nameField, JTextField selected) {
+			this.priceTextField = priceTextField;
+			this.nameField = nameField;
+			this.selected = selected;
+		}
+		@Override
+		public void changedUpdate(DocumentEvent arg0) {
+			act();
+
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent arg0) {
+			act();
+
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent arg0) {
+			act();
+
+		}
+
+		public void act() {
+			try {
+				if (selected.getText().compareTo("") != 0) {
+					int intInserted = 0;
+					if (priceTextField) {
+						totalPrice = Double.parseDouble(priceField.getText());
+						
+						priceUpdating();
+					} else
+						intInserted = Integer.parseInt(selected.getText());
+				}
+				else
+					buyCar.setText("Buy Car");
+					
+
+			} catch (NumberFormatException n) {
+				JOptionPane.showMessageDialog(MainPanel.getMainPanel(), nameField + " must be an integer", "CarCube",
+						JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+			}
+		}
+
+	}
+	
+	// listener for the selection of an optional
+	private class OptSelectionListener implements ItemListener {
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			JCheckBox selected = (JCheckBox) e.getItem();
+			// first of all, control that another optional with same name is not selected
+			if (selected.isSelected()) {
+				for (JCheckBox c : optionals) {
+					if (c != selected && c.isSelected() && c.getText().substring(0, c.getText().indexOf(" -"))
+							.compareTo(selected.getText().substring(0, selected.getText().indexOf(" -"))) == 0) {
+						JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "This optional is already selected",
+								"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+						selected.setSelected(false);
+
+					}
+				}
+				
+			}
+			priceUpdating();
+			
+
+		}
+	}
+	
+	// method for calculate totalPrice and set button
+	public void priceUpdating () {
+		if (priceField.getText().compareTo("") != 0) {
+			totalPrice = Double.parseDouble(priceField.getText());
+			for (JCheckBox c : optionals) {
+				if (c.isSelected()) {
+					String substring = c.getText().substring(c.getText().indexOf("€ ") + 2,
+							c.getText().lastIndexOf(","));
+					Double thousand = 0.00;
+					Double hundred = 0.00;
+					double optionalPrice = 0.00;
+					if (substring.contains(".")) {
+						thousand = Double.parseDouble(substring.substring(0, substring.indexOf(".")));
+						hundred = 1000 * Double.parseDouble(substring.substring(substring.indexOf(".")));
+						optionalPrice = (thousand * 1000) + hundred;
+					} else
+						optionalPrice = Double.parseDouble(substring);
+					totalPrice += optionalPrice;
+				}
+			}
+		}
+		else
+			totalPrice = 0;
+		
+		if (totalPrice == 0) {
+			buyCar.setText("Buy Car");
+		}
+		else
+			buyCar.setText("Buy Car - " + currencyFormat.format(totalPrice));
+	}
+	
+	
+	
+	////////////////////////////////////// INNER CLASS ///////////////////////////////////
 	
 	// class panel for adding an optional
 	private class AddOptionalPanel extends JPanel  {
