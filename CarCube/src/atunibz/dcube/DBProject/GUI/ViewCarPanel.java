@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -40,11 +41,14 @@ public class ViewCarPanel extends JPanel {
 	JTextField newMake, newModel, newKm, newType, doors, seats;
 	String currentMake, currentModel, currentCarType, currentFuel, currentDrive, currentTransmission;
 	int currentKm, currentDoors, currentSeats, finalPrice, currentYear, currentEuro, currentCapacity, currentHorsepower;
-	//Order of the returned array: length, height, width, trunk capacity, weight
-	int[] currentDimensions;
-
+	// Order of the returned array: length, height, width, trunk capacity, weight
+	int[] currentDimensions, tireIntegersData;
+	String[] tireStringsData;
+	ArrayList<String> currentCarColors, currentOptionals;
+	ArrayList<Integer> currentOptionalsIds;
 	JButton makeModelButton, modifyKm, modifyTypeEtc, modifyPrice, modifyYear, modifyEuroFuel, modifyCapHorse,
-			modifyDriveTranmission, modifyLengthWidthHeigth, modifyWeightTrunk;
+			modifyDriveTranmission, modifyLengthWidthHeigth, modifyWeightTrunk, modifyTireDimensions, modifyTireTypes,
+			modifyColors, modifyOptional;
 
 	// global importan variables
 	boolean isNewCar;
@@ -55,7 +59,9 @@ public class ViewCarPanel extends JPanel {
 		// make global for listeners and support methods
 		isNewCar = newCar;
 		carId = id;
-
+		currentCarColors = new ArrayList<>();
+		currentOptionals = new ArrayList<>();
+		currentOptionalsIds = new ArrayList<>();
 		// Get the connection
 		conn = DatabaseConnection.getDBConnection().getConnection();
 
@@ -76,8 +82,8 @@ public class ViewCarPanel extends JPanel {
 
 		// Photo
 		photoPanel = new JPanel();
-		photoPanel.setLayout(new BoxLayout(photoPanel, BoxLayout.Y_AXIS));
-		photoPanel.setPreferredSize(new Dimension(350,300));
+		photoPanel.setLayout(new BorderLayout());
+		photoPanel.setOpaque(false);
 
 		// Inner panel in order to have it automatically centered
 		JPanel photo = new JPanel();
@@ -87,7 +93,8 @@ public class ViewCarPanel extends JPanel {
 		photoLabel.setIcon(photoIcon);
 
 		photo.add(photoLabel);
-		photoPanel.add(photo);
+		photoPanel.add(photo, BorderLayout.NORTH);
+		
 		row.add(photoPanel);
 
 		// Info and description
@@ -98,15 +105,14 @@ public class ViewCarPanel extends JPanel {
 		// First row : make and model
 		JPanel support = new JPanel();
 		support.setOpaque(false);
-		
-		
+
 		JPanel firstRow = new JPanel();
 		firstRow.setLayout(new BoxLayout(firstRow, BoxLayout.X_AXIS));
 		firstRow.setOpaque(false);
 
 		// jlabels and font
 		JLabel make = new JLabel();
-		// hideTextField(make);
+		
 		AppResources.changeFont(make, Font.BOLD, 30);
 		currentMake = getStringFromGeneralCarTable("make", id, newCar);
 		make.setText(currentMake);
@@ -149,7 +155,7 @@ public class ViewCarPanel extends JPanel {
 			JPanel kmPanel = new JPanel();
 			kmPanel.setOpaque(false);
 			kmPanel.setLayout(new BorderLayout());
-			
+
 			JPanel kilometersRow = new JPanel();
 			kilometersRow.setLayout(new BoxLayout(kilometersRow, BoxLayout.X_AXIS));
 			kilometersRow.setOpaque(false);
@@ -165,7 +171,7 @@ public class ViewCarPanel extends JPanel {
 			modifyKm.setVisible(true);
 
 			kilometersRow.add(Box.createRigidArea(new Dimension(10, 0)));
-			//kilometersRow.add(modifyKm);
+			// kilometersRow.add(modifyKm);
 
 			kmPanel.add(kilometersRow, BorderLayout.WEST);
 			kmPanel.add(modifyKm, BorderLayout.EAST);
@@ -176,7 +182,7 @@ public class ViewCarPanel extends JPanel {
 		JPanel priceSupport = new JPanel();
 		priceSupport.setOpaque(false);
 		priceSupport.setLayout(new BorderLayout());
-		
+
 		JPanel pricePanel = new JPanel();
 		pricePanel.setLayout(new BoxLayout(pricePanel, BoxLayout.X_AXIS));
 		pricePanel.setOpaque(false);
@@ -194,8 +200,8 @@ public class ViewCarPanel extends JPanel {
 		modifyPrice.setVisible(true);
 
 		pricePanel.add(priceLabel);
-//		pricePanel.add(Box.createRigidArea(new Dimension(10, 0)));
-//		pricePanel.add(modifyPrice);
+		// pricePanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		// pricePanel.add(modifyPrice);
 
 		priceSupport.add(pricePanel, BorderLayout.WEST);
 		priceSupport.add(modifyPrice, BorderLayout.EAST);
@@ -224,9 +230,6 @@ public class ViewCarPanel extends JPanel {
 		modifyTypeEtc.setVisible(true);
 
 		secondRow.add(typeDoorsSeats);
-		//secondRow.add(modifyTypeEtc, BorderLayout.EAST);
-//		secondRow.add(Box.createRigidArea(new Dimension(10, 0)));
-//		secondRow.add(modifyTypeEtc);
 
 		support2.add(secondRow, BorderLayout.WEST);
 		support2.add(modifyTypeEtc, BorderLayout.EAST);
@@ -249,13 +252,13 @@ public class ViewCarPanel extends JPanel {
 		AppResources.changeFont(yearLabel, Font.PLAIN, 18);
 
 		modifyYear = new JButton();
-		
+
 		modifyYear.setIcon(new ImageIcon("icons/contacts/modify.png"));
 		modifyYear.setVisible(true);
 
 		yearPanel.add(yearLabel);
-//		yearPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-//		yearPanel.add(modifyYear);
+		// yearPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		// yearPanel.add(modifyYear);
 
 		support3.add(yearPanel, BorderLayout.WEST);
 		support3.add(modifyYear, BorderLayout.EAST);
@@ -264,7 +267,7 @@ public class ViewCarPanel extends JPanel {
 		// Engine data label
 		JPanel engineData = new JPanel();
 		engineData.setOpaque(false);
-		//engineData.setLayout(new BorderLayout());
+		// engineData.setLayout(new BorderLayout());
 
 		JLabel techLabel = new JLabel("Engine Data");
 		AppResources.changeFont(techLabel, Font.BOLD, 22);
@@ -277,7 +280,7 @@ public class ViewCarPanel extends JPanel {
 		JPanel supportEngine1 = new JPanel();
 		supportEngine1.setOpaque(false);
 		supportEngine1.setLayout(new BorderLayout());
-		
+
 		JPanel engine1 = new JPanel();
 		engine1.setOpaque(false);
 		engine1.setLayout(new BoxLayout(engine1, BoxLayout.X_AXIS));
@@ -293,8 +296,8 @@ public class ViewCarPanel extends JPanel {
 		modifyEuroFuel.setVisible(true);
 
 		engine1.add(euroFuel);
-//		engine1.add(Box.createRigidArea(new Dimension(10, 0)));
-//		engine1.add(modifyEuroFuel);
+		// engine1.add(Box.createRigidArea(new Dimension(10, 0)));
+		// engine1.add(modifyEuroFuel);
 		supportEngine1.add(engine1, BorderLayout.WEST);
 		supportEngine1.add(modifyEuroFuel, BorderLayout.EAST);
 		info.add(supportEngine1);
@@ -303,7 +306,7 @@ public class ViewCarPanel extends JPanel {
 		JPanel supportEngine2 = new JPanel();
 		supportEngine2.setOpaque(false);
 		supportEngine2.setLayout(new BorderLayout());
-		
+
 		JPanel engine2 = new JPanel();
 		engine2.setOpaque(false);
 		engine2.setLayout(new BoxLayout(engine2, BoxLayout.X_AXIS));
@@ -320,8 +323,8 @@ public class ViewCarPanel extends JPanel {
 		modifyDriveTranmission.setVisible(true);
 
 		engine2.add(capacityHorse);
-//		engine2.add(Box.createRigidArea(new Dimension(10, 0)));
-//		engine2.add(modifyDriveTranmission);
+		// engine2.add(Box.createRigidArea(new Dimension(10, 0)));
+		// engine2.add(modifyDriveTranmission);
 		supportEngine2.add(engine2, BorderLayout.WEST);
 		supportEngine2.add(modifyDriveTranmission, BorderLayout.EAST);
 		info.add(supportEngine2);
@@ -331,7 +334,7 @@ public class ViewCarPanel extends JPanel {
 		JPanel supportEngine3 = new JPanel();
 		supportEngine3.setOpaque(false);
 		supportEngine3.setLayout(new BorderLayout());
-		
+
 		JPanel engine3 = new JPanel();
 		engine3.setOpaque(false);
 		engine3.setLayout(new BoxLayout(engine3, BoxLayout.X_AXIS));
@@ -348,8 +351,8 @@ public class ViewCarPanel extends JPanel {
 		modifyCapHorse.setVisible(true);
 
 		engine3.add(driveTransmission);
-//		engine3.add(Box.createRigidArea(new Dimension(10, 0)));
-//		engine3.add(modifyCapHorse);
+		// engine3.add(Box.createRigidArea(new Dimension(10, 0)));
+		// engine3.add(modifyCapHorse);
 		supportEngine3.add(engine3, BorderLayout.WEST);
 		supportEngine3.add(modifyCapHorse, BorderLayout.EAST);
 		info.add(supportEngine3);
@@ -357,64 +360,187 @@ public class ViewCarPanel extends JPanel {
 		// Dimension data label
 		JPanel dimensionData = new JPanel();
 		dimensionData.setOpaque(false);
-		//dimensionData.setLayout(new BorderLayout());
-		
+		// dimensionData.setLayout(new BorderLayout());
+
 		JLabel dimensionLabel = new JLabel("Dimension");
 		AppResources.changeFont(dimensionLabel, Font.BOLD, 22);
 		dimensionData.add(dimensionLabel);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
 		info.add(dimensionData);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
-		
-		//first initialise all dimensions
+
+		// first initialise all dimensions
 		currentDimensions = getCarDimensions(id);
-				
-		//Dimension first row: length, height and width
+
+		// Dimension first row: length, height and width
 		JPanel dimension1support = new JPanel();
 		dimension1support.setOpaque(false);
 		dimension1support.setLayout(new BorderLayout());
-		
+
 		JPanel dimension1 = new JPanel();
 		dimension1.setOpaque(false);
 		dimension1.setLayout(new BoxLayout(dimension1, BoxLayout.X_AXIS));
-		
-		JLabel dim1 = new JLabel("Length: " + currentDimensions[0] + " cm - Height: " + currentDimensions[1] + " cm - Width: " + currentDimensions[2] + " cm");
+
+		JLabel dim1 = new JLabel("Length: " + currentDimensions[0] + " cm - Height: " + currentDimensions[1]
+				+ " cm - Width: " + currentDimensions[2] + " cm");
 		AppResources.changeFont(dim1, Font.PLAIN, 18);
-		
+
 		modifyLengthWidthHeigth = new JButton();
 		modifyLengthWidthHeigth.setIcon(new ImageIcon("icons/contacts/modify.png"));
 		modifyLengthWidthHeigth.setVisible(true);
-		
+
 		dimension1.add(dim1);
-//		dimension1.add(Box.createRigidArea(new Dimension(10, 0)));
-//		dimension1.add(modifyLengthWidthHeigth);
 		dimension1support.add(dimension1, BorderLayout.WEST);
 		dimension1support.add(modifyLengthWidthHeigth, BorderLayout.EAST);
 		info.add(dimension1support);
-		
-		//Dimension second row: weight and trunk capacitu
+
+		// Dimension second row: weight and trunk capacitu
 		JPanel dimension2support = new JPanel();
 		dimension2support.setOpaque(false);
 		dimension2support.setLayout(new BorderLayout());
-		
+
 		JPanel dimension2 = new JPanel();
 		dimension2.setOpaque(false);
 		dimension2.setLayout(new BoxLayout(dimension2, BoxLayout.X_AXIS));
-		
-		JLabel dim2 = new JLabel("Weight: " + currentDimensions[3] + " kg - Trunk capacity: " + currentDimensions[4] + " liters");
+
+		JLabel dim2 = new JLabel(
+				"Weight: " + currentDimensions[3] + " kg - Trunk capacity: " + currentDimensions[4] + " liters");
 		AppResources.changeFont(dim2, Font.PLAIN, 18);
-		
+
 		modifyWeightTrunk = new JButton();
 		modifyWeightTrunk.setIcon(new ImageIcon("icons/contacts/modify.png"));
 		modifyWeightTrunk.setVisible(true);
-		
+
 		dimension2.add(dim2);
-//		dimension2.add(Box.createRigidArea(new Dimension(10, 0)));
-//		dimension2.add(modifyWeightTrunk);
 		dimension2support.add(dimension2, BorderLayout.WEST);
 		dimension2support.add(modifyWeightTrunk, BorderLayout.EAST);
 		info.add(dimension2support);
+
+		// TIRE (whyyyyyyyy???)
+
+		JPanel tireData = new JPanel();
+		tireData.setOpaque(false);
+
+		JLabel tireLabel = new JLabel("Tires Data");
+		AppResources.changeFont(tireLabel, Font.BOLD, 22);
+		tireData.add(tireLabel);
+		info.add(Box.createRigidArea(new Dimension(0, 10)));
+		info.add(tireData);
+		info.add(Box.createRigidArea(new Dimension(0, 10)));
+		// Tire integers: width, aspet_ratio, diameter
+		// Tire strings: service type, construction, tire type
+		initialiseTireVariables(id);
+
+		// Tire first row
+		JPanel supportTire1 = new JPanel();
+		supportTire1.setLayout(new BorderLayout());
+		supportTire1.setOpaque(false);
+
+		JLabel tire1 = new JLabel("Dimensions: " + tireIntegersData[0] + "/" + tireIntegersData[1] + " "
+				+ tireStringsData[1] + " " + tireIntegersData[2]);
+		AppResources.changeFont(tire1, Font.PLAIN, 18);
+
+		modifyTireDimensions = new JButton();
+		modifyTireDimensions.setIcon(new ImageIcon("icons/contacts/modify.png"));
+		modifyTireDimensions.setVisible(true);
+
+		supportTire1.add(tire1, BorderLayout.WEST);
+		supportTire1.add(modifyTireDimensions, BorderLayout.EAST);
+
+		info.add(supportTire1);
+
+		// Tire second row
+		JPanel supportTire2 = new JPanel();
+		supportTire2.setLayout(new BorderLayout());
+		supportTire2.setOpaque(false);
+
+		JLabel tire2 = new JLabel("Service type: " + tireStringsData[0] + " - Tire type: " + tireStringsData[2]);
+		AppResources.changeFont(tire2, Font.PLAIN, 18);
+
+		modifyTireTypes = new JButton();
+		modifyTireTypes.setIcon(new ImageIcon("icons/contacts/modify.png"));
+		modifyTireTypes.setVisible(true);
+
+		supportTire2.add(tire2, BorderLayout.WEST);
+		supportTire2.add(modifyTireTypes, BorderLayout.EAST);
+		info.add(supportTire2);
+
+		// Color label
+		JPanel colorData = new JPanel();
+		colorData.setOpaque(false);
+
+		JLabel colorLabel = new JLabel("Colors");
+		AppResources.changeFont(colorLabel, Font.BOLD, 22);
+		colorData.add(colorLabel);
+		info.add(Box.createRigidArea(new Dimension(0, 10)));
+		info.add(colorData);
+
+		// Colors label
+		getCarColors(id);
+
+		JPanel colors = new JPanel();
+		colors.setLayout(new BorderLayout());
+		colors.setOpaque(false);
+
+		String colorString = "";
+
+		for (String c : currentCarColors) {
+			if (colorString.length() > 0)
+				colorString += ", " + c;
+			else
+				colorString += c;
+		}
+
+		JLabel colorList = new JLabel("This car is painted in " + colorString);
+		AppResources.changeFont(colorList, Font.PLAIN, 18);
+
+		modifyColors = new JButton();
+		modifyColors.setIcon(new ImageIcon("icons/contacts/modify.png"));
+		modifyColors.setVisible(true);
+
+		colors.add(colorList, BorderLayout.WEST);
+		colors.add(modifyColors, BorderLayout.EAST);
+		info.add(colors);
+
+		// Optional label
+		JPanel optionalData = new JPanel();
+		optionalData.setOpaque(false);
+
+		JLabel optionalLabel = new JLabel("Optionals");
+		AppResources.changeFont(optionalLabel, Font.BOLD, 22);
+		optionalData.add(optionalLabel);
+		info.add(Box.createRigidArea(new Dimension(0, 10)));
+		info.add(optionalData);
 		
+		
+		//Optional list
+		getCarOptionals(id);
+
+		JPanel optionals = new JPanel();
+		optionals.setLayout(new BorderLayout());
+		optionals.setOpaque(false);
+
+		String optionalString = "";
+
+		for (String c : currentOptionals) {
+			optionalString+= " <li> " + c + "</li>";
+		}
+		
+		JLabel optionalList = new JLabel("<html>This car is equipped with:<br><ul>" + optionalString + "</ul></html>");
+		AppResources.changeFont(optionalList, Font.PLAIN, 18);
+		
+		JPanel modOptPanel = new JPanel();
+		modOptPanel.setOpaque(false);
+		modifyOptional = new JButton();
+		modifyOptional.setIcon(new ImageIcon("icons/contacts/modify.png"));
+		modifyOptional.setVisible(true);
+		modOptPanel.add(modifyOptional);
+		
+		optionals.add(optionalList, BorderLayout.WEST);
+		optionals.add(modOptPanel, BorderLayout.EAST);
+		info.add(optionals);
+		
+		// ADD ALL
 		row.add(Box.createRigidArea(new Dimension(10, 0)));
 		row.add(info);
 		// End info
@@ -566,20 +692,22 @@ public class ViewCarPanel extends JPanel {
 		}
 		return result;
 	}
-	
-	//Order of the returned array: length, height, width, trunk capacity, weight
+
+	// Order of the returned array: length, height, width, trunk capacity, weight
 	public int[] getCarDimensions(String id) {
-		
+
 		String sql = "";
-		
+
 		if (isNewCar) {
 			int idNumb = Integer.parseInt(id);
-			sql = "SELECT * FROM new_car INNER JOIN dimension ON new_car.dimension = dimension.dimension_id WHERE new_car.car_id = " + idNumb;
+			sql = "SELECT * FROM new_car INNER JOIN dimension ON new_car.dimension = dimension.dimension_id WHERE new_car.car_id = "
+					+ idNumb;
 		} else
-			sql = "SELECT * FROM used_car INNER JOIN dimension ON used_car.dimension = dimension.dimension_id WHERE used_car.immatriculation = '" + id + "'";
-		
+			sql = "SELECT * FROM used_car INNER JOIN dimension ON used_car.dimension = dimension.dimension_id WHERE used_car.immatriculation = '"
+					+ id + "'";
+
 		int[] dimensions = new int[5];
-		
+
 		try {
 			Statement st = conn.createStatement();
 			ResultSet rs = st.executeQuery(sql);
@@ -598,10 +726,97 @@ public class ViewCarPanel extends JPanel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return dimensions;
 	}
+
+	public void initialiseTireVariables(String id) {
+
+		String sql = "";
+
+		if (isNewCar) {
+			int idNumb = Integer.parseInt(id);
+			sql = "SELECT tire.* FROM new_car INNER JOIN tire ON new_car.tire = tire.tire_id WHERE new_car.car_id = "
+					+ idNumb;
+		} else
+			sql = "SELECT tire.* FROM used_car INNER JOIN tire ON used_car.tire = tire.tire_id WHERE used_car.immatriculation = '"
+					+ id + "'";
+		tireIntegersData = new int[3];
+		tireStringsData = new String[3];
+		try {
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery(sql);
+
+			rs.next();
+
+			tireIntegersData[0] = rs.getInt("width");
+			tireIntegersData[1] = rs.getInt("aspet_ratio");
+			tireIntegersData[2] = rs.getInt("diameter");
+
+			tireStringsData[0] = rs.getString("service_type");
+			tireStringsData[1] = rs.getString("construction");
+			tireStringsData[2] = rs.getString("tire_type");
+
+			st.close();
+			rs.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void getCarColors(String id) {
+		String sql = "";
+
+		if (isNewCar) {
+			int idNumb = Integer.parseInt(id);
+			sql = "SELECT color.color_name FROM new_car INNER JOIN new_painting ON new_car.car_id = new_painting.car_id INNER JOIN color ON new_painting.color_code = color.color_code WHERE new_car.car_id = "
+					+ idNumb;
+		} else
+			sql = "SELECT color.color_name* FROM used_car INNER JOIN used_painting ON used_car.immatriculation = used_painting.immatriculation INNER JOIN color ON used_painting.color_code = color.color_code WHERE used_car.immatriculation = '"
+					+ id + "'";
+
+		try {
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery(sql);
+
+			while (rs.next()) {
+				currentCarColors.add(rs.getString("color_name"));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
 	
+	public void getCarOptionals(String id) {
+		String sql = "";
+
+		if (isNewCar) {
+			int idNumb = Integer.parseInt(id);
+			sql = "SELECT optional.optional_id, optional.opt_name FROM new_car INNER JOIN new_equipped ON new_car.car_id = new_equipped.car_id INNER JOIN optional ON new_equipped.optional_id = optional.optional_id WHERE new_car.car_id = "
+					+ idNumb;
+		} else
+			sql = "SELECT optional.optional_id, optional.opt_name FROM used_car INNER JOIN used_equipped ON used_car.immatriculation = new_equipped.immatriculation INNER JOIN optional ON used_equipped.optional_id = optional.optional_id WHERE used_car.immatriculation = "
+					+ id + "'";
+
+		try {
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery(sql);
+
+			while (rs.next()) {
+				currentOptionals.add(rs.getString("opt_name"));
+				currentOptionalsIds.add(rs.getInt("optional_id"));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	public int calculatePrice(int car_id) {
 		int result = 0;
 		try {
