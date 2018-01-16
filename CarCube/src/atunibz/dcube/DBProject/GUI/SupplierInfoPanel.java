@@ -176,6 +176,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 				addressEditPanel.cityTF.setText(rs.getString(3));
 				addressEditPanel.zipTF.setText(rs.getString(4));
 				addressEditPanel.nationTF.setText(rs.getString(5));
+				//extract id from address?
 				//rs.getString(6);
 			
 			}
