@@ -15,10 +15,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -37,9 +44,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import atunibz.dcube.DBProject.GUI.ColorsPanel.ColorCheckBox;
 import atunibz.dcube.DBProject.configuration.AppResources;
@@ -64,6 +76,8 @@ public class AddCarPanel extends JPanel{
 	private ArrayList<ColorCheckBox> colors;
 	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 	private File fileInserted;
+	private ArrayList<String> colorKeys;
+	private JDatePickerImpl datePicker;
 
 	
 	// Constructor
@@ -478,7 +492,7 @@ public class AddCarPanel extends JPanel{
 		AppResources.changeFont(tireTypeLabel, Font.PLAIN, 18);
 		String [] tire1 = {"P: Passenger Car", "LT: Light Truck", "ST: Special Trailer"};
 		String [] tire2 = {"R: Radial", "D: Diagonal", "B: Bias belt"};
-		String [] tire3 = {"Summer", "Winter", "Universal"};
+		String [] tire3 = {"summer", "winter", "universal"};
 		serviceType = new JComboBox <String> (tire1);
 		serviceType.setPrototypeDisplayValue("XXXXXXXXXXXXXXX");
 		serviceType.setSelectedIndex(0);
@@ -548,6 +562,7 @@ public class AddCarPanel extends JPanel{
 		supportPanel.add(content);
 		colorPanel.add(supportPanel);
 		colors = colPanel.getColorCheckBoxes();
+		colorKeys = colPanel.getColorKeys();
 		
 		addCarPanel.add(colorPanel);
 		addCarPanel.add(Box.createRigidArea(new Dimension (0,35)));
@@ -620,18 +635,45 @@ public class AddCarPanel extends JPanel{
 		uploadImage = new JButton("Upload image");
 		AppResources.changeFont(uploadImage, Font.PLAIN, 15);
 		imagefirstRow.add(uploadImage);
-		JPanel imagesecondRow = new JPanel ();
-		imagesecondRow.setOpaque(false);
 		uploadLabel = new JLabel (" ");
 		AppResources.changeFont(uploadLabel, Font.PLAIN, 15);
-		imagesecondRow.add(uploadLabel);
+		imagefirstRow.add(uploadLabel);
 		imagePanel.add(imagefirstRow);
-		imagePanel.add(imagesecondRow);
 
 		addCarPanel.add(imagePanel);
 		addCarPanel.add(Box.createRigidArea(new Dimension (0,35)));
-
 		
+		// panel for adding the date
+		JPanel datePanel = new JPanel();
+		datePanel.setOpaque(false);
+		datePanel.setLayout(new BoxLayout(datePanel, BoxLayout.Y_AXIS));
+		JPanel dateTitlePanel = new JPanel();
+		dateTitlePanel.setOpaque(false);
+		JLabel myicon3 = new JLabel (new ImageIcon ("icons/day.png"));
+		JLabel myicon4 = new JLabel (new ImageIcon ("icons/day.png"));
+		JLabel dateLabel = new JLabel ("Select date of the purchase");
+		AppResources.changeFont(dateLabel, Font.BOLD, 24);
+		dateTitlePanel.add(myicon3);
+		dateTitlePanel.add(dateLabel);
+		dateTitlePanel.add(myicon4);
+		datePanel.add(dateTitlePanel);
+		// calendar
+		JPanel datefirstPanel = new JPanel();
+		datefirstPanel.setOpaque(false);
+		UtilDateModel model = new UtilDateModel();
+		Properties p = new Properties();
+		p.put("text.today", "Today");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		JDatePanelImpl dateCPanel = new JDatePanelImpl(model, p);
+		datePicker = new JDatePickerImpl(dateCPanel, new DateLabelFormatter());
+		datePicker.setOpaque(false);
+		datefirstPanel.add(datePicker);
+		datePanel.add(datefirstPanel);
+		
+		addCarPanel.add(datePanel);
+		addCarPanel.add(Box.createRigidArea(new Dimension (0,35)));
+
 		// button for adding a car
 		JPanel buttonP = new JPanel ();
 		buttonP.setOpaque(false);
@@ -752,6 +794,28 @@ public class AddCarPanel extends JPanel{
 			e.printStackTrace();
 		}
 
+	}
+	
+	// formatter for the date Picker
+	public class DateLabelFormatter extends AbstractFormatter {
+
+		private String datePattern = "yyyy-MM-dd";
+		private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+
+		@Override
+		public Object stringToValue(String text) throws ParseException {
+			return dateFormatter.parseObject(text);
+		}
+
+		@Override
+		public String valueToString(Object value) throws ParseException {
+			if (value != null) {
+				Calendar cal = (Calendar) value;
+				return dateFormatter.format(cal.getTime());
+			}
+
+			return "";
+		}
 	}
 	
 	// method for filling the onlyForUsedPanel 
@@ -902,6 +966,24 @@ public class AddCarPanel extends JPanel{
 			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert the license plate of the used car","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 			return false;
 		}
+		if (usedCar.isSelected() && !licenseField.getText().equals("")) {
+			try {
+				String query = "SELECT immatriculation FROM used_car WHERE UPPER(immatriculation) = UPPER('" +licenseField.getText() + "')";
+				Statement stat = conn.createStatement();
+				ResultSet rs = stat.executeQuery(query);
+				if (rs.next()) {
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "This license plate already exists","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+					stat.close();
+					rs.close();
+					return false;
+				}
+				stat.close();
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		// at least one color has to be selected
 		boolean colorSelected = false;
 		for(int i = 0; i < colors.size(); i++) {
@@ -919,6 +1001,11 @@ public class AddCarPanel extends JPanel{
 			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert a \"jpg\" image for the car","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 			return false;
 		}
+		// control date
+		if (datePicker.getModel().getValue() == null) {
+			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert the date of the purchase","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+			return false;
+		}
 		
 		return true;
 	}
@@ -934,7 +1021,237 @@ public class AddCarPanel extends JPanel{
 		return result;
 	}
 	
+	// big method for adding a new car
+	public void addNewCar () {
+		// FIRST OF ALL, see if all constraints are respected
+		boolean canWeContinue = respectConstraints();
+		if (!canWeContinue)
+			return;
+		
+		// NOW WE CAN MOVE ON. To avoid confusion, get all values that i need for adding a new car
+		int tireKey = getTireForeignKey();
+		int dimensionKey = getDimensionForeignKey();
+		int engineKey = getEngineForeignKey();
+		String selectedMake = null;
+		String selectedModel = null;
+		String selectedType = null;
+		String selectedYear = (String) year.getSelectedItem();
+		int car_year = Integer.parseInt(selectedYear);
+		int doors = Integer.parseInt(doorsField.getText());
+		int seats = Integer.parseInt(seatsField.getText());
+		int sold = 0;
+		int price = Integer.parseInt(priceField.getText());
+		String selectedSupp = (String) supplierChoice.getSelectedItem();
+		String boughtFromKey = selectedSupp.substring(selectedSupp.lastIndexOf("(")+1, selectedSupp.lastIndexOf(")"));
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String dateFormatted = sdf.format(datePicker.getModel().getValue());
+		
+		// control if the user selected a particular value from combo boxes or added a new one
+		if (makeField.getText().equals(""))
+			selectedMake = (String) make.getSelectedItem();
+		else
+			selectedMake = makeField.getText();
+		if (modelField.getText().equals(""))
+			selectedModel = (String) model.getSelectedItem();
+		else
+			selectedModel = modelField.getText();
+		if (typeField.getText().equals(""))
+			selectedType = (String) type.getSelectedItem();
+		else
+			selectedType = typeField.getText();
+		
+		// WE HAVE ALL WHAT WE NEED FOR ADDING A NEW CAR (except from color and optionals, this will be done later)
+		
+		
+	}
+	////////////////////////////////// ADDING QUERY METHODS //////////////////////////////
 	
+	// TIRE FOREIGN KEY
+	public int getTireForeignKey () {
+		// first, control if a tire with all values like that one inserted already exists
+		int tireForeignKey = 0;
+		String checkTire = "SELECT * FROM tire WHERE UPPER(service_type) = UPPER(?) and width = ? and aspet_ratio = ? and UPPER(construction) = UPPER(?) and diameter = ? and UPPER (tire_type) = UPPER(?)";
+		try {
+			PreparedStatement stat = conn.prepareStatement(checkTire);
+			String selectedServiceType = (String) serviceType.getSelectedItem();
+			String selectedConstruction = (String) construction.getSelectedItem();
+			String selectedType = (String) tireType.getSelectedItem();
+			stat.setString(1, selectedServiceType.substring(0, 1));
+			stat.setInt(2, Integer.parseInt(tireWField.getText()));
+			stat.setInt(3, Integer.parseInt(aspetRatioField.getText()));
+			stat.setString(4, selectedConstruction.substring(0, 1));
+			stat.setInt(5, Integer.parseInt(diameterField.getText()));
+			stat.setString(6, selectedType);
+
+			ResultSet rs = stat.executeQuery();
+			
+			if (rs.next()) {
+			// We have a result (only one, we cannot have duplicate tires)
+				tireForeignKey = rs.getInt("tire_id");
+			} else {
+				// No data, we have to insert a new tire
+
+				String addTireQuery = "INSERT INTO tire (service_type, width, aspet_ratio, construction, diameter, tire_type) VALUES (?, ?, ?, ?, ?, ?)";
+
+				PreparedStatement addTire = conn.prepareStatement(addTireQuery,
+						Statement.RETURN_GENERATED_KEYS);
+
+				addTire.setString(1, selectedServiceType.substring(0, 1));
+				addTire.setInt(2, Integer.parseInt(tireWField.getText()));
+				addTire.setInt(3, Integer.parseInt(aspetRatioField.getText()));
+				addTire.setString(4, selectedConstruction.substring(0, 1));
+				addTire.setInt(5, Integer.parseInt(diameterField.getText()));
+				addTire.setString(6, selectedType);
+
+				addTire.executeUpdate();
+				ResultSet key = addTire.getGeneratedKeys();
+
+				if (key.next())
+					tireForeignKey = key.getInt(1);
+				
+				addTire.close();
+				key.close();
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return tireForeignKey;
+	}
+	
+	// DIMENSION FOREIGN KEY
+	public int getDimensionForeignKey() {
+		// first, control if a dimension with all values like that one inserted already
+		// exists
+		int dimForeignKey = 0;
+		String checkDimension = "SELECT * FROM dimension WHERE car_heigth = ? and car_length = ? and car_weight = ? and car_width = ? and trunk_capacity = ?";
+		try {
+			PreparedStatement stat = conn.prepareStatement(checkDimension);
+			stat.setInt(1, Integer.parseInt(heightField.getText()));
+			stat.setInt(2, Integer.parseInt(lengthField.getText()));
+			stat.setInt(3, Integer.parseInt(weightField.getText()));
+			stat.setInt(4, Integer.parseInt(widthField.getText()));
+			stat.setInt(5, Integer.parseInt(trunkField.getText()));
+
+			ResultSet rs = stat.executeQuery();
+
+			if (rs.next()) {
+				// We have a result (only one, we cannot have duplicate dimensions)
+				dimForeignKey = rs.getInt("dimension_id");
+			} else {
+				// No data, we have to insert a new dimension
+
+				String addDimensionQuery = "INSERT INTO dimension (car_heigth, car_length, car_weight, car_width, trunk_capacity) VALUES (?, ?, ?, ?, ?)";
+
+				PreparedStatement addDim = conn.prepareStatement(addDimensionQuery, Statement.RETURN_GENERATED_KEYS);
+
+				addDim.setInt(1, Integer.parseInt(heightField.getText()));
+				addDim.setInt(2, Integer.parseInt(lengthField.getText()));
+				addDim.setInt(3, Integer.parseInt(weightField.getText()));
+				addDim.setInt(4, Integer.parseInt(widthField.getText()));
+				addDim.setInt(5, Integer.parseInt(trunkField.getText()));
+
+				addDim.executeUpdate();
+				ResultSet key = addDim.getGeneratedKeys();
+
+				if (key.next())
+					dimForeignKey = key.getInt(1);
+
+				addDim.close();
+				key.close();
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return dimForeignKey;
+	}
+
+	// ENGINE FOREIGN KEY
+	public int getEngineForeignKey() {
+		// first, control if an engine with all values like that one inserted already
+		// exists
+		int engineForeignKey = 0;
+		String checkEngine = "SELECT * FROM engine WHERE capacity = ? and UPPER(fuel) = UPPER(?) and horsepower = ? and UPPER(wheel_drive) = UPPER (?) and euro = ? and UPPER(transmission) = UPPER(?)";
+		try {
+			PreparedStatement stat = conn.prepareStatement(checkEngine);
+			String selectedFuel = null;
+			if (fuelField.getText().equals("")) 
+				selectedFuel = (String) fuel.getSelectedItem();
+			else
+				selectedFuel = fuelField.getText();
+			String selectedWDrive = (String) wDrive.getSelectedItem();
+			String selectedTransmission = (String) trans.getSelectedItem();
+			stat.setInt(1,  Integer.parseInt(capacityField.getText()));
+			stat.setString(2, selectedFuel);
+			stat.setInt(3, Integer.parseInt(hPowerField.getText()));
+			stat.setString(4, selectedWDrive);
+			stat.setInt(5, Integer.parseInt(euroField.getText()));
+			stat.setString(6, selectedTransmission);
+
+			ResultSet rs = stat.executeQuery();
+
+			if (rs.next()) {
+				// We have a result (only one, we cannot have duplicate tires)
+				engineForeignKey = rs.getInt("engine_id");
+			} else {
+				// No data, we have to insert a new tire
+
+				String addEngineQuery = "INSERT INTO engine (capacity, fuel, horsepower, wheel_drive, euro, transmission) VALUES (?, ?, ?, ?, ?, ?)";
+
+				PreparedStatement addEngine = conn.prepareStatement(addEngineQuery, Statement.RETURN_GENERATED_KEYS);
+
+				addEngine.setInt(1,  Integer.parseInt(capacityField.getText()));
+				addEngine.setString(2, selectedFuel);
+				addEngine.setInt(3, Integer.parseInt(hPowerField.getText()));
+				addEngine.setString(4, selectedWDrive);
+				addEngine.setInt(5, Integer.parseInt(euroField.getText()));
+				addEngine.setString(6, selectedTransmission);
+
+				addEngine.executeUpdate();
+				ResultSet key = addEngine.getGeneratedKeys();
+
+				if (key.next())
+					engineForeignKey = key.getInt(1);
+
+				addEngine.close();
+				key.close();
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return engineForeignKey;
+	}
+	
+	// OPTIONAL FOREIGN KEY
+	public int getOptionalForeignKey(String name, double price) {
+		int optForeignKey = 0;
+		String getOptId = "SELECT optional_id FROM optional WHERE UPPER(opt_name) = UPPER(?) and price = ?";
+		try {
+			PreparedStatement stat = conn.prepareStatement(getOptId);
+			stat.setString(1, name);
+			stat.setDouble(2, price);
+			ResultSet rs = stat.executeQuery();
+
+			if (rs.next()) {
+				// We have a result (only one, we cannot have duplicate optionals)
+				optForeignKey = rs.getInt("optional_id");
+			} 
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return optForeignKey;
+	}
 	
 	
 	
@@ -1027,26 +1344,6 @@ public class AddCarPanel extends JPanel{
 					model.addItem(s);
 			}
 
-		}
-
-	}
-
-	// listener for buying a car
-	private class BuyListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JPanel gifPanel = new JPanel();
-			gifPanel.setLayout(new BoxLayout(gifPanel, BoxLayout.Y_AXIS));
-			JLabel myGIF = new JLabel(new ImageIcon("icons/200.gif"));
-			JLabel bought = new JLabel("Car bought!");
-			myGIF.setAlignmentX(CENTER_ALIGNMENT);
-			bought.setAlignmentX(CENTER_ALIGNMENT);
-			gifPanel.add(myGIF);
-			gifPanel.add(bought);
-			AppResources.changeFont(bought, Font.BOLD, 25);
-			//JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube", JOptionPane.PLAIN_MESSAGE);
-			respectConstraints();
 		}
 
 	}
@@ -1224,6 +1521,25 @@ public class AddCarPanel extends JPanel{
 		}
 	}
 
-	
+	// listener for buying a car
+	private class BuyListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			/*
+			 * JPanel gifPanel = new JPanel(); gifPanel.setLayout(new BoxLayout(gifPanel,
+			 * BoxLayout.Y_AXIS)); JLabel myGIF = new JLabel(new
+			 * ImageIcon("icons/200.gif")); JLabel bought = new JLabel("Car bought!");
+			 * myGIF.setAlignmentX(CENTER_ALIGNMENT);
+			 * bought.setAlignmentX(CENTER_ALIGNMENT); gifPanel.add(myGIF);
+			 * gifPanel.add(bought); AppResources.changeFont(bought, Font.BOLD, 25);
+			 * //JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel,
+			 * "CarCube", JOptionPane.PLAIN_MESSAGE); respectConstraints();
+			 */
+			
+			
+		}
+
+	}
 
 }
