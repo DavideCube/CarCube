@@ -1047,9 +1047,7 @@ public class AddCarPanel extends JPanel{
 		int price = Integer.parseInt(priceField.getText());
 		String selectedSupp = (String) supplierChoice.getSelectedItem();
 		String boughtFromKey = selectedSupp.substring(selectedSupp.lastIndexOf("(")+1, selectedSupp.lastIndexOf(")"));
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = (Date) datePicker.getModel().getValue();
-		String dateFormatted = sdf.format(datePicker.getModel().getValue());
 		java.sql.Date mydate= new java.sql.Date (date.getYear(), date.getMonth(), date.getDay());
 		
 		// control if the user selected a particular value from combo boxes or added a new one
@@ -1067,7 +1065,7 @@ public class AddCarPanel extends JPanel{
 			selectedType = typeField.getText();
 		
 		// WE HAVE ALL WHAT WE NEED FOR ADDING A NEW CAR (except from color and optionals, this will be done later)
-		String addCarQuery = "INSERT INTO new_car (make, model, car_type, car_year, doors, seats, sold, base_price, bought_from, bought_date, dimension, engine, tire)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		String addCarQuery = "INSERT INTO new_car (make, model, car_type, car_year, doors, seats, sold, base_price, bought_from, bought_date, dimension, engine, tire)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement stat = conn.prepareStatement(addCarQuery, Statement.RETURN_GENERATED_KEYS);
 			stat.setString(1, selectedMake);
@@ -1140,7 +1138,6 @@ public class AddCarPanel extends JPanel{
 			// NOW COPY IMAGE
 			// copy
 			try {
-				System.out.println(Paths.get(System.getProperty("user.dir") + "/icons/newCars"+ carkey + ".jpg"));
 				Files.copy(fileInserted.toPath(), Paths.get(System.getProperty("user.dir") + "/icons/newCars", carkey + ".jpg"), StandardCopyOption.REPLACE_EXISTING);
 				
 			} catch (IOException e) {
@@ -1153,6 +1150,135 @@ public class AddCarPanel extends JPanel{
 			e.printStackTrace();
 		}
 		
+	}
+	
+	// big method for adding a new car
+	public void addUsedCar() {
+		// FIRST OF ALL, see if all constraints are respected
+		boolean canWeContinue = respectConstraints();
+		if (!canWeContinue)
+			return;
+
+		// NOW WE CAN MOVE ON. To avoid confusion, get all values that i need for adding
+		// a new car
+		int tireKey = getTireForeignKey();
+		int dimensionKey = getDimensionForeignKey();
+		int engineKey = getEngineForeignKey();
+		String selectedMake = null;
+		String selectedModel = null;
+		String selectedType = null;
+		String selectedYear = (String) year.getSelectedItem();
+		String licensePlate = licenseField.getText();
+		int mileage = Integer.parseInt(mileageField.getText());
+		int car_year = Integer.parseInt(selectedYear);
+		int doors = Integer.parseInt(doorsField.getText());
+		int seats = Integer.parseInt(seatsField.getText());
+		int sold = 0;
+		int price = Integer.parseInt(priceField.getText());
+		String selectedCus = (String) customerChoice.getSelectedItem();
+		String boughtFromKey = selectedCus.substring(selectedCus.lastIndexOf("(") + 1, selectedCus.lastIndexOf(")"));
+		Date date = (Date) datePicker.getModel().getValue();
+		java.sql.Date mydate = new java.sql.Date(date.getYear(), date.getMonth(), date.getDay());
+
+		// control if the user selected a particular value from combo boxes or added a
+		// new one
+		if (makeField.getText().equals(""))
+			selectedMake = (String) make.getSelectedItem();
+		else
+			selectedMake = makeField.getText();
+		if (modelField.getText().equals(""))
+			selectedModel = (String) model.getSelectedItem();
+		else
+			selectedModel = modelField.getText();
+		if (typeField.getText().equals(""))
+			selectedType = (String) type.getSelectedItem();
+		else
+			selectedType = typeField.getText();
+
+		// WE HAVE ALL WHAT WE NEED FOR ADDING A NEW CAR (except from color and
+		// optionals, this will be done later)
+		String addCarQuery = "INSERT INTO used_car VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		try {
+			PreparedStatement stat = conn.prepareStatement(addCarQuery);
+			stat.setString(1, licensePlate);
+			stat.setString(2, selectedMake);
+			stat.setString(3, selectedModel);
+			stat.setString(4, selectedType);
+			stat.setInt(5, car_year);
+			stat.setInt(6, doors);
+			stat.setInt(7, seats);
+			stat.setInt(8, sold);
+			stat.setInt(9, price);
+			stat.setInt(10, mileage);
+			stat.setString(11, boughtFromKey);
+			stat.setDate(12, mydate);
+			stat.setInt(13, dimensionKey);
+			stat.setInt(14, engineKey);
+			stat.setInt(15, tireKey);
+
+			stat.executeUpdate();
+			stat.close();
+			
+
+			// NOW WE CONCLUDE WITH COLORS AND OPTIONALS
+			PreparedStatement colorStat = null, optStat = null;
+			for (int i = 0; i < colors.size(); i++) {
+				if (colors.get(i).getCheckBox().isSelected()) {
+					String colorQuery = "INSERT INTO used_painting VALUES(?, ?)";
+					colorStat = conn.prepareStatement(colorQuery);
+					colorStat.setString(1, licensePlate);
+					colorStat.setString(2, colorKeys.get(i));
+					colorStat.executeUpdate();
+				}
+			}
+
+			ArrayList<Integer> selectedOptKeys = new ArrayList<Integer>();
+			for (JCheckBox c : optionals) {
+				if (c.isSelected()) {
+					String optname = c.getText().substring(0, c.getText().indexOf(" -"));
+					double optprice = 0;
+					String substring = c.getText().substring(c.getText().indexOf("€ ") + 2,
+							c.getText().lastIndexOf(","));
+					Double thousand = 0.00;
+					Double hundred = 0.00;
+					if (substring.contains(".")) {
+						thousand = Double.parseDouble(substring.substring(0, substring.indexOf(".")));
+						hundred = 1000 * Double.parseDouble(substring.substring(substring.indexOf(".")));
+						optprice = (thousand * 1000) + hundred;
+					} else
+						optprice = Double.parseDouble(substring);
+					int optKey = getOptionalForeignKey(optname, optprice);
+					selectedOptKeys.add(optKey);
+				}
+			}
+
+			for (Integer n : selectedOptKeys) {
+				String optQuery = "INSERT INTO used_equipped VALUES(?, ?)";
+				optStat = conn.prepareStatement(optQuery);
+				optStat.setInt(1, n);
+				optStat.setString(2, licensePlate);
+				optStat.executeUpdate();
+			}
+
+			colorStat.close();
+			optStat.close();
+
+			// NOW COPY IMAGE
+			// copy
+			try {
+				Files.copy(fileInserted.toPath(),
+						Paths.get(System.getProperty("user.dir") + "/icons/usedCars", licensePlate + ".jpg"),
+						StandardCopyOption.REPLACE_EXISTING);
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	////////////////////////////////// ADDING QUERY METHODS //////////////////////////////
 	
@@ -1616,8 +1742,11 @@ public class AddCarPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
-			addNewCar();
+			if (newCar.isSelected())
+				addNewCar();
+			else
+				addUsedCar();
+			
 			JPanel gifPanel = new JPanel();
 			gifPanel.setLayout(new BoxLayout(gifPanel, BoxLayout.Y_AXIS));
 			JLabel myGIF = new JLabel(new ImageIcon("icons/200.gif"));
@@ -1628,9 +1757,6 @@ public class AddCarPanel extends JPanel{
 			gifPanel.add(bought);
 			AppResources.changeFont(bought, Font.BOLD, 25);
 			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube", JOptionPane.PLAIN_MESSAGE);
-			respectConstraints();
-			
-			
 		}
 
 	}
