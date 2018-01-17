@@ -724,50 +724,50 @@ public class AdvancedSearchPanel extends JPanel {
 			// look at the year
 			if (yearSelected.compareTo("From year") != 0) {
 				yearInt = Integer.parseInt(yearSelected);
-				newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE car_year >= " + yearInt;
+				newCarQuery += " INTERSECT ALL SELECT make, model FROM new_car WHERE car_year >= " + yearInt;
 			}
 			// look at the price
 			if (priceSelected.compareTo("Price up to") != 0) {
 				priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
-				newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE base_price <= " + priceInt;
+				newCarQuery += " INTERSECT ALL SELECT make, model FROM new_car WHERE base_price <= " + priceInt;
 			}
 			
 			// look at sold or not sold
 			if (soldSelected.compareTo("Sold or not") != 0) {
 				if (soldSelected.compareTo("Not sold") == 0)
-					newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE sold = 0";
+					newCarQuery += " INTERSECT ALL SELECT make, model FROM new_car WHERE sold = 0";
 				else
-					newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE sold = 1";
+					newCarQuery += " INTERSECT ALL SELECT make, model FROM new_car WHERE sold = 1";
 			}
 
 			// look at the car type
 			if (typeSelected.compareTo(OPTION3) != 0) {
-				newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE car_type = '" + typeSelected + "'";
+				newCarQuery += " INTERSECT ALL SELECT make, model FROM new_car WHERE car_type = '" + typeSelected + "'";
 			}
 
 			// look at the seats
 			if (seatsSelected.compareTo(OPTION4) != 0) {
 				seats = Integer.parseInt(seatsSelected);
-				newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE seats = " + seats;
+				newCarQuery += " INTERSECT ALL SELECT make, model FROM new_car WHERE seats = " + seats;
 			}
 
 			// look at the doors
 			if (doorsSelected.compareTo(OPTION5) != 0) {
 				doors = Integer.parseInt(doorsSelected);
-				newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE doors = " + doors;
+				newCarQuery += " INTERSECT ALL SELECT make, model FROM new_car WHERE doors = " + doors;
 			}
 
 			// look at the fuel (inner join)
 			if (fuelsSelected.compareTo(OPTION6) != 0) {
 
-				newCarQuery += " INTERSECT SELECT new_car.make, new_car.model FROM new_car INNER JOIN engine ON new_car.engine = engine.engine_id WHERE engine.fuel = '"
+				newCarQuery += " INTERSECT ALL SELECT new_car.make, new_car.model FROM new_car INNER JOIN engine ON new_car.engine = engine.engine_id WHERE engine.fuel = '"
 						+ fuelsSelected + "'";
 			}
 
 			// look at the transmission (inner join)
 			if (transmissionSelected.compareTo(OPTION7) != 0) {
 
-				newCarQuery += " INTERSECT SELECT new_car.make, new_car.model FROM new_car INNER JOIN engine ON new_car.engine = engine.engine_id WHERE engine.transmission = '"
+				newCarQuery += " INTERSECT ALL SELECT new_car.make, new_car.model FROM new_car INNER JOIN engine ON new_car.engine = engine.engine_id WHERE engine.transmission = '"
 						+ transmissionSelected + "'";
 			}
 
@@ -776,7 +776,7 @@ public class AdvancedSearchPanel extends JPanel {
 				try {
 				maxHeightVal = Integer.parseInt(maxHeight);
 
-				newCarQuery += " INTERSECT SELECT new_car.make, new_car.model FROM new_car INNER JOIN dimension on new_car.dimension = dimension.dimension_id WHERE dimension.car_heigth <= "
+				newCarQuery += " INTERSECT ALL SELECT new_car.make, new_car.model FROM new_car INNER JOIN dimension on new_car.dimension = dimension.dimension_id WHERE dimension.car_heigth <= "
 						+ maxHeightVal;
 				} catch(NumberFormatException n) {
 					
@@ -790,7 +790,7 @@ public class AdvancedSearchPanel extends JPanel {
 				try {
 				maxLengthVal = Integer.parseInt(maxLength);
 
-				newCarQuery += " INTERSECT SELECT new_car.make, new_car.model FROM new_car INNER JOIN dimension on new_car.dimension = dimension.dimension_id WHERE dimension.car_length <= "
+				newCarQuery += " INTERSECT ALL SELECT new_car.make, new_car.model FROM new_car INNER JOIN dimension on new_car.dimension = dimension.dimension_id WHERE dimension.car_length <= "
 						+ maxLengthVal;
 				} catch(NumberFormatException n) {
 					
@@ -804,7 +804,7 @@ public class AdvancedSearchPanel extends JPanel {
 				try {
 				maxWidthVal = Integer.parseInt(maxWidth);
 
-				newCarQuery += " INTERSECT SELECT new_car.make, new_car.model FROM new_car INNER JOIN dimension on new_car.dimension = dimension.dimension_id WHERE dimension.car_width <= "
+				newCarQuery += " INTERSECT ALL SELECT new_car.make, new_car.model FROM new_car INNER JOIN dimension on new_car.dimension = dimension.dimension_id WHERE dimension.car_width <= "
 						+ maxWidthVal;
 				} catch(NumberFormatException n) {
 					
@@ -818,7 +818,7 @@ public class AdvancedSearchPanel extends JPanel {
 				try {
 					maxHorsesVal = Integer.parseInt(maxHorses);
 
-					newCarQuery += " INTERSECT SELECT new_car.make, new_car.model FROM new_car INNER JOIN engine on new_car.engine = engine.engine_id WHERE engine.horsepower <= "
+					newCarQuery += " INTERSECT ALL SELECT new_car.make, new_car.model FROM new_car INNER JOIN engine on new_car.engine = engine.engine_id WHERE engine.horsepower <= "
 							+ maxHorsesVal;
 				} catch (NumberFormatException n) {
 
@@ -833,7 +833,7 @@ public class AdvancedSearchPanel extends JPanel {
 				
 				if(c.isSelected()) {
 					
-					newCarQuery += " INTERSECT SELECT new_car.make, new_car.model FROM new_car inner join new_equipped on new_car.car_id = new_equipped.car_id " + 
+					newCarQuery += " INTERSECT ALL SELECT new_car.make, new_car.model FROM new_car inner join new_equipped on new_car.car_id = new_equipped.car_id " + 
 							"inner join optional on new_equipped.optional_id = optional.optional_id WHERE optional.opt_name = '"
 							+ c.getText() + "'";
 				}
@@ -843,7 +843,7 @@ public class AdvancedSearchPanel extends JPanel {
 			//Colors: now we just print
 			for(int i = 0; i < colors.size(); i++) {
 				if(colors.get(i).getCheckBox().isSelected())
-					newCarQuery += " INTERSECT SELECT new_car.make, new_car.model FROM new_car inner join new_painting on new_car.car_id = new_painting.car_id " + 
+					newCarQuery += " INTERSECT ALL SELECT new_car.make, new_car.model FROM new_car inner join new_painting on new_car.car_id = new_painting.car_id " + 
 							"inner join color on new_painting.color_code = color.color_code WHERE color.color_code = '"
 							+ colorKeys.get(i) + "'";
 					//System.out.println("Color selected: " + colorKeys.get(i));
@@ -866,49 +866,49 @@ public class AdvancedSearchPanel extends JPanel {
 			// look at the year
 			if (yearSelected.compareTo(OPTION) != 0) {
 				yearInt = Integer.parseInt(yearSelected);
-				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE car_year >= " + yearInt;
+				usedCarQuery += " INTERSECT ALL SELECT make, model FROM used_car WHERE car_year >= " + yearInt;
 			}
 			// look at the price
 			if (priceSelected.compareTo(OPTION2) != 0) {
 				priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
-				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE net_price <= " + priceInt;
+				usedCarQuery += " INTERSECT ALL SELECT make, model FROM used_car WHERE net_price <= " + priceInt;
 			}
 			// look at sold or not sold
 			if (soldSelected.compareTo("Sold or not") != 0) {
 				if (soldSelected.compareTo("Not sold") == 0)
-					usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE sold = 0";
+					usedCarQuery += " INTERSECT ALL SELECT make, model FROM used_car WHERE sold = 0";
 				else
-					usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE sold = 1";
+					usedCarQuery += " INTERSECT ALL SELECT make, model FROM used_car WHERE sold = 1";
 			}
 
 			// look at the car type
 			if (typeSelected.compareTo(OPTION3) != 0) {
-				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE car_type = '" + typeSelected + "'";
+				usedCarQuery += " INTERSECT ALL SELECT make, model FROM used_car WHERE car_type = '" + typeSelected + "'";
 			}
 
 			// look at the seats
 			if (seatsSelected.compareTo(OPTION4) != 0) {
 				seats = Integer.parseInt(seatsSelected);
-				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE seats = " + seats;
+				usedCarQuery += " INTERSECT ALL SELECT make, model FROM used_car WHERE seats = " + seats;
 			}
 
 			// look at the doors
 			if (doorsSelected.compareTo(OPTION5) != 0) {
 				doors = Integer.parseInt(doorsSelected);
-				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE doors = " + doors;
+				usedCarQuery += " INTERSECT ALL SELECT make, model FROM used_car WHERE doors = " + doors;
 			}
 
 			// look at the fuel (inner join)
 			if (fuelsSelected.compareTo(OPTION6) != 0) {
 
-				usedCarQuery += " INTERSECT SELECT used_car.make, used_car.model FROM used_car INNER JOIN engine ON used_car.engine = engine.engine_id WHERE engine.fuel = '"
+				usedCarQuery += " INTERSECT ALL SELECT used_car.make, used_car.model FROM used_car INNER JOIN engine ON used_car.engine = engine.engine_id WHERE engine.fuel = '"
 						+ fuelsSelected + "'";
 			}
 
 			// look at the transmission (inner join)
 			if (transmissionSelected.compareTo(OPTION7) != 0) {
 
-				usedCarQuery += " INTERSECT SELECT used_car.make, used_car.model FROM used_car INNER JOIN engine ON used_car.engine = engine.engine_id WHERE engine.transmission = '"
+				usedCarQuery += " INTERSECT ALL SELECT used_car.make, used_car.model FROM used_car INNER JOIN engine ON used_car.engine = engine.engine_id WHERE engine.transmission = '"
 						+ transmissionSelected + "'";
 			}
 
@@ -917,7 +917,7 @@ public class AdvancedSearchPanel extends JPanel {
 				try {
 				maxHeightVal = Integer.parseInt(maxHeight);
 
-				usedCarQuery += " INTERSECT SELECT used_car.make, used_car.model FROM used_car INNER JOIN dimension on used_car.dimension = dimension.dimension_id WHERE dimension.car_heigth <= "
+				usedCarQuery += " INTERSECT ALL SELECT used_car.make, used_car.model FROM used_car INNER JOIN dimension on used_car.dimension = dimension.dimension_id WHERE dimension.car_heigth <= "
 						+ maxHeightVal;
 				} catch(NumberFormatException n) {
 					
@@ -931,7 +931,7 @@ public class AdvancedSearchPanel extends JPanel {
 				try {
 				maxLengthVal = Integer.parseInt(maxLength);
 
-				usedCarQuery += " INTERSECT SELECT used_car.make, used_car.model FROM used_car INNER JOIN dimension on used_car.dimension = dimension.dimension_id WHERE dimension.car_length <= "
+				usedCarQuery += " INTERSECT ALL SELECT used_car.make, used_car.model FROM used_car INNER JOIN dimension on used_car.dimension = dimension.dimension_id WHERE dimension.car_length <= "
 						+ maxLengthVal;
 				} catch(NumberFormatException n) {
 					
@@ -945,7 +945,7 @@ public class AdvancedSearchPanel extends JPanel {
 				try {
 				maxWidthVal = Integer.parseInt(maxWidth);
 
-				usedCarQuery += " INTERSECT SELECT used_car.make, used_car.model FROM used_car INNER JOIN dimension on used_car.dimension = dimension.dimension_id WHERE dimension.car_width <= "
+				usedCarQuery += " INTERSECT ALL SELECT used_car.make, used_car.model FROM used_car INNER JOIN dimension on used_car.dimension = dimension.dimension_id WHERE dimension.car_width <= "
 						+ maxWidthVal;
 				} catch(NumberFormatException n) {
 					
@@ -959,7 +959,7 @@ public class AdvancedSearchPanel extends JPanel {
 				try {
 					maxHorsesVal = Integer.parseInt(maxHorses);
 
-					usedCarQuery += " INTERSECT SELECT used_car.make, used_car.model FROM used_car INNER JOIN engine on used_car.engine = engine.engine_id WHERE engine.horsepower <= "
+					usedCarQuery += " INTERSECT ALL SELECT used_car.make, used_car.model FROM used_car INNER JOIN engine on used_car.engine = engine.engine_id WHERE engine.horsepower <= "
 							+ maxHorsesVal;
 				} catch (NumberFormatException n) {
 
@@ -974,7 +974,7 @@ public class AdvancedSearchPanel extends JPanel {
 				
 				if(c.isSelected()) {
 					
-					usedCarQuery += " INTERSECT SELECT used_car.make, used_car.model FROM used_car inner join used_equipped on used_car.immatriculation = used_equipped.immatriculation " + 
+					usedCarQuery += " INTERSECT ALL SELECT used_car.make, used_car.model FROM used_car inner join used_equipped on used_car.immatriculation = used_equipped.immatriculation " + 
 							"inner join optional on used_equipped.optional_id = optional.optional_id WHERE optional.opt_name = '"
 							+ c.getText() + "'";
 				}
@@ -983,7 +983,7 @@ public class AdvancedSearchPanel extends JPanel {
 			
 			for(int i = 0; i < colors.size(); i++) {
 				if(colors.get(i).getCheckBox().isSelected())
-					usedCarQuery += " INTERSECT SELECT used_car.make, used_car.model FROM used_car inner join used_painting on used_car.immatriculation = used_painting.immatriculation " + 
+					usedCarQuery += " INTERSECT ALL SELECT used_car.make, used_car.model FROM used_car inner join used_painting on used_car.immatriculation = used_painting.immatriculation " + 
 							"inner join color on used_painting.color_code = color.color_code WHERE color.color_code = '"
 							+ colorKeys.get(i) + "'";
 					//System.out.println("Color selected: " + colorKeys.get(i));

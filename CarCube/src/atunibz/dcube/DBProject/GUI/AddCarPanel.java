@@ -77,6 +77,7 @@ public class AddCarPanel extends JPanel{
 	private JTextField licenseField, mileageField, aspetRatioField, tireWField, diameterField;
 	private ArrayList<JCheckBox> optionals;
 	private double totalPrice = 0;
+	private int quantity = 1;
 	private ArrayList<ColorCheckBox> colors;
 	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 	private File fileInserted;
@@ -1027,11 +1028,6 @@ public class AddCarPanel extends JPanel{
 	
 	// big method for adding a new car
 	public void addNewCar () {
-		// FIRST OF ALL, see if all constraints are respected
-		boolean canWeContinue = respectConstraints();
-		if (!canWeContinue)
-			return;
-		
 		// NOW WE CAN MOVE ON. To avoid confusion, get all values that i need for adding a new car
 		int tireKey = getTireForeignKey();
 		int dimensionKey = getDimensionForeignKey();
@@ -1154,11 +1150,6 @@ public class AddCarPanel extends JPanel{
 	
 	// big method for adding a new car
 	public void addUsedCar() {
-		// FIRST OF ALL, see if all constraints are respected
-		boolean canWeContinue = respectConstraints();
-		if (!canWeContinue)
-			return;
-
 		// NOW WE CAN MOVE ON. To avoid confusion, get all values that i need for adding
 		// a new car
 		int tireKey = getTireForeignKey();
@@ -1208,7 +1199,7 @@ public class AddCarPanel extends JPanel{
 			stat.setInt(6, doors);
 			stat.setInt(7, seats);
 			stat.setInt(8, sold);
-			stat.setInt(9, price);
+			stat.setDouble(9, totalPrice);
 			stat.setInt(10, mileage);
 			stat.setString(11, boughtFromKey);
 			stat.setDate(12, mydate);
@@ -1499,6 +1490,127 @@ public class AddCarPanel extends JPanel{
 		}
 	}
 	
+	// class for selecting the quantity
+	public class SelectQuantityPanel extends JPanel {
+		public JLabel selectLabel, quantityLabel;
+		public JButton addQuantity, removeQuantity;
+		public SelectQuantityPanel () {
+			JPanel qPanel = new JPanel();
+			qPanel.setLayout(new BoxLayout(qPanel, BoxLayout.Y_AXIS));
+			selectLabel = new JLabel("Select number of car units");
+			AppResources.changeFont(selectLabel, Font.PLAIN, 18);
+			selectLabel.setAlignmentX(CENTER_ALIGNMENT);
+			qPanel.add(selectLabel);
+			JPanel row = new JPanel();
+			addQuantity = new JButton("+");
+			addQuantity.setPreferredSize(new Dimension(25, 25));
+			AppResources.changeFont(addQuantity, Font.PLAIN, 18);
+			removeQuantity = new JButton("-");
+			AppResources.changeFont(removeQuantity, Font.PLAIN, 18);
+			removeQuantity.setPreferredSize(new Dimension(25, 25));
+			quantityLabel = new JLabel (quantity + "");
+			AppResources.changeFont(quantityLabel, Font.PLAIN, 20);
+			addQuantity.addActionListener(new AddQListener());
+			removeQuantity.addActionListener(new RemoveQListener());
+			row.add(addQuantity);
+			row.add(quantityLabel);
+			row.add(removeQuantity);
+
+			
+			qPanel.add(row);
+			
+			add(qPanel);
+		}
+		private class AddQListener implements ActionListener {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				quantity++;
+				quantityLabel.setText(quantity + "");
+				
+			}
+			
+		}
+		private class RemoveQListener implements ActionListener {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if (quantity > 1) {
+					quantity--;
+					quantityLabel.setText(quantity + "");
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+	// class for asking confirm
+	public class ConfirmPurchasePanel extends JPanel {
+		
+		public ConfirmPurchasePanel () {
+			JPanel confirmPanel = new JPanel();
+			confirmPanel.setLayout(new BoxLayout(confirmPanel, BoxLayout.Y_AXIS));
+			JLabel confirmLabel = new JLabel("Please confirm the purchase");
+			AppResources.changeFont(confirmLabel, Font.BOLD, 20);
+			JLabel confirm2Label = new JLabel("Order details:");
+			AppResources.changeFont(confirm2Label, Font.PLAIN, 18);
+			confirmLabel.setAlignmentX(CENTER_ALIGNMENT);
+			confirm2Label.setAlignmentX(CENTER_ALIGNMENT);
+			// first row
+			JPanel support1 = new JPanel();
+			support1.setLayout(new BorderLayout());
+			JPanel firstRow = new JPanel();
+			String selectedMake = null;
+			String selectedModel = null;
+			if (makeField.getText().equals(""))
+				selectedMake = (String) make.getSelectedItem();
+			else
+				selectedMake = makeField.getText();
+			if (modelField.getText().equals(""))
+				selectedModel = (String) model.getSelectedItem();
+			else
+				selectedModel = modelField.getText();
+			
+			JLabel image1 = new JLabel (new ImageIcon("icons/sport-car.png"));
+			JLabel info1 = new JLabel(selectedMake + " "+ selectedModel);
+			info1.setFont(new Font("Helvetica", Font.PLAIN, 16));
+			firstRow.add(image1);
+			firstRow.add(info1);
+			support1.add(firstRow, BorderLayout.WEST);
+			// second row
+			JPanel support2 = new JPanel();
+			support2.setLayout(new BorderLayout());
+			JPanel secondRow = new JPanel();
+			JLabel image2 = new JLabel (new ImageIcon("icons/database.png"));
+			JLabel info2 = new JLabel("Number of units: " + quantity);
+			info2.setFont(new Font("Helvetica", Font.PLAIN, 16));
+			secondRow.add(image2);
+			secondRow.add(info2);
+			support2.add(secondRow, BorderLayout.WEST);
+			
+			// third row
+			JPanel support3 = new JPanel();
+			support3.setLayout(new BorderLayout());
+			JPanel thirdRow = new JPanel();
+			JLabel image3 = new JLabel(new ImageIcon("icons/price-tag.png"));
+			JLabel info3 = new JLabel("Total cost: " + currencyFormat.format(totalPrice * quantity));
+			info3.setFont(new Font("Helvetica", Font.PLAIN, 16));
+			thirdRow.add(image3);
+			thirdRow.add(info3);
+			support3.add(thirdRow, BorderLayout.WEST);
+			
+			confirmPanel.add(confirmLabel);
+			confirmPanel.add(confirm2Label);
+			confirmPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+			confirmPanel.add(support1);
+			confirmPanel.add(support2);
+			confirmPanel.add(support3);
+			add(confirmPanel);
+		}
+	}
 	///////////////////////////////// LISTENERS /////////////////////////////////////////
 	
 	// listener for radio buttons
@@ -1568,9 +1680,11 @@ public class AddCarPanel extends JPanel{
 	private class AddOptionalListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			int result = JOptionPane.showConfirmDialog(MainPanel.getMainPanel(), addOptionalPanel, "CarCube",
-					JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, new ImageIcon("icons/minilogo.png"));
-			if (result == JOptionPane.OK_OPTION) {
+			String [] options = {"Confirm", "Cancel"};
+			String sel = "Cancel";
+			int result = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), addOptionalPanel, "CarCube",
+					JOptionPane.INFORMATION_MESSAGE, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"), options, sel);
+			if (result == 0) {
 				String name = addOptionalPanel.nameField.getText();
 				String price = addOptionalPanel.priceField.getText();
 				int priceVal = 0;
@@ -1742,21 +1856,48 @@ public class AddCarPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (newCar.isSelected())
-				addNewCar();
-			else
-				addUsedCar();
-			
-			JPanel gifPanel = new JPanel();
-			gifPanel.setLayout(new BoxLayout(gifPanel, BoxLayout.Y_AXIS));
-			JLabel myGIF = new JLabel(new ImageIcon("icons/200.gif"));
-			JLabel bought = new JLabel("Car bought!");
-			myGIF.setAlignmentX(CENTER_ALIGNMENT);
-			bought.setAlignmentX(CENTER_ALIGNMENT);
-			gifPanel.add(myGIF);
-			gifPanel.add(bought);
-			AppResources.changeFont(bought, Font.BOLD, 25);
-			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube", JOptionPane.PLAIN_MESSAGE);
+			// FIRST OF ALL, see if all constraints are respected
+			boolean canWeContinue = respectConstraints();
+			if (!canWeContinue)
+				return;
+			JPanel selectQuantityPanel = new SelectQuantityPanel();
+			String [] options = {"Confirm", "Cancel"};
+			String sel = "Cancel";
+			int result = 0;
+			if (newCar.isSelected()) {
+				result = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), selectQuantityPanel, "CarCube",
+					JOptionPane.INFORMATION_MESSAGE, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
+					options, sel);
+			}
+			if (result == 0) {
+				JPanel confirmPanel = new ConfirmPurchasePanel();
+				int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), confirmPanel, "CarCube",
+						JOptionPane.INFORMATION_MESSAGE, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
+						options, sel);
+				if (choice == 0) {
+					if (newCar.isSelected()) {
+						for (int i = 0; i<quantity; i++)
+							addNewCar();
+					}
+					else
+						addUsedCar();
+
+					JPanel gifPanel = new JPanel();
+					gifPanel.setLayout(new BoxLayout(gifPanel, BoxLayout.Y_AXIS));
+					JLabel myGIF = new JLabel(new ImageIcon("icons/200.gif"));
+					JLabel bought = new JLabel("Car bought!");
+					myGIF.setAlignmentX(CENTER_ALIGNMENT);
+					bought.setAlignmentX(CENTER_ALIGNMENT);
+					gifPanel.add(myGIF);
+					gifPanel.add(bought);
+					AppResources.changeFont(bought, Font.BOLD, 25);
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube",
+							JOptionPane.PLAIN_MESSAGE);
+				}
+				quantity = 1;
+			}
+			else 
+				quantity = 1;
 		}
 
 	}

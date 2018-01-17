@@ -346,19 +346,19 @@ public class SearchCarPanel extends JPanel{
 			// look at the year
 			if (yearSelected.compareTo("From year") != 0) {
 				yearInt = Integer.parseInt(yearSelected);
-				newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE car_year >= " + yearInt;
+				newCarQuery += " INTERSECT ALL SELECT make, model FROM new_car WHERE car_year >= " + yearInt;
 			}
 			// look at the price
 			if (priceSelected.compareTo("Price up to") != 0) {
 				priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
-				newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE base_price <= " + priceInt;
+				newCarQuery += " INTERSECT ALL SELECT make, model FROM new_car WHERE base_price <= " + priceInt;
 			}
 			// look at sold or not sold
 			if (soldSelected.compareTo("Sold or not") != 0) {
 				if (soldSelected.compareTo("Not sold") == 0)
-					newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE sold = 0";
+					newCarQuery += " INTERSECT ALL SELECT make, model FROM new_car WHERE sold = 0";
 				else
-					newCarQuery += " INTERSECT SELECT make, model FROM new_car WHERE sold = 1";
+					newCarQuery += " INTERSECT ALL SELECT make, model FROM new_car WHERE sold = 1";
 			}
 				
 		}
@@ -375,19 +375,19 @@ public class SearchCarPanel extends JPanel{
 			// look at the year
 			if (yearSelected.compareTo(OPTION) != 0) {
 				yearInt = Integer.parseInt(yearSelected);
-				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE car_year >= " + yearInt;
+				usedCarQuery += " INTERSECT ALL SELECT make, model FROM used_car WHERE car_year >= " + yearInt;
 			}
 			// look at the price
 			if (priceSelected.compareTo(OPTION2) != 0) {
 				priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
-				usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE net_price <= " + priceInt;
+				usedCarQuery += " INTERSECT ALL SELECT make, model FROM used_car WHERE net_price <= " + priceInt;
 			}
 			// look at sold or not sold
 			if (soldSelected.compareTo("Sold or not") != 0) {
 				if (soldSelected.compareTo("Not sold") == 0)
-					usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE sold = 0";
+					usedCarQuery += " INTERSECT ALL SELECT make, model FROM used_car WHERE sold = 0";
 				else
-					usedCarQuery += " INTERSECT SELECT make, model FROM used_car WHERE sold = 1";
+					usedCarQuery += " INTERSECT ALL SELECT make, model FROM used_car WHERE sold = 1";
 			}
 		}
 		// CASE BOTH
@@ -488,19 +488,19 @@ public class SearchCarPanel extends JPanel{
 				// look at the year
 				if (yearSelected.compareTo("From year") != 0) {
 					yearInt = Integer.parseInt(yearSelected);
-					newCarQuery += " INTERSECT SELECT * FROM new_car WHERE car_year >= " + yearInt;
+					newCarQuery += " INTERSECT ALL SELECT * FROM new_car WHERE car_year >= " + yearInt;
 				}
 				// look at the price
 				if (priceSelected.compareTo("Price up to") != 0) {
 					priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
-					newCarQuery += " INTERSECT SELECT * FROM new_car WHERE base_price <= " + priceInt;
+					newCarQuery += " INTERSECT ALL SELECT * FROM new_car WHERE base_price <= " + priceInt;
 				}
 				// look at sold or not sold
 				if (soldSelected.compareTo("Sold or not") != 0) {
 					if (soldSelected.compareTo("Not sold") == 0)
-						newCarQuery += " INTERSECT SELECT * FROM new_car WHERE sold = 0";
+						newCarQuery += " INTERSECT ALL SELECT * FROM new_car WHERE sold = 0";
 					else
-						newCarQuery += " INTERSECT SELECT * FROM new_car WHERE sold = 1";
+						newCarQuery += " INTERSECT ALL SELECT * FROM new_car WHERE sold = 1";
 				}
 				
 			}
@@ -516,19 +516,19 @@ public class SearchCarPanel extends JPanel{
 				// look at the year
 				if (yearSelected.compareTo(OPTION) != 0) {
 					yearInt = Integer.parseInt(yearSelected);
-					usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE car_year >= " + yearInt;
+					usedCarQuery += " INTERSECT ALL SELECT * FROM used_car WHERE car_year >= " + yearInt;
 				}
 				// look at the price
 				if (priceSelected.compareTo(OPTION2) != 0) {
 					priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
-					usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE net_price <= " + priceInt;
+					usedCarQuery += " INTERSECT ALL SELECT * FROM used_car WHERE net_price <= " + priceInt;
 				}
 				// look at sold or not sold
 				if (soldSelected.compareTo("Sold or not") != 0) {
 					if (soldSelected.compareTo("Not sold") == 0)
-						usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE sold = 0";
+						usedCarQuery += " INTERSECT ALL SELECT * FROM used_car WHERE sold = 0";
 					else
-						usedCarQuery += " INTERSECT SELECT * FROM used_car WHERE sold = 1";
+						usedCarQuery += " INTERSECT ALL SELECT * FROM used_car WHERE sold = 1";
 				}
 			}
 			
