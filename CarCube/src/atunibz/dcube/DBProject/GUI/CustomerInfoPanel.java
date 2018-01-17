@@ -212,16 +212,14 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		addressTF.setOpaque(false);
 		addressTF.setText(this.getCustomerAddress());
 		//buttons
-		backBtn = new JButton("Back");
+		backBtn = AppResources.iconButton("Go back", "icons/back.png");
 		backBtn.setOpaque(false);
-		backBtn.setIcon(new ImageIcon("icons/back.png"));
-		statsBtn = new JButton("Stats");
+		statsBtn = AppResources.iconButton("Stats", "icons/graph.png");
 		statsBtn.setOpaque(false);
-		statsBtn.setIcon(new ImageIcon("icons/graph.png"));
-		addBtn = new JButton("Add contact");
+		addBtn = AppResources.iconButton("Add contact", "icons/plus.png");
 		addBtn.setOpaque(false);
-		addBtn.setIcon(new ImageIcon("icons/plus.png"));
 		modifyBtn = new JButton("Modify");
+		modifyBtn.setFont(AppResources.LITTLEBUTTON_FONT);
 		modifyBtn.setOpaque(false);
 		//need modify icon many times
 		try {

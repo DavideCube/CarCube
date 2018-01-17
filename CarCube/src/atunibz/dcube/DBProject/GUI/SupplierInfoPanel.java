@@ -204,13 +204,15 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		vatTF = new JLabel();
 		vatTF.setText(supplierPkey);
 		//buttons
-		backBtn = new JButton("Back");
-		backBtn.setIcon(new ImageIcon("icons/back.png"));
-		statsBtn = new JButton("Stats");
-		statsBtn.setIcon(new ImageIcon("icons/graph.png"));
-		addBtn = new JButton("Add contact");
-		addBtn.setIcon(new ImageIcon("icons/plus.png"));
+		backBtn = AppResources.iconButton("Go back", "icons/back.png");
+		backBtn.setOpaque(false);
+		statsBtn = AppResources.iconButton("Stats", "icons/graph.png");
+		statsBtn.setOpaque(false);
+		addBtn = AppResources.iconButton("Add contact", "icons/plus.png");
+		addBtn.setOpaque(false);
 		modifyBtn = new JButton("Modify");
+		modifyBtn.setFont(AppResources.LITTLEBUTTON_FONT);
+		modifyBtn.setOpaque(false);
 		try {
 			modifyIcon = new ImageIcon(ImageIO.read(new File("icons/contacts/modify.png")));
 			modifyBtn.setIcon(modifyIcon);
