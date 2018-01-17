@@ -5,6 +5,7 @@ import java.awt.*;
 import java.sql.*;
 import org.jfree.*;
 import org.jfree.chart.*;
+import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
@@ -22,21 +23,27 @@ public class CarBarChart extends JPanel{
 	  
 	 */
 	
-	
-	
 	private JFreeChart chart;
 	private ChartPanel chartPanel;
 	private DefaultPieDataset dataset;
-	
 	private Connection conn;
 	private Statement stmnt;
-	
+	//for every make of cars, returns the make along with the number of units sold of that make
+	private final String unitsSoldPerMake = "select make, count(all_cars.sold)\n" + 
+			"	  from (select make, sold from new_car where sold = 1 union all select make, sold from used_car where sold = 1) as all_cars\n" + 
+			"	  group by(make)";
+	//returns total number of cars sold so far
+	private final String totalUnitSold = "select count(*) from (select make, sold from new_car where sold = 1 union all select make, sold from used_car where sold = 1) as all_cars";
 	public CarBarChart() {
 		this.establishConnection();
 		this.populateDataset();
-		chart = ChartFactory.createPieChart("Most sold auto", dataset, true, true, false);
+		chart = ChartFactory.createPieChart3D("Most sold auto", dataset, true, true, false);
 		chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new Dimension(600, 400));
+		
+		PiePlot3D plot = (PiePlot3D)chart.getPlot();
+		plot.setForegroundAlpha(0.5f);
+		
 		this.add(chartPanel);
 				
 				
@@ -45,6 +52,7 @@ public class CarBarChart extends JPanel{
 	
 	private void populateDataset() {
 		dataset = new DefaultPieDataset();
+		/*
 		dataset.setValue("BMW", new Double(20));
 		dataset.setValue("Fiat", new Double(10));
 		dataset.setValue("Mercedes", new Double(35));
@@ -52,9 +60,26 @@ public class CarBarChart extends JPanel{
 		dataset.setValue("Maserati", new Double(5));
 		dataset.setValue("Ferrari", new Double(3));
 		dataset.setValue("Lamborghini", new Double(20));
+		*/
+		try {
+			int totalSale = 0;
+			ResultSet rs1 = stmnt.executeQuery(totalUnitSold);
+			int i = 0;
+			while(rs1.next() && i <= 5) {
+				totalSale = rs1.getInt(1);
+				i++;
+			}
+			System.out.println("Total sales: " + totalSale);
+			ResultSet rs = stmnt.executeQuery(unitsSoldPerMake);
+			while(rs.next()) {
+				dataset.setValue(rs.getString(1), new Double((rs.getInt(2)*100)/totalSale));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		
-		
+			
 	}
 	
 	
