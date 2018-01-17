@@ -463,6 +463,8 @@ public class SearchCarPanel extends JPanel{
 			// TODO Auto-generated method stub
 			String newCarQuery = "SELECT * FROM new_car";
 			String usedCarQuery = "SELECT * FROM used_car";
+			String newCarWhere = "";
+			String usedCarWhere = "";
 			// first of all, get all the selected item from the combo boxes
 			String makeSelected = (String) make.getSelectedItem();
 			String modelSelected = (String) model.getSelectedItem();
@@ -478,59 +480,93 @@ public class SearchCarPanel extends JPanel{
 				// look at the make combo box (if it is equal "All makes" then no changes in the
 				// query)
 				if (makeSelected.compareTo("All Makes") != 0) {
-					newCarQuery += " WHERE make = '" + makeSelected + "'";
+					newCarWhere += " make = '" + makeSelected + "'";
 					// look at the model (inside this "if" because if we are not entered here, then
 					// no model is automatically not selected
 					if (modelSelected.compareTo("All Models") != 0) {
-						newCarQuery += " AND model = '" + modelSelected + "'";
+						newCarWhere += " AND model = '" + modelSelected + "'";
 					}
 				}
 				// look at the year
 				if (yearSelected.compareTo("From year") != 0) {
 					yearInt = Integer.parseInt(yearSelected);
-					newCarQuery += " INTERSECT ALL SELECT * FROM new_car WHERE car_year >= " + yearInt;
+					if(newCarWhere.length() > 0)
+						newCarWhere += " AND car_year >=" + yearInt;
+					else
+						newCarWhere += " car_year >=" + yearInt;
 				}
 				// look at the price
 				if (priceSelected.compareTo("Price up to") != 0) {
 					priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
-					newCarQuery += " INTERSECT ALL SELECT * FROM new_car WHERE base_price <= " + priceInt;
+					if(newCarWhere.length() > 0)
+						newCarWhere += " AND base_price <= " + priceInt;
+					else
+						newCarWhere += " base_price <= " + priceInt;
 				}
 				// look at sold or not sold
 				if (soldSelected.compareTo("Sold or not") != 0) {
-					if (soldSelected.compareTo("Not sold") == 0)
-						newCarQuery += " INTERSECT ALL SELECT * FROM new_car WHERE sold = 0";
-					else
-						newCarQuery += " INTERSECT ALL SELECT * FROM new_car WHERE sold = 1";
+					if (soldSelected.compareTo("Not sold") == 0) {
+						if(newCarWhere.length() > 0)
+							newCarWhere += " AND sold = 0";
+						else
+							newCarWhere += " sold = 0";
+					}
+					else {
+						if(newCarWhere.length() > 0)
+							newCarWhere += " AND sold = 1";
+						else
+							newCarWhere += " sold = 1";
+					}
 				}
 				
 			}
 			if (usedCar.isSelected()) {
 				// look at the make combo box (if it is equal "All makes" then no changes in the query)
 				if (makeSelected.compareTo("All Makes") != 0) {
-					usedCarQuery += " WHERE make = '" + makeSelected + "'";
+					usedCarWhere += " make = '" + makeSelected + "'";
 					// look at the model (inside this "if" because if we are not entered here, then no model is automatically not selected
 					if (modelSelected.compareTo("All Models") != 0) {
-						usedCarQuery += " AND model = '" + modelSelected + "'";
+						usedCarWhere += " AND model = '" + modelSelected + "'";
 					}
 				}
 				// look at the year
 				if (yearSelected.compareTo(OPTION) != 0) {
 					yearInt = Integer.parseInt(yearSelected);
-					usedCarQuery += " INTERSECT ALL SELECT * FROM used_car WHERE car_year >= " + yearInt;
+					if(usedCarWhere.length() > 0)
+						usedCarWhere += " AND car_year >=" + yearInt;
+					else
+						usedCarWhere += " car_year >=" + yearInt;
 				}
 				// look at the price
 				if (priceSelected.compareTo(OPTION2) != 0) {
 					priceInt = Integer.parseInt(priceSelected.substring(0, priceSelected.lastIndexOf(" €")));
-					usedCarQuery += " INTERSECT ALL SELECT * FROM used_car WHERE net_price <= " + priceInt;
+					if(usedCarWhere.length() > 0)
+						usedCarWhere += " AND net_price <= " + priceInt;
+					else
+						usedCarWhere += " net_price <= " + priceInt;
 				}
 				// look at sold or not sold
 				if (soldSelected.compareTo("Sold or not") != 0) {
-					if (soldSelected.compareTo("Not sold") == 0)
-						usedCarQuery += " INTERSECT ALL SELECT * FROM used_car WHERE sold = 0";
-					else
-						usedCarQuery += " INTERSECT ALL SELECT * FROM used_car WHERE sold = 1";
+					if (soldSelected.compareTo("Not sold") == 0) {
+						if(usedCarWhere.length() > 0)
+							usedCarWhere += " AND sold = 0";
+						else
+							usedCarWhere += " sold = 0";
+					}
+					else {
+						if(usedCarWhere.length() > 0)
+							usedCarWhere += " AND sold = 1";
+						else
+							usedCarWhere += " sold = 1";
+					}
 				}
 			}
+			if (newCarWhere.length() >0)
+				newCarQuery += " WHERE " + newCarWhere;
+			if(usedCarWhere.length() >0)
+				usedCarQuery += " WHERE " + usedCarWhere;
+			System.out.println(newCarQuery);
+			System.out.println(usedCarQuery);
 			
 			// CASE BOTH
 			if (newCar.isSelected() && usedCar.isSelected()) {
