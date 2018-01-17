@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -39,6 +40,7 @@ public class ViewCarPanel extends JPanel {
 	JPanel titlePanel, row, photoPanel;
 	JComboBox<String> makeCombo, modelCombo, typesCombo, fuelCombo, transmissionCombo, driveCombo;
 	JTextField newMake, newModel, newKm, newType, doors, seats, newYear, newFuel, newEuro, newCapacity, newHorses;
+	JTextField newLength, newHeight, newWidth, newWeight, newTrunk;
 	String currentMake, currentModel, currentCarType, currentFuel, currentDrive, currentTransmission;
 	int currentKm, currentDoors, currentSeats, finalPrice, currentYear, currentEuro, currentCapacity, currentHorsepower;
 	// Order of the returned array: length, height, width, trunk capacity, weight
@@ -350,7 +352,7 @@ public class ViewCarPanel extends JPanel {
 
 		modifyDriveTranmission = new JButton();
 		modifyDriveTranmission.setIcon(new ImageIcon("icons/contacts/modify.png"));
-		modifyDriveTranmission.addActionListener(new modifyTransmissionDrive() );
+		modifyDriveTranmission.addActionListener(new modifyTransmissionDrive());
 		modifyDriveTranmission.setVisible(true);
 
 		engine3.add(driveTransmission);
@@ -388,6 +390,7 @@ public class ViewCarPanel extends JPanel {
 
 		modifyLengthWidthHeigth = new JButton();
 		modifyLengthWidthHeigth.setIcon(new ImageIcon("icons/contacts/modify.png"));
+		modifyLengthWidthHeigth.addActionListener(new modifyLengthHeightWidth());
 		modifyLengthWidthHeigth.setVisible(true);
 
 		dimension1.add(dim1);
@@ -405,11 +408,12 @@ public class ViewCarPanel extends JPanel {
 		dimension2.setLayout(new BoxLayout(dimension2, BoxLayout.X_AXIS));
 
 		JLabel dim2 = new JLabel(
-				"Weight: " + currentDimensions[3] + " kg - Trunk capacity: " + currentDimensions[4] + " liters");
+				"Weight: " + currentDimensions[4] + " kg - Trunk capacity: " + currentDimensions[3] + " liters");
 		AppResources.changeFont(dim2, Font.PLAIN, 18);
 
 		modifyWeightTrunk = new JButton();
 		modifyWeightTrunk.setIcon(new ImageIcon("icons/contacts/modify.png"));
+		modifyWeightTrunk.addActionListener(new modifyWeightTrunk() );
 		modifyWeightTrunk.setVisible(true);
 
 		dimension2.add(dim2);
@@ -1389,28 +1393,8 @@ public class ViewCarPanel extends JPanel {
 					fuelUpdated = newFuel.getText();
 				}
 
-				// Prepare and execute query
-				String sql = "";
-
-				if (isNewCar)
-					sql = "UPDATE engine SET fuel = '" + fuelUpdated + "', euro = " + euroUpdated
-							+ " FROM new_car WHERE new_car.engine = engine.engine_id AND new_car.car_id = " + carId;
-				else
-					sql = "UPDATE engine SET fuel = '" + fuelUpdated + "', euro = " + euroUpdated
-							+ " FROM used_car WHERE used_car.engine = engine.engine_id AND used_car.immatriculation = '"
-							+ carId + "'";
-
-				try {
-					Statement st = conn.createStatement();
-					st.executeUpdate(sql);
-
-					st.close();
-
-				} catch (SQLException e1) {
-
-					e1.printStackTrace();
-				}
-				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+				UpdateEngine(currentCapacity, fuelUpdated, currentHorsepower, currentDrive, euroUpdated,
+						currentTransmission);
 			}
 
 		}
@@ -1479,27 +1463,7 @@ public class ViewCarPanel extends JPanel {
 					return;
 				}
 
-				String sql;
-				// prepare and execute query
-				if (isNewCar)
-					sql = "UPDATE engine SET capacity = " + updatedCap + ", horsepower = " + updatedHorses
-							+ " FROM new_car WHERE new_car.engine = engine.engine_id AND new_car.car_id = " + carId;
-				else
-					sql = "UPDATE engine SET capacity = " + updatedCap + ", horsepower = " + updatedHorses
-							+ " FROM used_car WHERE used_car.engine = engine.engine_id AND used_car.immatriculation = '"
-							+ carId + "'";
-
-				try {
-					Statement st = conn.createStatement();
-					st.executeUpdate(sql);
-
-					st.close();
-
-				} catch (SQLException e1) {
-
-					e1.printStackTrace();
-				}
-				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+				UpdateEngine(updatedCap, currentFuel, updatedHorses, currentDrive, currentEuro, currentTransmission);
 			}
 		}
 
@@ -1514,44 +1478,44 @@ public class ViewCarPanel extends JPanel {
 
 			JPanel container = new JPanel();
 			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-			
+
 			// Wheel drive row
 			JPanel drivePanel = new JPanel();
 			drivePanel.setLayout(new BoxLayout(drivePanel, BoxLayout.X_AXIS));
-			
+
 			JLabel drive = new JLabel("Wheel Drive");
 			AppResources.changeFont(drive, Font.PLAIN, 18);
-			
+
 			String[] drives = GetListQuery.getWheelDrive();
 			driveCombo = new JComboBox<>(drives);
 			driveCombo.setSelectedItem(currentDrive);
-			
+
 			drivePanel.add(drive);
 			drivePanel.add(Box.createRigidArea(new Dimension(10, 0)));
 			drivePanel.add(driveCombo);
-			
+
 			container.add(drivePanel);
-			//Transmission row
-			
+			// Transmission row
+
 			JPanel transmissionPanel = new JPanel();
 			transmissionPanel.setLayout(new BoxLayout(transmissionPanel, BoxLayout.X_AXIS));
-			
+
 			JLabel transmission = new JLabel("Transmission");
 			AppResources.changeFont(transmission, Font.PLAIN, 18);
-			
+
 			String[] transmissions = GetListQuery.getTransmissions();
 			transmissionCombo = new JComboBox<>(transmissions);
-			transmissionCombo.setSelectedItem(currentDrive);
-			
+			transmissionCombo.setSelectedItem(currentTransmission);
+
 			transmissionPanel.add(transmission);
 			transmissionPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 			transmissionPanel.add(transmissionCombo);
-			
-			container.add(Box.createRigidArea(new Dimension(0,10)));
+
+			container.add(Box.createRigidArea(new Dimension(0, 10)));
 			container.add(transmissionPanel);
-			
+
 			modify.add(container);
-			
+
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
 			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify wheel drive and transmission",
@@ -1559,38 +1523,303 @@ public class ViewCarPanel extends JPanel {
 					options, selected);
 
 			if (choice == 0) {
-				
-				//no checks are needed, it is from our combobox
-				
+
+				// no checks are needed, it is from our combobox
+
 				String updatedDrive = (String) driveCombo.getSelectedItem();
 				String updatedTransmission = (String) transmissionCombo.getSelectedItem();
-				
-				
-				String sql;
-				// prepare and execute query
-				if (isNewCar)
-					sql = "UPDATE engine SET wheel_drive = '" + updatedDrive + "', transmission = '" + updatedTransmission
-							+ "' FROM new_car WHERE new_car.engine = engine.engine_id AND new_car.car_id = " + carId;
-				else
-					sql = "UPDATE engine SET wheel_drive = '" + updatedDrive + "', transmission = '" + updatedTransmission
-							+ "' FROM used_car WHERE used_car.engine = engine.engine_id AND used_car.immatriculation = '"
-							+ carId + "'";
 
-				try {
-					Statement st = conn.createStatement();
-					st.executeUpdate(sql);
-
-					st.close();
-
-				} catch (SQLException e1) {
-
-					e1.printStackTrace();
-				}
-				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+				UpdateEngine(currentCapacity, currentFuel, currentHorsepower, updatedDrive, currentEuro,
+						updatedTransmission);
 
 			}
-			
+
 		}
 
+	}
+
+	public void UpdateEngine(int capacity, String fuel, int horses, String wheel_drive, int euro, String transmission) {
+
+		int engineKey = 0;
+
+		// Check if this engine already exists: we have the key
+
+		String checkEngine = "SELECT * FROM engine WHERE capacity = ? and UPPER(fuel) = UPPER(?) and horsepower = ? and UPPER(wheel_drive) = UPPER(?) and euro = ? and UPPER(transmission) = UPPER(?) ";
+		try {
+
+			PreparedStatement stat = conn.prepareStatement(checkEngine);
+			stat.setInt(1, capacity);
+			stat.setString(2, fuel);
+			stat.setInt(3, horses);
+			stat.setString(4, wheel_drive);
+			stat.setInt(5, euro);
+			stat.setString(6, transmission);
+
+			ResultSet rs = stat.executeQuery();
+
+			if (rs.next())
+				engineKey = rs.getInt("engine_id");
+			else {
+				// Otherwise add it: we have the key (in the end, we hope)
+				String addEngineString = "INSERT INTO engine (capacity, fuel, horsepower, wheel_drive, euro, transmission) VALUES (?,?,?,?,?,?)";
+
+				PreparedStatement addEngine = conn.prepareStatement(addEngineString, Statement.RETURN_GENERATED_KEYS);
+				addEngine.setInt(1, capacity);
+				addEngine.setString(2, fuel);
+				addEngine.setInt(3, horses);
+				addEngine.setString(4, wheel_drive);
+				addEngine.setInt(5, euro);
+				addEngine.setString(6, transmission);
+
+				addEngine.executeUpdate();
+
+				ResultSet rs2 = addEngine.getGeneratedKeys();
+
+				if (rs2.next())
+					engineKey = rs2.getInt(1);
+
+				// Close all statements and results
+
+				addEngine.close();
+				rs2.close();
+			}
+			stat.close();
+			rs.close();
+			// Now we have the key of the engine, update the car table accordingly
+			String carUpdate;
+
+			if (isNewCar)
+				carUpdate = "UPDATE new_car SET engine = " + engineKey + " WHERE car_id=" + carId;
+			else
+				carUpdate = "UPDATE used_car SET engine = " + engineKey + " WHERE immatriculation='" + carId + "'";
+
+			Statement st2 = conn.createStatement();
+			st2.executeUpdate(carUpdate);
+
+			st2.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+
+	}
+
+	private class modifyLengthHeightWidth implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// Prepare JPanel for the option pane
+			JPanel modify = new JPanel();
+
+			JPanel container = new JPanel();
+			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
+			// Length row
+			JPanel lengthPanel = new JPanel();
+			lengthPanel.setLayout(new BoxLayout(lengthPanel, BoxLayout.X_AXIS));
+
+			JLabel length = new JLabel("Length (cm)");
+			AppResources.changeFont(length, Font.PLAIN, 18);
+
+			newLength = new JTextField(4);
+			newLength.setText("" + currentDimensions[0]);
+
+			lengthPanel.add(length);
+			lengthPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+			lengthPanel.add(newLength);
+
+			container.add(lengthPanel);
+
+			// Height row
+			JPanel heightPanel = new JPanel();
+			heightPanel.setLayout(new BoxLayout(heightPanel, BoxLayout.X_AXIS));
+
+			JLabel height = new JLabel("Height (cm)");
+			AppResources.changeFont(height, Font.PLAIN, 18);
+
+			newHeight = new JTextField(4);
+			newHeight.setText("" + currentDimensions[1]);
+
+			heightPanel.add(height);
+			heightPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+			heightPanel.add(newHeight);
+
+			container.add(Box.createRigidArea(new Dimension(0, 10)));
+			container.add(heightPanel);
+
+			// Width row
+			JPanel widthtPanel = new JPanel();
+			widthtPanel.setLayout(new BoxLayout(widthtPanel, BoxLayout.X_AXIS));
+
+			JLabel width = new JLabel("Width (cm)");
+			AppResources.changeFont(width, Font.PLAIN, 18);
+
+			newWidth = new JTextField(4);
+			newWidth.setText("" + currentDimensions[2]);
+
+			widthtPanel.add(width);
+			widthtPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+			widthtPanel.add(newWidth);
+
+			container.add(Box.createRigidArea(new Dimension(0, 10)));
+			container.add(widthtPanel);
+
+			modify.add(container);
+
+			String[] options = { "Update", "Cancel" };
+			String selected = "Cancel";
+			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify length, height and width",
+					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
+					options, selected);
+
+			if (choice == 0) {
+
+				// check if the user inserted all integers
+				int updatedLenght, updateWidth, updatedHeight;
+				try {
+					updatedLenght = Integer.parseInt(newLength.getText());
+					updateWidth = Integer.parseInt(newWidth.getText());
+					updatedHeight = Integer.parseInt(newHeight.getText());
+				} catch (NumberFormatException n) {
+					JOptionPane.showMessageDialog(viewCarPanel, "Lenght, height and width values must be integers",
+							"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					return;
+				}
+
+				// okei, if we arrived here no problems...
+				updateDimension(updatedHeight, updatedLenght, currentDimensions[4], updateWidth, currentDimensions[3]);
+			}
+
+		}
+
+	}
+
+	private class modifyWeightTrunk implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			// Prepare JPanel for the option pane
+			JPanel modify = new JPanel();
+
+			JPanel container = new JPanel();
+			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
+			// Weight row
+			JPanel weightPanel = new JPanel();
+			weightPanel.setLayout(new BoxLayout(weightPanel, BoxLayout.X_AXIS));
+
+			JLabel weight = new JLabel("Weight (kg)");
+			AppResources.changeFont(weight, Font.PLAIN, 18);
+
+			newWeight = new JTextField(4);
+			newWeight.setText("" + currentDimensions[4]);
+
+			weightPanel.add(weight);
+			weightPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+			weightPanel.add(newWeight);
+
+			container.add(weightPanel);
+
+			// Trunk capacity row
+			JPanel trunkPanel = new JPanel();
+			trunkPanel.setLayout(new BoxLayout(trunkPanel, BoxLayout.X_AXIS));
+
+			JLabel trunk = new JLabel("Trunk capacity (liters)");
+			AppResources.changeFont(trunk, Font.PLAIN, 18);
+
+			newTrunk = new JTextField(4);
+			newTrunk.setText("" + currentDimensions[3]);
+
+			trunkPanel.add(trunk);
+			trunkPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+			trunkPanel.add(newTrunk);
+
+			container.add(trunkPanel);
+			
+			modify.add(container);
+
+			String[] options = { "Update", "Cancel" };
+			String selected = "Cancel";
+			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify length, height and width",
+					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
+					options, selected);
+
+			if (choice == 0) {
+				int updatedWeight, updatedTrunk;
+				try {
+					updatedWeight = Integer.parseInt(newWeight.getText());
+					updatedTrunk = Integer.parseInt(newTrunk.getText());
+				} catch (NumberFormatException n) {
+					JOptionPane.showMessageDialog(viewCarPanel, "Weight and trunk capacity values must be integers",
+							"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					return;
+				}
+
+				// okei, if we arrived here no problems...
+				updateDimension(currentDimensions[1], currentDimensions[0], updatedWeight, currentDimensions[2], updatedTrunk);
+
+			
+			}
+		}
+
+	}
+
+	public void updateDimension(int height, int length, int weight, int width, int trunk) { // trunk è simile a drunk?
+
+		int dimensionKey = 0;
+
+		String checkDimension = "SELECT * FROM dimension WHERE car_heigth = ? and car_length = ? and car_weight = ? and car_width= ? and trunk_capacity= ?";
+
+		try {
+			PreparedStatement st = conn.prepareStatement(checkDimension);
+			st.setInt(1, height);
+			st.setInt(2, length);
+			st.setInt(3, weight);
+			st.setInt(4, width);
+			st.setInt(5, trunk);
+
+			ResultSet rs = st.executeQuery();
+
+			if (rs.next())
+				dimensionKey = rs.getInt("dimension_id");
+			else {
+				// Add new dimension
+
+				String addDim = "INSERT INTO dimension (car_heigth, car_length, car_weight, car_width, trunk_capacity) VALUES (?,?,?,?,?)";
+				PreparedStatement st2 = conn.prepareStatement(addDim, Statement.RETURN_GENERATED_KEYS);
+				st2.setInt(1, height);
+				st2.setInt(2, length);
+				st2.setInt(3, weight);
+				st2.setInt(4, width);
+				st2.setInt(5, trunk);
+
+				st2.executeUpdate();
+				ResultSet rs2 = st2.getGeneratedKeys();
+				if (rs2.next())
+					dimensionKey = rs2.getInt(1);
+
+				st2.close();
+				rs2.close();
+			}
+			st.close();
+			rs.close();
+
+			// We have the key so update
+			String sql = "";
+			if (isNewCar)
+				sql = "UPDATE new_car SET dimension = " + dimensionKey + " WHERE car_id = " + carId;
+			else
+				sql = "UPDATE used_car SET dimension = " + dimensionKey + " WHERE immatriculation = '" + carId + "'";
+
+			Statement st3 = conn.createStatement();
+			st3.executeUpdate(sql);
+
+			st3.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
 	}
 }
