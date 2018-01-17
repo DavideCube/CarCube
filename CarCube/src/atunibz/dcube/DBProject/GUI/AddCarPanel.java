@@ -1027,8 +1027,9 @@ public class AddCarPanel extends JPanel{
 	}
 	
 	// big method for adding a new car
-	public void addNewCar () {
+	public int addNewCar () {
 		// NOW WE CAN MOVE ON. To avoid confusion, get all values that i need for adding a new car
+		int carkey = 0;
 		int tireKey = getTireForeignKey();
 		int dimensionKey = getDimensionForeignKey();
 		int engineKey = getEngineForeignKey();
@@ -1079,7 +1080,7 @@ public class AddCarPanel extends JPanel{
 			stat.setInt(13, tireKey);
 			
 			stat.executeUpdate();
-			int carkey = 0;
+			
 			ResultSet rs = stat.getGeneratedKeys();
 			
 			if (rs.next())
@@ -1145,11 +1146,12 @@ public class AddCarPanel extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return carkey;
 		
 	}
 	
 	// big method for adding a new car
-	public void addUsedCar() {
+	public String addUsedCar() {
 		// NOW WE CAN MOVE ON. To avoid confusion, get all values that i need for adding
 		// a new car
 		int tireKey = getTireForeignKey();
@@ -1269,6 +1271,7 @@ public class AddCarPanel extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return licensePlate;
 
 	}
 	////////////////////////////////// ADDING QUERY METHODS //////////////////////////////
@@ -1283,7 +1286,7 @@ public class AddCarPanel extends JPanel{
 			String selectedServiceType = (String) serviceType.getSelectedItem();
 			String selectedConstruction = (String) construction.getSelectedItem();
 			String selectedType = (String) tireType.getSelectedItem();
-			stat.setString(1, selectedServiceType.substring(0, 1));
+			stat.setString(1, selectedServiceType.substring(0, selectedServiceType.indexOf(":")));
 			stat.setInt(2, Integer.parseInt(tireWField.getText()));
 			stat.setInt(3, Integer.parseInt(aspetRatioField.getText()));
 			stat.setString(4, selectedConstruction.substring(0, 1));
@@ -1875,12 +1878,14 @@ public class AddCarPanel extends JPanel{
 						JOptionPane.INFORMATION_MESSAGE, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 						options, sel);
 				if (choice == 0) {
+					String usedCarKey = "";
+					int newCarKey = 0;
 					if (newCar.isSelected()) {
 						for (int i = 0; i<quantity; i++)
-							addNewCar();
+							newCarKey = addNewCar();
 					}
 					else
-						addUsedCar();
+						usedCarKey = addUsedCar();
 
 					JPanel gifPanel = new JPanel();
 					gifPanel.setLayout(new BoxLayout(gifPanel, BoxLayout.Y_AXIS));
@@ -1893,6 +1898,10 @@ public class AddCarPanel extends JPanel{
 					AppResources.changeFont(bought, Font.BOLD, 25);
 					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube",
 							JOptionPane.PLAIN_MESSAGE);
+					if (newCar.isSelected())
+						MainPanel.getMainPanel().swapPanel(new ViewCarPanel (newCarKey + "", true));
+					else
+						MainPanel.getMainPanel().swapPanel(new ViewCarPanel (usedCarKey + "", false));
 				}
 				quantity = 1;
 			}
