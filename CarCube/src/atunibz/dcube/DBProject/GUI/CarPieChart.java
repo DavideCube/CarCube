@@ -11,7 +11,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 
-public class CarBarChart extends JPanel{
+public class CarPieChart extends JPanel{
 	
 	
 	
@@ -34,7 +34,7 @@ public class CarBarChart extends JPanel{
 			"	  group by(make)";
 	//returns total number of cars sold so far
 	private final String totalUnitSold = "select count(*) from (select make, sold from new_car where sold = 1 union all select make, sold from used_car where sold = 1) as all_cars";
-	public CarBarChart() {
+	public CarPieChart() {
 		this.establishConnection();
 		this.populateDataset();
 		chart = ChartFactory.createPieChart3D("Most sold auto", dataset, true, true, false);
