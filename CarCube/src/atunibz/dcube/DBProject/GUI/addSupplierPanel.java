@@ -557,8 +557,7 @@ public class addSupplierPanel extends JPanel {
 							add.close();
 							}
 						}
-						
-						JOptionPane.showMessageDialog(addSupplierrPanel, "Supplier was inserted successfully!");
+						JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Supplier was inserted successfully!","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 						addSupplier.close();
 						if(fromCarPanels) {
 							MainPanel.getMainPanel().swapPanel(new AddCarPanel(true, vatField.getText()));

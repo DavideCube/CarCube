@@ -565,8 +565,6 @@ public class SearchCarPanel extends JPanel{
 				newCarQuery += " WHERE " + newCarWhere;
 			if(usedCarWhere.length() >0)
 				usedCarQuery += " WHERE " + usedCarWhere;
-			System.out.println(newCarQuery);
-			System.out.println(usedCarQuery);
 			
 			// CASE BOTH
 			if (newCar.isSelected() && usedCar.isSelected()) {
