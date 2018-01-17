@@ -38,13 +38,15 @@ public class ViewCarPanel extends JPanel {
 	Connection conn;
 	JPanel viewCarPanel;
 	JPanel titlePanel, row, photoPanel;
-	JComboBox<String> makeCombo, modelCombo, typesCombo, fuelCombo, transmissionCombo, driveCombo;
+	JComboBox<String> makeCombo, modelCombo, typesCombo, fuelCombo, transmissionCombo, driveCombo, serviceTypeCombo,
+			constructionCombo, tireTypeCombo;
 	JTextField newMake, newModel, newKm, newType, doors, seats, newYear, newFuel, newEuro, newCapacity, newHorses;
-	JTextField newLength, newHeight, newWidth, newWeight, newTrunk;
+	JTextField newLength, newHeight, newWidth, newWeight, newTrunk, newTireWidth, newAspetRatio, newDiameter;
 	String currentMake, currentModel, currentCarType, currentFuel, currentDrive, currentTransmission;
 	int currentKm, currentDoors, currentSeats, finalPrice, currentYear, currentEuro, currentCapacity, currentHorsepower;
 	// Order of the returned array: length, height, width, trunk capacity, weight
-	int[] currentDimensions, tireIntegersData;
+	int[] currentDimensions, tireIntegersData; // Tire integers: width, aspet_ratio, diameter
+	// Tire strings: service type, construction, tire type
 	String[] tireStringsData;
 	ArrayList<String> currentCarColors, currentOptionals;
 	ArrayList<Integer> currentOptionalsIds;
@@ -413,7 +415,7 @@ public class ViewCarPanel extends JPanel {
 
 		modifyWeightTrunk = new JButton();
 		modifyWeightTrunk.setIcon(new ImageIcon("icons/contacts/modify.png"));
-		modifyWeightTrunk.addActionListener(new modifyWeightTrunk() );
+		modifyWeightTrunk.addActionListener(new modifyWeightTrunk());
 		modifyWeightTrunk.setVisible(true);
 
 		dimension2.add(dim2);
@@ -447,6 +449,7 @@ public class ViewCarPanel extends JPanel {
 
 		modifyTireDimensions = new JButton();
 		modifyTireDimensions.setIcon(new ImageIcon("icons/contacts/modify.png"));
+		modifyTireDimensions.addActionListener(new modifyTireDimensions());
 		modifyTireDimensions.setVisible(true);
 
 		supportTire1.add(tire1, BorderLayout.WEST);
@@ -464,6 +467,7 @@ public class ViewCarPanel extends JPanel {
 
 		modifyTireTypes = new JButton();
 		modifyTireTypes.setIcon(new ImageIcon("icons/contacts/modify.png"));
+		modifyTireTypes.addActionListener(new modifyTireType() );
 		modifyTireTypes.setVisible(true);
 
 		supportTire2.add(tire2, BorderLayout.WEST);
@@ -1538,6 +1542,7 @@ public class ViewCarPanel extends JPanel {
 
 	}
 
+	// Support method to update the engine (maybe adding a new one)
 	public void UpdateEngine(int capacity, String fuel, int horses, String wheel_drive, int euro, String transmission) {
 
 		int engineKey = 0;
@@ -1737,7 +1742,7 @@ public class ViewCarPanel extends JPanel {
 			trunkPanel.add(newTrunk);
 
 			container.add(trunkPanel);
-			
+
 			modify.add(container);
 
 			String[] options = { "Update", "Cancel" };
@@ -1758,14 +1763,15 @@ public class ViewCarPanel extends JPanel {
 				}
 
 				// okei, if we arrived here no problems...
-				updateDimension(currentDimensions[1], currentDimensions[0], updatedWeight, currentDimensions[2], updatedTrunk);
+				updateDimension(currentDimensions[1], currentDimensions[0], updatedWeight, currentDimensions[2],
+						updatedTrunk);
 
-			
 			}
 		}
 
 	}
 
+	// support method to update dimensions
 	public void updateDimension(int height, int length, int weight, int width, int trunk) { // trunk è simile a drunk?
 
 		int dimensionKey = 0;
@@ -1817,6 +1823,275 @@ public class ViewCarPanel extends JPanel {
 			st3.executeUpdate(sql);
 
 			st3.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+	}
+
+	private class modifyTireDimensions implements ActionListener {
+		// Tire integers: width, aspet_ratio, diameter
+		// Tire strings: service type, construction, tire type
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+
+			// Prepare JPanel for the option pane
+			JPanel modify = new JPanel();
+
+			JPanel container = new JPanel();
+			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
+			// Width row
+			JPanel widthPanel = new JPanel();
+			widthPanel.setLayout(new BoxLayout(widthPanel, BoxLayout.X_AXIS));
+
+			JLabel width = new JLabel("Tire width (mm)");
+			AppResources.changeFont(width, Font.PLAIN, 18);
+
+			newTireWidth = new JTextField(3);
+			newTireWidth.setText("" + tireIntegersData[0]);
+
+			widthPanel.add(width);
+			widthPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+			widthPanel.add(newTireWidth);
+
+			container.add(widthPanel);
+
+			// Aspet Ratio
+			JPanel ratioPanel = new JPanel();
+			ratioPanel.setLayout(new BoxLayout(ratioPanel, BoxLayout.X_AXIS));
+
+			JLabel ratio = new JLabel("Aspet Ratio (mm)");
+			AppResources.changeFont(ratio, Font.PLAIN, 18);
+
+			newAspetRatio = new JTextField(3);
+			newAspetRatio.setText("" + tireIntegersData[1]);
+
+			ratioPanel.add(ratio);
+			ratioPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+			ratioPanel.add(newAspetRatio);
+
+			container.add(Box.createRigidArea(new Dimension(0, 10)));
+			container.add(ratioPanel);
+
+			// Construction
+
+			JPanel constructionPanel = new JPanel();
+			constructionPanel.setLayout(new BoxLayout(constructionPanel, BoxLayout.X_AXIS));
+
+			JLabel construction = new JLabel("Construction");
+			AppResources.changeFont(construction, Font.PLAIN, 18);
+
+			String[] constructionTypes = { "R: Radial", "D: Diagonal", "B: Bias belt" };
+			constructionCombo = new JComboBox<>(constructionTypes);
+
+			if (tireStringsData[1].equals("R"))
+				constructionCombo.setSelectedIndex(0);
+			else if (tireStringsData[1].equals("D"))
+				constructionCombo.setSelectedIndex(1);
+			else
+				constructionCombo.setSelectedIndex(2);
+
+			constructionPanel.add(construction);
+			constructionPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+			constructionPanel.add(constructionCombo);
+
+			container.add(Box.createRigidArea(new Dimension(0, 10)));
+			container.add(constructionPanel);
+
+			// Diameter
+			JPanel diameterPanel = new JPanel();
+			diameterPanel.setLayout(new BoxLayout(diameterPanel, BoxLayout.X_AXIS));
+
+			JLabel diameter = new JLabel("Diameter (mm)");
+			AppResources.changeFont(diameter, Font.PLAIN, 18);
+
+			newDiameter = new JTextField(3);
+			newDiameter.setText("" + tireIntegersData[2]);
+
+			diameterPanel.add(diameter);
+			diameterPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+			diameterPanel.add(newDiameter);
+
+			container.add(Box.createRigidArea(new Dimension(0, 10)));
+			container.add(diameterPanel);
+
+			modify.add(container);
+
+			String[] options = { "Update", "Cancel" };
+			String selected = "Cancel";
+			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify tire dimensions",
+					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
+					options, selected);
+
+			if (choice == 0) {
+
+				int UpdatedWidth = 0, UpdatedRatio = 0, updatedDiameter = 0;
+				try {
+					UpdatedWidth = Integer.parseInt(newTireWidth.getText());
+					UpdatedRatio = Integer.parseInt(newAspetRatio.getText());
+					updatedDiameter = Integer.parseInt(newDiameter.getText());
+
+				} catch (NumberFormatException n) {
+					JOptionPane.showMessageDialog(viewCarPanel,
+							"Tire width, aspet ratio and diameter values must be integers", "CarCube",
+							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					return;
+				}
+
+				// We have passed the checks and we have the values, now we get the construction
+				String selectedConstruction = ((String) constructionCombo.getSelectedItem()).substring(0, 1);
+
+				pitStop(tireStringsData[0], UpdatedWidth, UpdatedRatio, selectedConstruction, updatedDiameter,
+						tireStringsData[2]);
+
+			}
+
+		}
+
+	}
+
+	private class modifyTireType implements ActionListener {
+		// Tire integers: width, aspet_ratio, diameter
+		// Tire strings: service type, construction, tire type
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+
+			// Prepare JPanel for the option pane
+			JPanel modify = new JPanel();
+
+			JPanel container = new JPanel();
+			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+			
+			// service type
+			JPanel serviceTypePanel = new JPanel();
+			serviceTypePanel.setLayout(new BoxLayout(serviceTypePanel, BoxLayout.X_AXIS));
+
+			JLabel serviceType = new JLabel("Service Type");
+			AppResources.changeFont(serviceType, Font.PLAIN, 18);
+
+			String[] serviceTypes = {"P: Passenger Car", "LT: Light Truck", "ST: Special Trailer"};
+			serviceTypeCombo = new JComboBox<>(serviceTypes);
+			if(tireStringsData[0].contains("P"))
+				serviceTypeCombo.setSelectedIndex(0);
+			else if(tireStringsData[0].contains("L"))
+				serviceTypeCombo.setSelectedIndex(1);
+			else
+				serviceTypeCombo.setSelectedIndex(2);
+			
+			serviceTypePanel.add(serviceType);
+			serviceTypePanel.add(Box.createRigidArea(new Dimension(10,0)));
+			serviceTypePanel.add(serviceTypeCombo);
+			
+			container.add(serviceTypePanel);
+			
+			//Tire type
+			JPanel tireTypePanel = new JPanel();
+			tireTypePanel.setLayout(new BoxLayout(tireTypePanel, BoxLayout.X_AXIS));
+
+			JLabel tireType = new JLabel("Tire Type");
+			AppResources.changeFont(tireType, Font.PLAIN, 18);
+
+			String[] tireTypes = {"summer", "winter", "universal"};
+			
+			tireTypeCombo = new JComboBox<>(tireTypes);
+			
+			if(tireStringsData[2].equals("summer"))
+				tireTypeCombo.setSelectedIndex(0);
+			else if(tireStringsData[2].equals("winter"))
+				tireTypeCombo.setSelectedIndex(1);
+			else
+				tireTypeCombo.setSelectedIndex(2);
+			
+			tireTypePanel.add(tireType);
+			tireTypePanel.add(Box.createRigidArea(new Dimension(10,0)));
+			tireTypePanel.add(tireTypeCombo);
+			
+			container.add(Box.createRigidArea(new Dimension(0, 10)));
+			container.add(tireTypePanel);
+			
+			modify.add(container);
+			
+			String[] options = { "Update", "Cancel" };
+			String selected = "Cancel";
+			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify tire type",
+					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
+					options, selected);
+
+			if (choice == 0) {
+				
+				//No integers value, only comboboxes so we can simply take the selected values
+				String updatedService = ( (String) serviceTypeCombo.getSelectedItem() ).substring(0, 1);
+				String updatedType = (String) tireTypeCombo.getSelectedItem();
+				
+				pitStop(updatedService, tireIntegersData[0], tireIntegersData[1], tireStringsData[1], tireIntegersData[2], updatedType);
+			}
+		}
+
+	}
+
+	// Support method to update tires
+	public void pitStop(String serviceType, int width, int aspet_ratio, String construction, int diameter,
+			String tireType) {
+
+		int tireKey = 0;
+
+		// Check if the current tire already exists
+		String checkTire = "SELECT * FROM tire WHERE UPPER(service_type) = UPPER(?) and width = ? and aspet_ratio = ? and UPPER(construction) = UPPER(?) and diameter = ? and UPPER(tire_type) = UPPER(?) ";
+
+		try {
+			PreparedStatement ps = conn.prepareStatement(checkTire);
+			ps.setString(1, serviceType);
+			ps.setInt(2, width);
+			ps.setInt(3, aspet_ratio);
+			ps.setString(4, construction);
+			ps.setInt(5, diameter);
+			ps.setString(6, tireType);
+
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next())
+				tireKey = rs.getInt("tire_id");
+			else {
+				// otherwise we add it
+				String addTireString = "INSERT INTO tire (service_type, width, aspet_ratio, construction, diameter, tire_type) VALUES(?,?,?,?,?,?)";
+
+				PreparedStatement addTire = conn.prepareStatement(addTireString, Statement.RETURN_GENERATED_KEYS);
+
+				addTire.setString(1, serviceType);
+				addTire.setInt(2, width);
+				addTire.setInt(3, aspet_ratio);
+				addTire.setString(4, construction);
+				addTire.setInt(5, diameter);
+				addTire.setString(6, tireType);
+
+				addTire.executeUpdate();
+
+				ResultSet rs2 = addTire.getGeneratedKeys();
+
+				if (rs2.next())
+					tireKey = rs2.getInt(1);
+
+				addTire.close();
+				rs2.close();
+			}
+			ps.close();
+			rs.close();
+
+			// Now we have the key so we can update the table accordingly
+			String updateTable = "";
+
+			if (isNewCar)
+				updateTable = "UPDATE new_car SET tire = " + tireKey + " WHERE car_id = " + carId;
+			else
+				updateTable = "UPDATE used_car SET tire = " + tireKey + " WHERE immatriculation = " + carId;
+
+			Statement st = conn.createStatement();
+			st.executeUpdate(updateTable);
+
+			st.close();
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
