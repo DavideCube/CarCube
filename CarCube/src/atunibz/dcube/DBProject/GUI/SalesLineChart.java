@@ -5,6 +5,7 @@ import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jfree.*;
@@ -30,8 +31,8 @@ public class SalesLineChart extends JPanel{
 	
 	public SalesLineChart() {
 		this.establishConnection();
-		
-		this.populateDataset();
+		this.getSalesInfo();
+		//this.populateDataset();
 		chart = ChartFactory.createLineChart("Revenues", "Months", "Net income (€)", dataset, PlotOrientation.VERTICAL, true, true, false);
 		chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new Dimension(600, 400));
@@ -42,6 +43,7 @@ public class SalesLineChart extends JPanel{
 	
 	private void getSalesInfo() {
 		salesTable = new double[11];
+		salesMap = new HashMap<>();
 		Calendar cal = Calendar.getInstance();
 		double price = 0.0;
 		int month = 0;
@@ -51,17 +53,23 @@ public class SalesLineChart extends JPanel{
 				cal.setTime(rs.getDate(2));
 				month = cal.get(Calendar.MONTH);
 				price = rs.getDouble(1);
+				//no car sold that month, add month along with the price
 				if(!salesMap.containsKey(month)) {
 					salesMap.put(month, price);
 				}
+				//at least a car has already been sold that month, get the price, increase it by the new value and add it again
 				else {
-					
+					price += salesMap.get(month);
+					salesMap.put(month, price);
 				}
-				
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		for(Map.Entry<Integer, Double> entry : salesMap.entrySet()) {
+			System.out.println(entry.getKey() + " - " + entry.getValue().toString());
 		}
 		
 	}

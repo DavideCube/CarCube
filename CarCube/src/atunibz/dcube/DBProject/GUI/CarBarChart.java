@@ -85,7 +85,7 @@ public class CarBarChart extends JPanel{
 	
 	
 	
-	//////////////////////////DATABASE INTERACTION////////////////////////////////////////
+	//////////////////////////////////DATABASE INTERACTION////////////////////////////////////////
 	private boolean establishConnection() {
 		conn = DatabaseConnection.getDBConnection().getConnection();
 		try {
