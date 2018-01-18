@@ -29,10 +29,10 @@ public class CarPieChart extends JPanel{
 	private Connection conn;
 	private Statement stmnt;
 	//for every make of cars, returns the make along with the number of units sold of that make
-	private final String unitsSoldPerMake = "select make, count(all_cars.sold)\n" + 
-			"	  from (select make, sold from new_car where sold = 1 union all select make, sold from used_car where sold = 1) as all_cars\n" + 
-			"	  group by(make)";
-	//returns total number of cars sold so far
+	private final String unitsSoldPerMake = "select make, count(all_cars.sold) as quantity\n" + 
+			"				  from (select make, sold from new_car where sold = 1 union all select make, sold from used_car where sold = 1) as all_cars \n" + 
+			"				  group by(make)\n" + 
+			"                  order by quantity desc";	//returns total number of cars sold so far
 	private final String totalUnitSold = "select count(*) from (select make, sold from new_car where sold = 1 union all select make, sold from used_car where sold = 1) as all_cars";
 	public CarPieChart() {
 		this.establishConnection();
