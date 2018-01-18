@@ -443,8 +443,7 @@ public class AdvancedSearchPanel extends JPanel {
 		backPanel.setOpaque(false);
 		// back
 		back = AppResources.iconButton("Go back     ", "icons/back.png");
-		//back.addActionListener(new BackListener());
-		back.addActionListener(new ClaudioListener());
+		back.addActionListener(new BackListener());
 		backPanel.add(back);
 		
 		
@@ -1906,30 +1905,6 @@ public class AdvancedSearchPanel extends JPanel {
 			}
 			return result;
 			
-			
-		}
-		
-		private class ClaudioListener implements ActionListener {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JPanel panel = new JPanel ();
-				BufferedImage buffImg = null;
-				try {
-					
-						buffImg = ImageIO.read(new File("icons/1516282286889.JPEG"));
-					
-				} catch (IOException e4) {
-					e4.printStackTrace();
-				}
-				Image image = buffImg.getScaledInstance(640, 640, Image.SCALE_SMOOTH);
-				ImageIcon scaledImage = new ImageIcon(image);
-				JLabel sbetti = new JLabel (scaledImage);
-				panel.add(sbetti);
-				JOptionPane.showMessageDialog(MainPanel.getMainPanel(), panel, "CarCube",
-						JOptionPane.INFORMATION_MESSAGE);
-				
-			}
 			
 		}
 }
