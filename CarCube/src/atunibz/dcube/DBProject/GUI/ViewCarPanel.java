@@ -98,16 +98,55 @@ public class ViewCarPanel extends JPanel {
 		photoPanel = new JPanel();
 		photoPanel.setLayout(new BorderLayout());
 		photoPanel.setOpaque(false);
+		
+		// Cremo: big panel that contains photo panel and buttons
+		JPanel bigLeftPanel = new JPanel ();
+		bigLeftPanel.setLayout(new BoxLayout(bigLeftPanel, BoxLayout.Y_AXIS));
+		bigLeftPanel.setOpaque(false);
+		// panels with first two buttons
+		JPanel firstRowButton = new JPanel();
+		firstRowButton.setOpaque(false);
+		// panels with second two buttons
+		JPanel secondRowButton = new JPanel();
+		secondRowButton.setOpaque(false);
+		
+		// back
+		back = AppResources.iconButton("Go back     ", "icons/back.png");
+		back.addActionListener(new BackListener());
+		firstRowButton.add(back);
+		firstRowButton.add((Box.createRigidArea(new Dimension(50, 0))));
+
+		// Modify
+		modify = AppResources.iconButton("Modify     ", "icons/contacts/modify.png");
+		modify.addActionListener(new ModifyListener());
+		firstRowButton.add(modify);
+
+		// Sell
+		sell = AppResources.iconButton("Sell car       ", "icons/cart.png");
+		// modify.addActionListener(new AddListener(fromCarPanels));
+		secondRowButton.add(sell);
+		secondRowButton.add((Box.createRigidArea(new Dimension(50, 0))));
+
+		// Delete
+		delete = AppResources.iconButton("Delete     ", "icons/delete.png");
+		// modify.addActionListener(new AddListener(fromCarPanels));
+		secondRowButton.add(delete);
 
 		// Inner panel in order to have it automatically centered
 		JPanel photo = new JPanel();
+		photo.setOpaque(false);
 		photo.setLayout(new BoxLayout(photo, BoxLayout.X_AXIS));
+		photo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		ImageIcon photoIcon = getPhotoFromId(id, newCar);
 		JLabel photoLabel = new JLabel();
 		photoLabel.setIcon(photoIcon);
 
 		photo.add(photoLabel);
-		photoPanel.add(photo, BorderLayout.NORTH);
+		bigLeftPanel.add(photo);
+		bigLeftPanel.add(Box.createRigidArea(new Dimension (0, 20)));
+		bigLeftPanel.add(firstRowButton);
+		bigLeftPanel.add(secondRowButton);
+		photoPanel.add(bigLeftPanel, BorderLayout.NORTH);
 
 		row.add(photoPanel);
 
@@ -130,6 +169,16 @@ public class ViewCarPanel extends JPanel {
 		AppResources.changeFont(make, Font.BOLD, 30);
 		currentMake = getStringFromGeneralCarTable("make", id, newCar);
 		make.setText(currentMake);
+		
+		// Cremo: add correspondent icon
+		JLabel iconNewUsed = new JLabel();
+		if (newCar)
+			iconNewUsed.setIcon(new ImageIcon ("icons/new2.png"));
+		else
+			iconNewUsed.setIcon(new ImageIcon ("icons/used2.png"));
+			
+		firstRow.add(iconNewUsed);
+		firstRow.add(Box.createRigidArea(new Dimension (10, 0)));
 		firstRow.add(make);
 
 		JLabel model = new JLabel();
@@ -156,9 +205,13 @@ public class ViewCarPanel extends JPanel {
 		descPanel.setOpaque(false);
 		descPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		JLabel generalData = new JLabel("General Data");
+		JLabel icon1 = new JLabel (new ImageIcon("icons/tools.png"));
+		JLabel icon2 = new JLabel (new ImageIcon("icons/tools.png"));
 		AppResources.changeFont(generalData, Font.BOLD, 22);
 
+		descPanel.add(icon1);
 		descPanel.add(generalData);
+		descPanel.add(icon2);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
 		info.add(descPanel);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -285,8 +338,12 @@ public class ViewCarPanel extends JPanel {
 		// engineData.setLayout(new BorderLayout());
 
 		JLabel techLabel = new JLabel("Engine Data");
+		JLabel icon3 = new JLabel (new ImageIcon("icons/engine.png"));
+		JLabel icon4 = new JLabel (new ImageIcon("icons/engine.png"));
 		AppResources.changeFont(techLabel, Font.BOLD, 22);
+		engineData.add(icon3);
 		engineData.add(techLabel);
+		engineData.add(icon4);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
 		info.add(engineData);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -377,8 +434,12 @@ public class ViewCarPanel extends JPanel {
 		// dimensionData.setLayout(new BorderLayout());
 
 		JLabel dimensionLabel = new JLabel("Dimension");
+		JLabel icon5 = new JLabel (new ImageIcon("icons/ruler.png"));
+		JLabel icon6 = new JLabel (new ImageIcon("icons/ruler.png"));
 		AppResources.changeFont(dimensionLabel, Font.BOLD, 22);
+		dimensionData.add(icon5);
 		dimensionData.add(dimensionLabel);
+		dimensionData.add(icon6);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
 		info.add(dimensionData);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -438,8 +499,12 @@ public class ViewCarPanel extends JPanel {
 		tireData.setOpaque(false);
 
 		JLabel tireLabel = new JLabel("Tires Data");
+		JLabel icon7 = new JLabel (new ImageIcon("icons/tire.png"));
+		JLabel icon8 = new JLabel (new ImageIcon("icons/tire.png"));
 		AppResources.changeFont(tireLabel, Font.BOLD, 22);
+		tireData.add(icon7);
 		tireData.add(tireLabel);
+		tireData.add(icon8);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
 		info.add(tireData);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -487,9 +552,13 @@ public class ViewCarPanel extends JPanel {
 		JPanel colorData = new JPanel();
 		colorData.setOpaque(false);
 
-		JLabel colorLabel = new JLabel("Colors");
+		JLabel colorLabel = new JLabel("  Colors  ");
+		JLabel icon9 = new JLabel (new ImageIcon("icons/pantone.png"));
+		JLabel icon10 = new JLabel (new ImageIcon("icons/pantone.png"));
 		AppResources.changeFont(colorLabel, Font.BOLD, 22);
+		colorData.add(icon9);
 		colorData.add(colorLabel);
+		colorData.add(icon10);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
 		info.add(colorData);
 
@@ -526,8 +595,12 @@ public class ViewCarPanel extends JPanel {
 		optionalData.setOpaque(false);
 
 		JLabel optionalLabel = new JLabel("Optionals");
+		JLabel icon11 = new JLabel (new ImageIcon("icons/opt.png"));
+		JLabel icon12 = new JLabel (new ImageIcon("icons/opt.png"));
 		AppResources.changeFont(optionalLabel, Font.BOLD, 22);
+		optionalData.add(icon11);
 		optionalData.add(optionalLabel);
+		optionalData.add(icon12);
 		info.add(Box.createRigidArea(new Dimension(0, 10)));
 		info.add(optionalData);
 
@@ -560,45 +633,17 @@ public class ViewCarPanel extends JPanel {
 		info.add(optionals);
 
 		// ADD ALL
-		row.add(Box.createRigidArea(new Dimension(10, 0)));
+		row.add(Box.createRigidArea(new Dimension(30, 0)));
 		row.add(info);
 		// End info
 		viewCarPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 		// add the row
 		viewCarPanel.add(row);
 
-		// Panel for buttons controls
+		/*// Panel for buttons controls
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));*/
 
-		// back
-		back = AppResources.iconButton("Go back     ", "icons/back.png");
-		back.addActionListener(new BackListener());
-		buttonPanel.add(back);
-		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
-
-		// Modify
-		modify = AppResources.iconButton("Modify     ", "icons/contacts/modify.png");
-		modify.addActionListener(new ModifyListener());
-		buttonPanel.add(modify);
-		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
-
-		// Sell
-		sell = AppResources.iconButton("Sell     ", "icons/sale.png");
-		// modify.addActionListener(new AddListener(fromCarPanels));
-		buttonPanel.add(sell);
-		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
-
-		// Delete
-		delete = AppResources.iconButton("Delete     ", "icons/sale.png");
-		// modify.addActionListener(new AddListener(fromCarPanels));
-		buttonPanel.add(delete);
-
-		buttonPanel.setOpaque(false);
-
-		// end
-		viewCarPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-		viewCarPanel.add(buttonPanel);
 		viewCarPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 		// End of the panel
 		add(viewCarPanel);
@@ -1783,7 +1828,7 @@ public class ViewCarPanel extends JPanel {
 	}
 
 	// support method to update dimensions
-	public void updateDimension(int height, int length, int weight, int width, int trunk) { // trunk è simile a drunk?
+	public void updateDimension(int height, int length, int weight, int width, int trunk) { // trunk ï¿½ simile a drunk?
 
 		int dimensionKey = 0;
 
