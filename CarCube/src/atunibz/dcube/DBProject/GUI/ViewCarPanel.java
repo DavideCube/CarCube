@@ -17,6 +17,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -24,6 +26,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -56,7 +59,8 @@ public class ViewCarPanel extends JPanel {
 			modifyDriveTranmission, modifyLengthWidthHeigth, modifyWeightTrunk, modifyTireDimensions, modifyTireTypes,
 			modifyColors, modifyOptional;
 	JButton back, sell, delete, modify;
-
+	ArrayList<JCheckBox> optionals;
+	JPanel optPanel;
 	// global importan variables
 	boolean isNewCar;
 	String carId;
@@ -544,6 +548,7 @@ public class ViewCarPanel extends JPanel {
 		modOptPanel.setOpaque(false);
 		modifyOptional = new JButton();
 		modifyOptional.setIcon(new ImageIcon("icons/contacts/modify.png"));
+		modifyOptional.addActionListener(new modifyOptionals() );
 		modifyOptional.setVisible(true);
 		modOptPanel.add(modifyOptional);
 
@@ -2212,4 +2217,132 @@ public class ViewCarPanel extends JPanel {
 		}
 
 	}
+	
+	//OPTIONAL MODIFY
+	private class modifyOptionals implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			//
+			ArrayList<Integer> allIds = new ArrayList<>();
+			optionals = new ArrayList<>();
+			
+			JPanel container = new JPanel();
+			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+			
+			String currentOptional = "";
+			if(isNewCar)
+				currentOptional = "SELECT * FROM new_equipped WHERE car_id = " + carId;
+			else
+				currentOptional = "SELECT * FROM used_equipped WHERE immatriculation = '" + carId + "'";
+			
+			ArrayList<Integer> ids = new ArrayList<>();
+			try{
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery(currentOptional);
+			
+			while(rs.next())
+				ids.add(rs.getInt("optional_id"));
+				
+			//Now we have the current optionals, take al of them
+			ArrayList<JCheckBox> optionals = new ArrayList<>();
+			String query = "SELECT *  from optional";
+			
+			NumberFormat currencyFormat;
+			
+			Statement stat = conn.createStatement();
+			ResultSet rs2 = stat.executeQuery(query);
+			
+			optionals.removeAll(optionals);
+			
+			//Fill checkbox arrayList
+		
+			while(rs2.next()) {
+				//Add to arrayList
+				int price = rs2.getInt("price");
+				currencyFormat = NumberFormat.getCurrencyInstance();
+				String priceFormatted = currencyFormat.format(price);
+				JCheckBox temp = new JCheckBox(rs2.getString("opt_name") + " - " + priceFormatted);
+				
+				for(Integer i : ids)
+					if(i == rs2.getInt("optional_id"))
+						temp.setSelected(true);
+				
+				temp.setOpaque(false);
+				AppResources.changeFont(temp, Font.PLAIN, 20);
+				optionals.add(temp);
+				
+				allIds.add(rs2.getInt("optional_id"));
+			}
+			
+			
+			//Add them to panel
+			optPanel = new JPanel();
+			optPanel.setLayout(new BoxLayout(optPanel, BoxLayout.Y_AXIS));
+			fillOptionalPanel(optionals);
+			
+			JScrollPane pane = new JScrollPane(optPanel);
+			pane.setPreferredSize(new Dimension (280, 190));
+			
+			container.add(pane);
+			
+			
+			// panel for adding a new optional
+			
+			JLabel description1 = new JLabel ("Note: optionals of different car makes may have different prices");
+			JLabel description2 = new JLabel ("Select the correct optional, or add another one");
+			description1.setAlignmentX(CENTER_ALIGNMENT);
+			description2.setAlignmentX(CENTER_ALIGNMENT);
+			AppResources.changeFont(description1, Font.PLAIN, 15);
+			AppResources.changeFont(description2, Font.PLAIN, 15);
+			JButton addOptButton = AppResources.iconButton("Add another optional", "icons/plus.png");
+			addOptButton.setAlignmentX(CENTER_ALIGNMENT);
+			AppResources.changeFont(addOptButton, Font.PLAIN, 15);
+			
+			
+			container.add(description1);
+			container.add(description2);
+			container.add(addOptButton);
+			
+			
+			
+			String[] options = { "Update", "Cancel" };
+			String selected = "Cancel";
+			int choice = JOptionPane.showOptionDialog(viewCarPanel, container, "Modify optionals",
+					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
+					options, selected);
+			
+			
+			} catch(SQLException e1) {
+				e1.printStackTrace();
+			}
+			
+		}
+		
+	}
+	
+	// method for filling the panel that contains list of checkboxes
+		public void fillOptionalPanel (ArrayList<JCheckBox> optionals) {
+			optPanel.removeAll();
+			// optPanel the array with comparator
+			Collections.sort(optionals, new Comparator<JCheckBox>() {
+				@Override
+				public int compare(JCheckBox o1, JCheckBox o2) {
+					return o1.getText().compareTo(o2.getText());
+				}
+			});
+			for (JCheckBox c : optionals) {
+				JPanel auxiliaryPanel = new JPanel();
+				auxiliaryPanel.setLayout(new BorderLayout());
+				auxiliaryPanel.add(c, BorderLayout.WEST);
+				optPanel.add(auxiliaryPanel);
+			}
+			optPanel.revalidate();
+			optPanel.repaint();
+			
+		}
+
+	
+	
 }
