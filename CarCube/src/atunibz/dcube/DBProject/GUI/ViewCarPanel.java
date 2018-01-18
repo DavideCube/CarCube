@@ -177,6 +177,7 @@ public class ViewCarPanel extends JPanel {
 		else
 			iconNewUsed.setIcon(new ImageIcon ("icons/used2.png"));
 			
+		firstRow.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLoweredBevelBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		firstRow.add(iconNewUsed);
 		firstRow.add(Box.createRigidArea(new Dimension (10, 0)));
 		firstRow.add(make);
