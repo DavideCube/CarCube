@@ -28,8 +28,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import atunibz.dcube.DBProject.GUI.ColorsPanel.ColorCheckBox;
 import atunibz.dcube.DBProject.configuration.AppResources;
 import atunibz.dcube.DBProject.configuration.GetListQuery;
 
@@ -467,7 +469,7 @@ public class ViewCarPanel extends JPanel {
 
 		modifyTireTypes = new JButton();
 		modifyTireTypes.setIcon(new ImageIcon("icons/contacts/modify.png"));
-		modifyTireTypes.addActionListener(new modifyTireType() );
+		modifyTireTypes.addActionListener(new modifyTireType());
 		modifyTireTypes.setVisible(true);
 
 		supportTire2.add(tire2, BorderLayout.WEST);
@@ -505,6 +507,7 @@ public class ViewCarPanel extends JPanel {
 
 		modifyColors = new JButton();
 		modifyColors.setIcon(new ImageIcon("icons/contacts/modify.png"));
+		modifyColors.addActionListener(new modifyColors());
 		modifyColors.setVisible(true);
 
 		colors.add(colorList, BorderLayout.WEST);
@@ -1963,7 +1966,7 @@ public class ViewCarPanel extends JPanel {
 
 			JPanel container = new JPanel();
 			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-			
+
 			// service type
 			JPanel serviceTypePanel = new JPanel();
 			serviceTypePanel.setLayout(new BoxLayout(serviceTypePanel, BoxLayout.X_AXIS));
@@ -1971,48 +1974,48 @@ public class ViewCarPanel extends JPanel {
 			JLabel serviceType = new JLabel("Service Type");
 			AppResources.changeFont(serviceType, Font.PLAIN, 18);
 
-			String[] serviceTypes = {"P: Passenger Car", "LT: Light Truck", "ST: Special Trailer"};
+			String[] serviceTypes = { "P: Passenger Car", "LT: Light Truck", "ST: Special Trailer" };
 			serviceTypeCombo = new JComboBox<>(serviceTypes);
-			if(tireStringsData[0].contains("P"))
+			if (tireStringsData[0].contains("P"))
 				serviceTypeCombo.setSelectedIndex(0);
-			else if(tireStringsData[0].contains("L"))
+			else if (tireStringsData[0].contains("L"))
 				serviceTypeCombo.setSelectedIndex(1);
 			else
 				serviceTypeCombo.setSelectedIndex(2);
-			
+
 			serviceTypePanel.add(serviceType);
-			serviceTypePanel.add(Box.createRigidArea(new Dimension(10,0)));
+			serviceTypePanel.add(Box.createRigidArea(new Dimension(10, 0)));
 			serviceTypePanel.add(serviceTypeCombo);
-			
+
 			container.add(serviceTypePanel);
-			
-			//Tire type
+
+			// Tire type
 			JPanel tireTypePanel = new JPanel();
 			tireTypePanel.setLayout(new BoxLayout(tireTypePanel, BoxLayout.X_AXIS));
 
 			JLabel tireType = new JLabel("Tire Type");
 			AppResources.changeFont(tireType, Font.PLAIN, 18);
 
-			String[] tireTypes = {"summer", "winter", "universal"};
-			
+			String[] tireTypes = { "summer", "winter", "universal" };
+
 			tireTypeCombo = new JComboBox<>(tireTypes);
-			
-			if(tireStringsData[2].equals("summer"))
+
+			if (tireStringsData[2].equals("summer"))
 				tireTypeCombo.setSelectedIndex(0);
-			else if(tireStringsData[2].equals("winter"))
+			else if (tireStringsData[2].equals("winter"))
 				tireTypeCombo.setSelectedIndex(1);
 			else
 				tireTypeCombo.setSelectedIndex(2);
-			
+
 			tireTypePanel.add(tireType);
-			tireTypePanel.add(Box.createRigidArea(new Dimension(10,0)));
+			tireTypePanel.add(Box.createRigidArea(new Dimension(10, 0)));
 			tireTypePanel.add(tireTypeCombo);
-			
+
 			container.add(Box.createRigidArea(new Dimension(0, 10)));
 			container.add(tireTypePanel);
-			
+
 			modify.add(container);
-			
+
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
 			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify tire type",
@@ -2020,12 +2023,13 @@ public class ViewCarPanel extends JPanel {
 					options, selected);
 
 			if (choice == 0) {
-				
-				//No integers value, only comboboxes so we can simply take the selected values
-				String updatedService = ( (String) serviceTypeCombo.getSelectedItem() ).substring(0, 1);
+
+				// No integers value, only comboboxes so we can simply take the selected values
+				String updatedService = ((String) serviceTypeCombo.getSelectedItem()).substring(0, 1);
 				String updatedType = (String) tireTypeCombo.getSelectedItem();
-				
-				pitStop(updatedService, tireIntegersData[0], tireIntegersData[1], tireStringsData[1], tireIntegersData[2], updatedType);
+
+				pitStop(updatedService, tireIntegersData[0], tireIntegersData[1], tireStringsData[1],
+						tireIntegersData[2], updatedType);
 			}
 		}
 
@@ -2096,5 +2100,116 @@ public class ViewCarPanel extends JPanel {
 			e.printStackTrace();
 		}
 		MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+	}
+
+	// COLOR MODIFY
+	private class modifyColors implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+
+			
+			JPanel container = new JPanel();
+			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
+			ColorsPanel colorPanel = new ColorsPanel();
+
+			ArrayList<ColorCheckBox> boxes = colorPanel.getColorCheckBoxes();
+
+			String colorQuery = "";
+
+			if (isNewCar)
+				colorQuery = "SELECT * FROM new_painting WHERE car_id = " + carId;
+			else
+				colorQuery = "SELECT * FROM used_painting WHERE immatriculation = '" + carId + "'";
+
+			try {
+				Statement st = conn.createStatement();
+
+				ResultSet rs = st.executeQuery(colorQuery);
+
+				while (rs.next()) {
+
+					for (ColorCheckBox c : boxes) {
+
+						System.out.println("ColorCode:" + c.getColorCode());
+
+						if (c.getColorCode().equals(rs.getString("color_code"))) {
+							c.getCheckBox().setSelected(true);
+							System.out.println("Inside");
+						}
+					}
+
+				}
+
+				st.close();
+				rs.close();
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+			container.add(colorPanel);
+			
+			
+			JScrollPane pane = new JScrollPane(container);
+			pane.setPreferredSize(new Dimension(520,188));
+			
+			String[] options = { "Update", "Cancel" };
+			String selected = "Cancel";
+			int choice = JOptionPane.showOptionDialog(viewCarPanel, pane, "Modify colors",
+					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
+					options, selected);
+
+			if (choice == 0) {
+
+				// Remove all colors...
+				String removeColors = "";
+				if (isNewCar)
+					removeColors = "DELETE FROM new_painting WHERE car_id = " + carId;
+				else
+					removeColors = "DELETE FROM used_painting WHERE immatriculation = '" + carId + "'";
+
+				try {
+					Statement remove = conn.createStatement();
+					remove.executeUpdate(removeColors);
+
+					remove.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+				// Add colors
+
+				for (ColorCheckBox c : boxes) {
+
+					if (c.getCheckBox().isSelected()) {
+
+						String addColors = "";
+
+						if (isNewCar)
+							addColors = "INSERT INTO new_painting (car_id, color_code) VALUES (" + carId + ",'"
+									+ c.getColorCode() + "')";
+						else
+							addColors = "INSERT INTO used_painting (immatriculation, color_code) VALUES ('" + carId + "','"
+									+ c.getColorCode() + "')";
+						
+						try {
+							Statement add = conn.createStatement();
+							add.executeUpdate(addColors);
+
+							add.close();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+
+					}
+
+				}
+				
+				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+			}
+		}
+
 	}
 }

@@ -83,7 +83,7 @@ public class ColorsPanel extends JPanel {
 			Map.Entry<String, Color> pair = (Map.Entry)it.next();
 			ColorCheckBox colorBox = new ColorCheckBox(pair.getValue(), pair.getKey(), colorKeys.get(index));
 			boxes.add(colorBox);
-
+			index++;
 		}
 	}
 	
