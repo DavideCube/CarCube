@@ -70,7 +70,7 @@ public class AddCarPanel extends JPanel{
 	private JComboBox <String> supplierChoice, customerChoice, make, model, type, year, fuel, trans, wDrive, serviceType, construction, tireType;
 	private ButtonGroup group;
 	private String [] supplierList, customerList, makesList, modelsList, typesList, fuelList, transList, wDriveList;
-	private JButton newSupplier, newCustomer, uploadImage, buyCar;
+	private JButton newSupplier, newCustomer, uploadImage, buyCar, back;
 	private JLabel iconLabel, uploadLabel;
 	private JTextField makeField, modelField, typeField, doorsField, seatsField, priceField, fuelField;
 	private JTextField capacityField, hPowerField, euroField, lengthField, heightField, widthField, trunkField, weightField;
@@ -686,6 +686,12 @@ public class AddCarPanel extends JPanel{
 		AppResources.changeFont(buyCar, Font.BOLD, 30);
 		buyCar.setForeground(new Color (255, 128, 0));
 		buttonP.add(buyCar);
+		back =  AppResources.iconButton("Go back", "icons/back2.png");
+		AppResources.changeFont(back, Font.BOLD, 30);
+		buttonP.add(Box.createRigidArea(new Dimension(20,0)));
+		buttonP.add(back);
+		
+		
 		
 		addCarPanel.add(buttonP);
 
@@ -715,6 +721,7 @@ public class AddCarPanel extends JPanel{
 		aspetRatioField.getDocument().addDocumentListener(new changedTextListener(false, "Aspet Ratio", aspetRatioField));
 		tireWField.getDocument().addDocumentListener(new changedTextListener(false, "Tire width", tireWField));
 		diameterField.getDocument().addDocumentListener(new changedTextListener(false, "Diameter", diameterField));
+		back.addActionListener(new BackListener());
 
 
 		for (JCheckBox c : optionals)
@@ -1911,4 +1918,14 @@ public class AddCarPanel extends JPanel{
 
 	}
 
+	// listener for back button
+	private class BackListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainPanel.getMainPanel().swapPanel(new SearchCarPanel());
+
+		}
+
+	}
 }
