@@ -457,7 +457,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		btnPanel.add(statsBtn);
 		btnPanel.add(modifyBtn);
 		btnPanel.add(addBtn);
-		addBtn.addActionListener(new AddContactListener());
+		
 		this.add(btnPanel);
 		this.add((Box.createRigidArea(new Dimension(0, 30))));
 		this.add((Box.createRigidArea(new Dimension(0, 30))));
