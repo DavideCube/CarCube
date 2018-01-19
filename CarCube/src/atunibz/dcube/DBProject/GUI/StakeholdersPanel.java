@@ -348,7 +348,7 @@ public class StakeholdersPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			MainPanel.getMainPanel().swapPanel(new addCustomerPanel(false));
+			MainPanel.getMainPanel().swapPanel(new addCustomerPanel(0, "", false));
 				
 		}
 			

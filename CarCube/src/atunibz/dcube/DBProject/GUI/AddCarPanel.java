@@ -1660,7 +1660,7 @@ public class AddCarPanel extends JPanel{
 			if (selected == newSupplier)
 				MainPanel.getMainPanel().swapPanel(new addSupplierPanel(true));
 			else
-				MainPanel.getMainPanel().swapPanel(new addCustomerPanel(true));
+				MainPanel.getMainPanel().swapPanel(new addCustomerPanel(1, "", false));
 
 		}
 	}
