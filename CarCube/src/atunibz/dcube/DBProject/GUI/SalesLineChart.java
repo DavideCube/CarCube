@@ -72,19 +72,26 @@ public class SalesLineChart extends JPanel{
 			System.out.println(entry.getKey() + " - " + entry.getValue().toString());
 		}
 		
+		
+		
+		
 	}
 	
 	
 	private void populateDataset() {
 		dataset = new DefaultCategoryDataset();
-		
+		for(int i = 0; i < 12; i++) {
+			if(!salesMap.containsKey(i))
+				salesMap.put(i, 0.0);
+			dataset.addValue(salesMap.get(i), "incomes", "month");
+		}/*
 		dataset.addValue(10000, "incomes", "january");
 		dataset.addValue(8123, "incomes", "february");
 		dataset.addValue(12450, "incomes", "march");
 		dataset.addValue(6140, "incomes", "april");
 		dataset.addValue(4000, "incomes", "may");
 		dataset.addValue(9100, "incomes", "juny");
-		dataset.addValue(6405, "incomes", "july");
+		dataset.addValue(6405, "incomes", "july");*/
 	}
 	
 	
