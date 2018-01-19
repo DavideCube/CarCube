@@ -1,17 +1,26 @@
 package atunibz.dcube.DBProject.GUI;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GradientPaint;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
@@ -33,40 +42,64 @@ public class CarBarChart extends ChartJPanel {
 		super();
 		dataset = new DefaultCategoryDataset();
 		this.populateDataset();
-		chart = ChartFactory.createBarChart("Number of units sold", "Make", "Units sold all-time", (DefaultCategoryDataset)dataset);
+		createAndFormatChart();
 		chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new Dimension(600, 400));
-		
 		this.add(chartPanel);
 					
 	}
 	
-	public void getCarMakes() {
-		soldCarMakes = new String[5];
-		int index = 0;
-		try {
-			ResultSet rs = stmnt.executeQuery(unitsSoldPerMake);
-			while(rs.next() && index < 5) {
-				soldCarMakes[index] = rs.getString(1);
-				index++;
-			}
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		}
+	private void createAndFormatChart() {
+		chart = ChartFactory.createBarChart("Number of units sold", "Make", "Units sold all-time", (DefaultCategoryDataset)dataset, PlotOrientation.VERTICAL, true, true , false);
+		chart.setBackgroundPaint(Color.WHITE);
+		final CategoryPlot plot = chart.getCategoryPlot();
+		plot.setBackgroundPaint(Color.GRAY);
+		plot.setDomainGridlinePaint(Color.BLACK);
+		plot.setRangeGridlinePaint(Color.BLACK);
+		// set the range axis to display integers only
+        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        // disable bar outlines
+        final BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setDrawBarOutline(false);
+        // set up gradient paints for series
+        final GradientPaint gp0 = new GradientPaint(
+            0.0f, 0.0f, Color.blue, 
+            0.0f, 0.0f, Color.white
+        );
+        final GradientPaint gp1 = new GradientPaint(
+            0.0f, 0.0f, Color.red, 
+            0.0f, 0.0f, Color.white
+        );
+        renderer.setSeriesPaint(0, gp0);
+        renderer.setSeriesPaint(1, gp1);
+        //rotate the label che magari fa figo
+        final CategoryAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setCategoryLabelPositions(
+            CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 6.0)
+        );
+	}
 	
 
 	@Override
 	public void populateDataset() {
-		getCarMakes();
+		System.out.println(Arrays.toString(soldCarMakes));
 		DefaultCategoryDataset dcd = (DefaultCategoryDataset)dataset;
-		int columnIndex = 3;
-		for(int i = 0; i < soldCarMakes.length; i++) {
-			dcd.setValue(1, soldCarMakes[i], Integer.valueOf(columnIndex));
-			columnIndex += 3;
+		try {
+			ResultSet newCarsSet = stmnt.executeQuery(newUnitsSoldPerMake);
+			while(newCarsSet.next()) {
+				dcd.setValue((double)newCarsSet.getInt(2), "NEW", newCarsSet.getString(1));
+			}
+		Statement stmnt2 = conn.createStatement();
+		ResultSet usedCarSet = stmnt2.executeQuery(usedUnitsSoldPerMake);
+		while(usedCarSet.next()) {
+			dcd.setValue((double)usedCarSet.getInt(2), "USED", usedCarSet.getString(1));
 		}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 	}
 	
