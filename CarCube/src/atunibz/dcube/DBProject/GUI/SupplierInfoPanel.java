@@ -170,7 +170,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			Statement stmnt = conn.createStatement();
 			ResultSet rs = stmnt.executeQuery("select a.street, a.civic_number, a.city, a.postcode, a.nation from address a, supplier s where a.address_id = s.address and s.vat = '" + supplierPkey + "'");
 			while(rs.next()) {
-				address = rs.getString(1) + " Street n." + rs.getInt(2) + " , " + rs.getString(3) + " - " + rs.getString(4) + " , " + rs.getString(5);
+				address = rs.getString(1) + " n." + rs.getInt(2) + " , " + rs.getString(3) + " - " + rs.getString(4) + " , " + rs.getString(5);
 				addressEditPanel.streetTF.setText(rs.getString(1));
 				addressEditPanel.civNumTF.setText(rs.getInt(2) + "");
 				addressEditPanel.cityTF.setText(rs.getString(3));
