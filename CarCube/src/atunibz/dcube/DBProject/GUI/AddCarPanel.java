@@ -104,7 +104,7 @@ public class AddCarPanel extends JPanel{
 		addCarPanel.setOpaque(false);
 		addCarPanel.add((Box.createRigidArea(new Dimension(0, 10))));
 		
-		// panel containing label that inform user to add a car
+		//  panel containing label that inform user to add a car
 		JPanel labelPanel = new JPanel();
 		labelPanel.setOpaque(false);
 		JLabel info = new JLabel ("Add a car! New or used?");
