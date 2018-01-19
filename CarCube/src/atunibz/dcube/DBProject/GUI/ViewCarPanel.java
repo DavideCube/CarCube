@@ -2799,7 +2799,17 @@ public class ViewCarPanel extends JPanel {
 					stat.executeUpdate(changeAttr);
 					stat.close();
 					
-					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Car sold!", "CarCube", JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					JPanel gifPanel = new JPanel();
+					gifPanel.setLayout(new BoxLayout(gifPanel, BoxLayout.Y_AXIS));
+					JLabel myGIF = new JLabel(new ImageIcon("icons/sold.gif"));
+					JLabel bought = new JLabel("Car sold!");
+					myGIF.setAlignmentX(CENTER_ALIGNMENT);
+					bought.setAlignmentX(CENTER_ALIGNMENT);
+					gifPanel.add(myGIF);
+					gifPanel.add(bought);
+					AppResources.changeFont(bought, Font.BOLD, 25);
+					
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube", JOptionPane.PLAIN_MESSAGE);
 					MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
 					} catch(SQLException e) {
 						e.printStackTrace();
