@@ -285,16 +285,12 @@ public class ViewCarPanel extends JPanel {
 		NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 		JLabel priceLabel = new JLabel("Final price: " + currencyFormat.format(finalPrice));
 		AppResources.changeFont(priceLabel, Font.PLAIN, 18);
-		modifyPrice = new JButton();
-		modifyPrice.setIcon(new ImageIcon("icons/contacts/modify.png"));
-		modifyPrice.setVisible(true);
 
 		pricePanel.add(priceLabel);
 		// pricePanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		// pricePanel.add(modifyPrice);
 
 		priceSupport.add(pricePanel, BorderLayout.WEST);
-		priceSupport.add(modifyPrice, BorderLayout.EAST);
 		info.add(priceSupport);
 
 		// car type, doors and seats
@@ -1015,7 +1011,6 @@ public class ViewCarPanel extends JPanel {
 			modifyKm.setVisible(visibleState);
 
 		modifyTypeEtc.setVisible(visibleState);
-		modifyPrice.setVisible(visibleState);
 		modifyYear.setVisible(visibleState);
 		modifyEuroFuel.setVisible(visibleState);
 		modifyCapHorse.setVisible(visibleState);
@@ -2391,7 +2386,7 @@ public class ViewCarPanel extends JPanel {
 						if (c.isSelected()) {
 							String optname = c.getText().substring(0, c.getText().indexOf(" -"));
 							double optprice = 0;
-							String substring = c.getText().substring(c.getText().indexOf("� ") + 2,
+							String substring = c.getText().substring(c.getText().indexOf("€ ") + 2,
 									c.getText().lastIndexOf(","));
 							Double thousand = 0.00;
 							Double hundred = 0.00;
@@ -2726,7 +2721,7 @@ public class ViewCarPanel extends JPanel {
 				JPanel support2 = new JPanel();
 				support2.setLayout(new BorderLayout());
 				JPanel secondRow = new JPanel();
-				JLabel image2 = new JLabel (new ImageIcon("icons/database.png"));
+				JLabel image2 = new JLabel (new ImageIcon("icons/man.png"));
 				JLabel info2 = new JLabel("Sold to customer: " + customers.getSelectedItem());
 				info2.setFont(new Font("Helvetica", Font.PLAIN, 16));
 				secondRow.add(image2);
@@ -2906,7 +2901,8 @@ public class ViewCarPanel extends JPanel {
 
 					removeCar.close();
 					
-					
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Car deleted", "CarCube",
+							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 					MainPanel.getMainPanel().swapPanel(new SearchCarPanel() );
 					
 				} catch (SQLException e) {
