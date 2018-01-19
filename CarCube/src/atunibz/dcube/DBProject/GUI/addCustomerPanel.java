@@ -39,7 +39,13 @@ public class addCustomerPanel extends JPanel {
 	private JButton back, add;
 	private Connection conn;
 
-	public addCustomerPanel(boolean fromCarPanels) {
+	/*
+	 * fromPanel = 0 ---> return to StakeholdersPanel
+	 * fromPanel = 1 ---> return to addCarPanel
+	 * fromPanel = 2 ---> return to viewCarPanel
+	 */
+	
+	public addCustomerPanel(int fromPanel, String id, boolean newCar) {
 
 		// Initialise Variables
 		emails = new ArrayList<>();
@@ -264,13 +270,13 @@ public class addCustomerPanel extends JPanel {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		// back
 		back = AppResources.iconButton("Go back     ", "icons/back.png");
-		back.addActionListener(new BackListener(fromCarPanels));
+		back.addActionListener(new BackListener(fromPanel, id, newCar));
 		buttonPanel.add(back);
 		buttonPanel.add((Box.createRigidArea(new Dimension(50, 0))));
 
 		// Add
 		add = AppResources.iconButton("Add     ", "icons/user.png");
-		add.addActionListener(new AddListener(fromCarPanels));
+		add.addActionListener(new AddListener(fromPanel, id, newCar));
 		buttonPanel.add(add);
 
 		buttonPanel.setOpaque(false);
@@ -284,21 +290,26 @@ public class addCustomerPanel extends JPanel {
 	// listener to go back to the stakeholder panel
 	private class BackListener implements ActionListener {
 		
-		boolean fromCarPanels;
+		int fromPanels;
+		String id;
+		boolean newCar;
 		
-		public BackListener(boolean carPanels) {
-			fromCarPanels = carPanels;
+		public BackListener(int carPanel, String id, boolean newCar) {
+			fromPanels = carPanel;
+			this.id = id;
+			this.newCar = newCar;
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-			if(fromCarPanels) {
+			if(fromPanels == 1) {
 				MainPanel.getMainPanel().swapPanel(new AddCarPanel(false, ""));
 			}
-			else	
+			else if (fromPanels == 0)
 				MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
-
+			else
+				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,newCar));
 		}
 
 	}
@@ -403,10 +414,14 @@ public class addCustomerPanel extends JPanel {
 	// listener for the add customer button
 	private class AddListener implements ActionListener {
 		
-		boolean fromCarPanels;
+		int fromPanels;
+		String id;
+		boolean newCar;
 		
-		public AddListener(boolean fromCar) {
-			fromCarPanels = fromCar;
+		public AddListener(int carPanel, String id, boolean newCar) {
+			fromPanels = carPanel;
+			this.id = id;
+			this.newCar = newCar;
 		}
 		
 		@Override
@@ -580,10 +595,16 @@ public class addCustomerPanel extends JPanel {
 						}
 					}
 					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Customer was inserted successfully!","CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-					if(fromCarPanels) {
+					
+					
+					if(fromPanels == 1) {
 						MainPanel.getMainPanel().swapPanel(new AddCarPanel(false, taxField.getText()));
-					} else
+					}
+					else if (fromPanels == 0)
 						MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
+					else
+						MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,newCar));
+					
 				} else {
 					// Already present
 					JOptionPane.showMessageDialog(addCustomerPanel, "Customer already present");
