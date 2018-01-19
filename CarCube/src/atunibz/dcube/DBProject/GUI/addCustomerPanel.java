@@ -309,7 +309,7 @@ public class addCustomerPanel extends JPanel {
 			else if (fromPanels == 0)
 				MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 			else
-				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,newCar));
+				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,newCar, ""));
 		}
 
 	}
@@ -602,8 +602,10 @@ public class addCustomerPanel extends JPanel {
 					}
 					else if (fromPanels == 0)
 						MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
-					else
-						MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,newCar));
+					else {
+						String customerString = nameField.getText() + " " + surnameField.getText() +"  (" + taxField.getText() + ")";
+						MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,newCar, customerString));
+					}
 					
 				} else {
 					// Already present

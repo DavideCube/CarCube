@@ -1906,9 +1906,9 @@ public class AddCarPanel extends JPanel{
 					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube",
 							JOptionPane.PLAIN_MESSAGE);
 					if (newCar.isSelected())
-						MainPanel.getMainPanel().swapPanel(new ViewCarPanel (newCarKey + "", true));
+						MainPanel.getMainPanel().swapPanel(new ViewCarPanel (newCarKey + "", true, ""));
 					else
-						MainPanel.getMainPanel().swapPanel(new ViewCarPanel (usedCarKey + "", false));
+						MainPanel.getMainPanel().swapPanel(new ViewCarPanel (usedCarKey + "", false, ""));
 				}
 				quantity = 1;
 			}

@@ -75,12 +75,14 @@ public class ViewCarPanel extends JPanel {
 	boolean isNewCar;
 	int sold;
 	String carId;
-
-	public ViewCarPanel(String id, boolean newCar) {
+	String selCustomer;
+	
+	public ViewCarPanel(String id, boolean newCar, String selectedCustomer) {
 
 		// make global for listeners and support methods
 		isNewCar = newCar;
 		carId = id;
+		selCustomer = selectedCustomer;
 		currentCarColors = new ArrayList<>();
 		currentOptionals = new ArrayList<>();
 		currentOptionalsIds = new ArrayList<>();
@@ -1132,7 +1134,7 @@ public class ViewCarPanel extends JPanel {
 					e.printStackTrace();
 				}
 
-				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar, ""));
 
 			}
 		}
@@ -1217,7 +1219,7 @@ public class ViewCarPanel extends JPanel {
 
 					e.printStackTrace();
 				}
-				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar, ""));
 			}
 		}
 
@@ -1332,7 +1334,7 @@ public class ViewCarPanel extends JPanel {
 
 					e.printStackTrace();
 				}
-				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar, ""));
 			}
 		}
 
@@ -1403,7 +1405,7 @@ public class ViewCarPanel extends JPanel {
 
 					e1.printStackTrace();
 				}
-				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar, ""));
 			}
 		}
 
@@ -1702,7 +1704,7 @@ public class ViewCarPanel extends JPanel {
 			e.printStackTrace();
 		}
 
-		MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+		MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar, ""));
 
 	}
 
@@ -1921,7 +1923,7 @@ public class ViewCarPanel extends JPanel {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+		MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar, ""));
 	}
 
 	private class modifyTireDimensions implements ActionListener {
@@ -2191,7 +2193,7 @@ public class ViewCarPanel extends JPanel {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+		MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar, ""));
 	}
 
 	// COLOR MODIFY
@@ -2297,7 +2299,7 @@ public class ViewCarPanel extends JPanel {
 
 				}
 
-				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar, ""));
 			}
 		}
 
@@ -2421,7 +2423,7 @@ public class ViewCarPanel extends JPanel {
 						addOptStat.close();
 					}
 
-					MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+					MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar, ""));
 				}
 
 			} catch (SQLException e1) {
@@ -2661,6 +2663,9 @@ public class ViewCarPanel extends JPanel {
 			JPanel support = new JPanel();
 			
 			JComboBox<String> customers = new JComboBox<>(getStakeholderQuery("customer"));
+			if(!selCustomer.equals(""))
+				customers.setSelectedItem(selCustomer);
+			
 			JButton newCustomer = AppResources.iconButton("", "icons/user.png");
 			newCustomer.addActionListener(new ActionListener() {
 
@@ -2810,7 +2815,7 @@ public class ViewCarPanel extends JPanel {
 					AppResources.changeFont(bought, Font.BOLD, 25);
 					
 					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), gifPanel, "CarCube", JOptionPane.PLAIN_MESSAGE);
-					MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
+					MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar, ""));
 					} catch(SQLException e) {
 						e.printStackTrace();
 					}

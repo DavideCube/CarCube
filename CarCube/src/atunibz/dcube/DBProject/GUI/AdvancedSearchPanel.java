@@ -1745,7 +1745,7 @@ public class AdvancedSearchPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
-				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,true ));
+				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,true, ""));
 				
 			}
 			
@@ -1882,7 +1882,7 @@ public class AdvancedSearchPanel extends JPanel {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					
-					MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,false ));
+					MainPanel.getMainPanel().swapPanel(new ViewCarPanel(id,false, ""));
 					
 				}
 				
