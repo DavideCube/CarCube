@@ -351,6 +351,24 @@ public class ViewCarPanel extends JPanel {
 		support3.add(yearPanel, BorderLayout.WEST);
 		support3.add(modifyYear, BorderLayout.EAST);
 		info.add(support3);
+		
+		// add label for sold or not
+		JPanel support4 = new JPanel();
+		support4.setOpaque(false);
+		support4.setLayout(new BorderLayout());
+		JPanel soldPanel = new JPanel();
+		soldPanel.setLayout(new BoxLayout(soldPanel, BoxLayout.X_AXIS));
+		soldPanel.setOpaque(false);
+
+		JLabel soldLabel = new JLabel();
+		if (sold == 0)
+			soldLabel.setText("Not sold");
+		else
+			soldLabel.setText("Sold");
+		AppResources.changeFont(soldLabel, Font.PLAIN, 18);
+		soldPanel.add(soldLabel);
+		support4.add(soldPanel, BorderLayout.WEST);
+		info.add(support4);
 
 		// Engine data label
 		JPanel engineData = new JPanel();
@@ -1070,7 +1088,7 @@ public class ViewCarPanel extends JPanel {
 			// Panel is ready, create and show OptionPane
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify make and model",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), modify, "Modify make and model",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -1090,7 +1108,7 @@ public class ViewCarPanel extends JPanel {
 
 				// Check length
 				if (updateMake.length() > 20 || updateModel.length() > 20) {
-					JOptionPane.showMessageDialog(viewCarPanel, "Make and model cannot be longer than 20 characters",
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Make and model cannot be longer than 20 characters",
 							"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 					return;
 				}
@@ -1174,7 +1192,7 @@ public class ViewCarPanel extends JPanel {
 			// Panel is ready, create and show OptionPane
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify km",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), modify, "Modify km",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -1183,7 +1201,7 @@ public class ViewCarPanel extends JPanel {
 				try {
 					newValue = Integer.parseInt(newKm.getText());
 				} catch (NumberFormatException n) {
-					JOptionPane.showMessageDialog(viewCarPanel, "The value entered is not an integer", "CarCube",
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "The value entered is not an integer", "CarCube",
 							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 					return;
 				}
@@ -1267,7 +1285,7 @@ public class ViewCarPanel extends JPanel {
 			modify.add(container);
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify km",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), modify, "Modify km",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -1279,7 +1297,7 @@ public class ViewCarPanel extends JPanel {
 					updateDoors = Integer.parseInt(doors.getText());
 					updateSeats = Integer.parseInt(seats.getText());
 				} catch (NumberFormatException n) {
-					JOptionPane.showMessageDialog(viewCarPanel, "Doors and seats values must be integers", "CarCube",
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Doors and seats values must be integers", "CarCube",
 							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 					return;
 				}
@@ -1291,7 +1309,7 @@ public class ViewCarPanel extends JPanel {
 					updateType = (String) typesCombo.getSelectedItem();
 
 				if (updateType.length() > 30) {
-					JOptionPane.showMessageDialog(viewCarPanel, "Car type cannot be longer than 30 characters",
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Car type cannot be longer than 30 characters",
 							"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 					return;
 				}
@@ -1352,7 +1370,7 @@ public class ViewCarPanel extends JPanel {
 
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify km",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), modify, "Modify km",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -1363,7 +1381,7 @@ public class ViewCarPanel extends JPanel {
 				try {
 					yearUpdated = Integer.parseInt(newYear.getText());
 				} catch (NumberFormatException n) {
-					JOptionPane.showMessageDialog(viewCarPanel, "Year value must be an integer", "CarCube",
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Year value must be an integer", "CarCube",
 							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 					return;
 				}
@@ -1443,7 +1461,7 @@ public class ViewCarPanel extends JPanel {
 
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify fuel and euro",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), modify, "Modify fuel and euro",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -1456,7 +1474,7 @@ public class ViewCarPanel extends JPanel {
 				try {
 					euroUpdated = Integer.parseInt(newEuro.getText());
 				} catch (NumberFormatException n) {
-					JOptionPane.showMessageDialog(viewCarPanel, "Euro value must be an integer", "CarCube",
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Euro value must be an integer", "CarCube",
 							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 					return;
 				}
@@ -1466,7 +1484,7 @@ public class ViewCarPanel extends JPanel {
 					fuelUpdated = (String) fuelCombo.getSelectedItem();
 				else {
 					if (newFuel.getText().length() > 20) {
-						JOptionPane.showMessageDialog(viewCarPanel, "Fuel cannot be longer than 20 characters",
+						JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fuel cannot be longer than 20 characters",
 								"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 						return;
 					}
@@ -1527,7 +1545,7 @@ public class ViewCarPanel extends JPanel {
 
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify capacity and horsepower",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), modify, "Modify capacity and horsepower",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -1539,7 +1557,7 @@ public class ViewCarPanel extends JPanel {
 					updatedCap = Integer.parseInt(newCapacity.getText());
 					updatedHorses = Integer.parseInt(newHorses.getText());
 				} catch (NumberFormatException n) {
-					JOptionPane.showMessageDialog(viewCarPanel, "Capacity and horsepower values must be integers",
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Capacity and horsepower values must be integers",
 							"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 					return;
 				}
@@ -1599,7 +1617,7 @@ public class ViewCarPanel extends JPanel {
 
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify wheel drive and transmission",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), modify, "Modify wheel drive and transmission",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -1752,7 +1770,7 @@ public class ViewCarPanel extends JPanel {
 
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify length, height and width",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), modify, "Modify length, height and width",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -1765,7 +1783,7 @@ public class ViewCarPanel extends JPanel {
 					updateWidth = Integer.parseInt(newWidth.getText());
 					updatedHeight = Integer.parseInt(newHeight.getText());
 				} catch (NumberFormatException n) {
-					JOptionPane.showMessageDialog(viewCarPanel, "Lenght, height and width values must be integers",
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Lenght, height and width values must be integers",
 							"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 					return;
 				}
@@ -1824,7 +1842,7 @@ public class ViewCarPanel extends JPanel {
 
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify length, height and width",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), modify, "Modify length, height and width",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -1834,7 +1852,7 @@ public class ViewCarPanel extends JPanel {
 					updatedWeight = Integer.parseInt(newWeight.getText());
 					updatedTrunk = Integer.parseInt(newTrunk.getText());
 				} catch (NumberFormatException n) {
-					JOptionPane.showMessageDialog(viewCarPanel, "Weight and trunk capacity values must be integers",
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Weight and trunk capacity values must be integers",
 							"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 					return;
 				}
@@ -1998,7 +2016,7 @@ public class ViewCarPanel extends JPanel {
 
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify tire dimensions",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), modify, "Modify tire dimensions",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -2011,7 +2029,7 @@ public class ViewCarPanel extends JPanel {
 					updatedDiameter = Integer.parseInt(newDiameter.getText());
 
 				} catch (NumberFormatException n) {
-					JOptionPane.showMessageDialog(viewCarPanel,
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(),
 							"Tire width, aspet ratio and diameter values must be integers", "CarCube",
 							JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
 					return;
@@ -2092,7 +2110,7 @@ public class ViewCarPanel extends JPanel {
 
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, modify, "Modify tire type",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), modify, "Modify tire type",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -2229,7 +2247,7 @@ public class ViewCarPanel extends JPanel {
 
 			String[] options = { "Update", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, pane, "Modify colors",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), pane, "Modify colors",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -2347,7 +2365,7 @@ public class ViewCarPanel extends JPanel {
 
 				String[] options = { "Update", "Cancel" };
 				String selected = "Cancel";
-				int choice = JOptionPane.showOptionDialog(viewCarPanel, container, "Modify optionals",
+				int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), container, "Modify optionals",
 						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
 						new ImageIcon("icons/minilogo.png"), options, selected);
 
@@ -2370,7 +2388,7 @@ public class ViewCarPanel extends JPanel {
 						if (c.isSelected()) {
 							String optname = c.getText().substring(0, c.getText().indexOf(" -"));
 							double optprice = 0;
-							String substring = c.getText().substring(c.getText().indexOf("€ ") + 2,
+							String substring = c.getText().substring(c.getText().indexOf("ï¿½ ") + 2,
 									c.getText().lastIndexOf(","));
 							Double thousand = 0.00;
 							Double hundred = 0.00;
@@ -2629,6 +2647,14 @@ public class ViewCarPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			
+			JPanel bigSell = new JPanel();
+			bigSell.setOpaque(false);
+			bigSell.setLayout(new BoxLayout(bigSell, BoxLayout.Y_AXIS));
+			
+			JLabel spiegation = new JLabel ("Select a customer or add a new one");
+			AppResources.changeFont(spiegation, Font.PLAIN, 20);
+			spiegation.setAlignmentX(CENTER_ALIGNMENT);
+			
 			JPanel customerPanel = new JPanel();
 			customerPanel.setLayout(new BoxLayout(customerPanel, BoxLayout.X_AXIS));
 			
@@ -2657,10 +2683,12 @@ public class ViewCarPanel extends JPanel {
 			support.add(newCustomer);
 			
 			customerPanel.add(support);
+			bigSell.add(spiegation);
+			bigSell.add(customerPanel);
 			
 			String[] options = { "Sell", "Cancel" };
 			String selected = "Cancel";
-			int choice = JOptionPane.showOptionDialog(viewCarPanel, customerPanel, "Sell car",
+			int choice = JOptionPane.showOptionDialog(MainPanel.getMainPanel(), bigSell, "Sell car",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"),
 					options, selected);
 
@@ -2771,7 +2799,8 @@ public class ViewCarPanel extends JPanel {
 					stat.executeUpdate(changeAttr);
 					stat.close();
 					
-					JOptionPane.showMessageDialog(viewCarPanel, "Car sold!", "CarCube", JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Car sold!", "CarCube", JOptionPane.PLAIN_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					MainPanel.getMainPanel().swapPanel(new ViewCarPanel(carId, isNewCar));
 					} catch(SQLException e) {
 						e.printStackTrace();
 					}
@@ -2818,7 +2847,7 @@ public class ViewCarPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 
-			int choice = JOptionPane.showConfirmDialog(viewCarPanel, "Do you really want to delete this car?",
+			int choice = JOptionPane.showConfirmDialog(MainPanel.getMainPanel(), "Do you really want to delete this car?",
 					"Delete car", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 					new ImageIcon("icons/minilogo.png"));
 			if (choice == JOptionPane.YES_OPTION) {
