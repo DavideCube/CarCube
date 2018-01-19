@@ -57,6 +57,7 @@ public class ViewCarPanel extends JPanel {
 	String currentMake, currentModel, currentCarType, currentFuel, currentDrive, currentTransmission;
 	int currentKm, currentDoors, currentSeats, currentYear, currentEuro, currentCapacity, currentHorsepower;
 	double finalPrice;
+	
 	// Order of the returned array: length, height, width, trunk capacity, weight
 	int[] currentDimensions, tireIntegersData; // Tire integers: width, aspet_ratio, diameter
 	// Tire strings: service type, construction, tire type
