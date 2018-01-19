@@ -259,7 +259,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			Statement stmnt = conn.createStatement();
 			ResultSet rs = stmnt.executeQuery("select a.street, a.civic_number, a.city, a.postcode, a.nation, a.address_id from address a, customer c where a.address_id = c.address and c.tax_code = '" + customerPkey + "'");
 			while(rs.next()) {
-				address = rs.getString(1) + " Street n." + rs.getInt(2) + " , " + rs.getString(3) + " - " + rs.getString(4) + " , " + rs.getString(5);
+				address = rs.getString(1) + " n." + rs.getInt(2) + " , " + rs.getString(3) + " - " + rs.getString(4) + " , " + rs.getString(5);
 				addressEditPanel.streetTF.setText(rs.getString(1));
 				addressEditPanel.civNumTF.setText(rs.getInt(2) + "");
 				addressEditPanel.cityTF.setText(rs.getString(3));
