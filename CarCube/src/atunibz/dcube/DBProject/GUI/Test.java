@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 public class Test {
 
 	public static void main(String[] args) {
-			JPanel p = new CarBarChart();
+			JPanel p = new GeneralCriteriaChart();
 			JFrame f = new JFrame();
 			f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			f.getContentPane().add(p);

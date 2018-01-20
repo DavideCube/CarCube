@@ -34,9 +34,7 @@ public class CarBarChart extends ChartJPanel {
 	private final String newUnitsSoldPerMake = "select make, count(cars_sold.sold) as quantity\n" + 
 			" from (select make, sold from new_car where sold = 1) as cars_sold group by(make) order by quantity desc";
 	private final String usedUnitsSoldPerMake = "select make, count(cars_sold.sold) as quantity\n" + 
-			" from (select make, sold from used_car where sold = 1) as cars_sold group by(make) order by quantity desc";
-	private String[] soldCarMakes;
-	
+			" from (select make, sold from used_car where sold = 1) as cars_sold group by(make) order by quantity desc";	
 	
 	public CarBarChart() {
 		super();
@@ -83,7 +81,7 @@ public class CarBarChart extends ChartJPanel {
 
 	@Override
 	public void populateDataset() {
-		System.out.println(Arrays.toString(soldCarMakes));
+
 		DefaultCategoryDataset dcd = (DefaultCategoryDataset)dataset;
 		try {
 			ResultSet newCarsSet = stmnt.executeQuery(newUnitsSoldPerMake);
