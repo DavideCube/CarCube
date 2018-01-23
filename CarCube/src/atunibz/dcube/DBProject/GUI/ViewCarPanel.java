@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -134,6 +135,8 @@ public class ViewCarPanel extends JPanel {
 		// Modify
 		modify = AppResources.iconButton("Modify     ", "icons/contacts/modify.png");
 		modify.addActionListener(new ModifyListener());
+		if(sold == 1)
+			modify.setEnabled(false);
 		firstRowButton.add(modify);
 
 		// Sell
@@ -360,19 +363,48 @@ public class ViewCarPanel extends JPanel {
 		soldPanel.setOpaque(false);
 
 		JLabel soldLabel = new JLabel();
-		if (sold == 0)
-			soldLabel.setText("Not sold");
-		else
-			soldLabel.setText("Sold");
 		AppResources.changeFont(soldLabel, Font.PLAIN, 18);
-		soldPanel.add(soldLabel);
+		JButton soldButton = new JButton();
+		soldButton.setOpaque(false);
+		soldButton.setBorderPainted(false);
+		soldButton.setMargin(new Insets(0,0,0,0));
+		soldButton.setContentAreaFilled(false);
+		soldButton.setFocusPainted(false);
+		soldButton.setAlignmentX(LEFT_ALIGNMENT);
+		if (sold == 0) {
+			soldLabel.setText("Not sold");
+			soldPanel.add(soldLabel);
+		}
+		else {
+			soldLabel.setText("Sold to");
+			String to = "";
+			String soldTo = "";
+			if(isNewCar)
+				soldTo = "SELECT customer.tax_code, customer.c_name, customer.c_surname FROM customer INNER JOIN new_sell ON new_sell.tax_code = customer.tax_code WHERE car_id =" + carId;
+			else
+				soldTo = "SELECT customer.tax_code, customer.c_name, customer.c_surname FROM customer INNER JOIN used_sell ON used_sell.tax_code = customer.tax_code WHERE immatriculation ='" + carId + "'";
+			
+			try {
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery(soldTo);
+				
+				rs.next();
+				to = "<html><u>" + rs.getString("c_name") + " " + rs.getString("c_surname") + " (" + rs.getString("tax_code") + ")</u></html>";
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+			
+			soldButton.setText(to);
+			soldPanel.add(soldLabel);
+			soldPanel.add(soldButton);
+		}
+		AppResources.changeFont(soldButton, Font.PLAIN, 18);
 		support4.add(soldPanel, BorderLayout.WEST);
 		info.add(support4);
 
 		// Engine data label
 		JPanel engineData = new JPanel();
 		engineData.setOpaque(false);
-		// engineData.setLayout(new BorderLayout());
 
 		JLabel techLabel = new JLabel("Engine Data");
 		JLabel icon3 = new JLabel(new ImageIcon("icons/engine.png"));

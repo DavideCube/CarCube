@@ -553,8 +553,9 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 			String newValue = null;
 			if(fieldName.compareTo("name" )== 0 || fieldName.compareTo("surname") == 0) {
 				newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
+				if (newValue == null)
+					return;
 		}
-		
 		String newPkey = "";
 		switch(fieldName) {
 		case "name": 
@@ -601,6 +602,8 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		case "phone":
 			
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's phone:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+			if (newValue == null)
+				return;
 			if(newValue.compareTo("") != 0) {
 				if(!newValue.matches("[A-Za-z]+") && (newValue.length() <= 25))
 					updateContactInDB("phone", newValue, sourceId);
@@ -620,6 +623,8 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		
 		case "mail":
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+			if (newValue == null)
+				return;
 			if(newValue.compareTo("") != 0) {
 				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
 				if(newValue.matches("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+") && (newValue.length() <= 40))
@@ -640,6 +645,8 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		
 		case "fax":
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+			if (newValue == null)
+				return;
 			if(newValue.compareTo("") != 0) {
 				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
 				if(newValue.matches("[A-Za-z]+") && (newValue.length() <= 30))

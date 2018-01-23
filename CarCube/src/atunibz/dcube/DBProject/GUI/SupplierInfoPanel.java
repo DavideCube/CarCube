@@ -486,6 +486,8 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			String newValue = null;
 			if(fieldName.compareTo("name" )== 0) {
 				newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
+				if (newValue == null)
+					return;
 		}
 		switch(fieldName) {
 		case "name":
@@ -516,6 +518,8 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		case "phone":
 			
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's phone:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+			if (newValue == null)
+				return;
 			if(newValue.compareTo("") != 0) {
 				if(!newValue.matches("[A-Za-z]+") && (newValue.length() <= 25))
 					updateContactInDB("phone", newValue, sourceId);
@@ -535,6 +539,8 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		
 		case "mail":
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+			if (newValue == null)
+				return;
 			if(newValue.compareTo("") != 0) {
 				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
 				if(newValue.matches("^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+") && (newValue.length() <= 40))
@@ -555,6 +561,8 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		
 		case "fax":
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
+			if (newValue == null)
+				return;
 			if(newValue.compareTo("") != 0) {
 				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
 				if(newValue.matches("[A-Za-z]+") && (newValue.length() <= 30))
