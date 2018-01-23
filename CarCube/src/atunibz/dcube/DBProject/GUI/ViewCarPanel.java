@@ -394,6 +394,7 @@ public class ViewCarPanel extends JPanel {
 				
 				rs.close();
 				st.close();
+				
 			}catch(SQLException e) {
 				e.printStackTrace();
 			}
