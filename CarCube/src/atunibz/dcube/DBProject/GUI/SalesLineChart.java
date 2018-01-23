@@ -35,7 +35,7 @@ public class SalesLineChart extends ChartJPanel{
 		chart = ChartFactory.createLineChart("Revenues", "Months", "Net income (€)", (DefaultCategoryDataset)dataset, PlotOrientation.VERTICAL, true, true, false);
 		chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new Dimension(600, 400));
-		criteriaBox = new JComboBox<String>(years);
+		criteriaBox = new JComboBox<String>(setYearsRange());
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.criteriaBox.addActionListener(new ChoiceListener());
 		this.add(criteriaBox);
@@ -44,6 +44,7 @@ public class SalesLineChart extends ChartJPanel{
 	
 	private String[] setYearsRange() {
 		int upperBound = 0, lowerBound = 0;
+		String[] yearsRange;
 		try {
 			Statement stmnt = conn.createStatement();
 			ResultSet rs = stmnt.executeQuery("select max(sell_date)\n" + 
@@ -69,11 +70,15 @@ public class SalesLineChart extends ChartJPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		yearsRange = new String[(upperBound-lowerBound) + 1];
+		int pos = 0;
 		for(int i = lowerBound; i <= upperBound; i++) { 
-			
+			System.out.println(i);
+			yearsRange[pos] = "" + i;
+			pos++;
 		}
 		
-		return null;
+		return yearsRange;
 			
 	}
 	
