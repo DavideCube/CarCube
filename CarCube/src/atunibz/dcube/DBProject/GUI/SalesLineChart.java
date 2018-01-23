@@ -2,113 +2,176 @@ package atunibz.dcube.DBProject.GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jfree.*;
 import org.jfree.chart.*;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-public class SalesLineChart extends JPanel{
+
+public class SalesLineChart extends ChartJPanel{
+	//TODO set jcombobox options and fetch data
+	private Calendar calendar = Calendar.getInstance();
+	private Map<String, Double> salesMap;
+	private int year = 2017;
+	private JComboBox<String> criteriaBox;
+	private String[] years = {"2015", "2016", "2017", "2018", "2019", "2020"};
 	
-	private JFreeChart chart;
-	private ChartPanel chartPanel;
-	private DefaultCategoryDataset dataset;
-	private final String carSalesInfo = "select sell_price, sell_date from new_car c, new_sell s where sold = 1 and c.car_id = s.car_id \n" + 
-			"\n" + 
-			"union all \n" + 
-			"\n" + 
-			"select sell_price, sell_date from used_car d, used_sell u where sold = 1 and d.immatriculation = u.immatriculation";
-	private double[] salesTable;
-	private Map<Integer, Double> salesMap;
-	
-	private Connection conn;
-	private Statement stmnt;
 	
 	public SalesLineChart() {
-		this.establishConnection();
 		this.getSalesInfo();
-		//this.populateDataset();
-		chart = ChartFactory.createLineChart("Revenues", "Months", "Net income (€)", dataset, PlotOrientation.VERTICAL, true, true, false);
+		this.populateDataset();
+		chart = ChartFactory.createLineChart("Revenues", "Months", "Net income (€)", (DefaultCategoryDataset)dataset, PlotOrientation.VERTICAL, true, true, false);
 		chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new Dimension(600, 400));
-		this.add(chartPanel);
-				
-				
+		criteriaBox = new JComboBox(years);
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.criteriaBox.addActionListener(new ChoiceListener());
+		this.add(criteriaBox);
+		this.add(chartPanel);		
 	}
+	
+	//evaluates the condition required to get the interval in the whole year
+	private String evalTimeInterval(int year) {
+		String interval = " and sell_date < '" + (year + 1) + "-01-01' and sell_date > '" + (year-1) + "-12-31'";
+		return interval;
+	}
+	
+	private String evalQuery(int year) {
+		return "select sell_price, sell_date from new_car c, new_sell s where sold = 1 and c.car_id = s.car_id " + evalTimeInterval(year) + 
+				"\n" + 
+				"union all \n" + 
+				"\n" + 
+				"select sell_price, sell_date from used_car d, used_sell u where sold = 1 and d.immatriculation = u.immatriculation" + evalTimeInterval(year);
+	}
+	
+	
+	private String dateToMonth(int month) {
+		String ret = "";
+		switch(month) {
+		case 0: ret = "January";
+		break;
+		case 1: ret = "February";
+		break;
+		case 2: ret = "March";
+		break;
+		case 3: ret = "April";
+		break;
+		case 4: ret = "May";
+		break;
+		case 5: ret = "June";
+		break;
+		case 6:  ret = "July";
+		break;
+		case 7: ret = "August";
+		break;
+		case 8: ret = "September";
+		break;
+		case 9: ret = "October";
+		break;
+		case 10: ret = "November";
+		break;
+		case 11: ret = "December";
+		break;
+		}
+		return ret;
+	}
+	
+	private void initMap() {
+		salesMap = new LinkedHashMap<>();
+		//put all months in map
+		salesMap.put("January", 0.0);
+		salesMap.put("February", 0.0);
+		salesMap.put("March", 0.0);
+		salesMap.put("April", 0.0);
+		salesMap.put("May", 0.0);
+		salesMap.put("Juny", 0.0);
+		salesMap.put("July", 0.0);
+		salesMap.put("August", 0.0);
+		salesMap.put("September", 0.0);
+		salesMap.put("October", 0.0);
+		salesMap.put("November", 0.0);
+		salesMap.put("December", 0.0);
+	}
+	
 	
 	private void getSalesInfo() {
-		salesTable = new double[11];
-		salesMap = new HashMap<>();
-		Calendar cal = Calendar.getInstance();
-		double price = 0.0;
-		int month = 0;
+		initMap();
 		try {
-			ResultSet rs = stmnt.executeQuery(carSalesInfo);
+			ResultSet rs = stmnt.executeQuery(evalQuery(this.year));
+			String monthToPut = "";
+			double priceToPut = 0.0;
 			while(rs.next()) {
-				cal.setTime(rs.getDate(2));
-				month = cal.get(Calendar.MONTH);
-				price = rs.getDouble(1);
-				//no car sold that month, add month along with the price
-				if(!salesMap.containsKey(month)) {
-					salesMap.put(month, price);
-				}
-				//at least a car has already been sold that month, get the price, increase it by the new value and add it again
-				else {
-					price += salesMap.get(month);
-					salesMap.put(month, price);
-				}
+				calendar.setTime(rs.getDate(2));
+				monthToPut = dateToMonth(calendar.get(Calendar.MONTH));
+				priceToPut = rs.getDouble(1);
+				priceToPut += salesMap.get(monthToPut);
+				salesMap.put(monthToPut, priceToPut);
+				
+				
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}
+		catch(SQLException e) {
+			
 		}
 		
-		for(Map.Entry<Integer, Double> entry : salesMap.entrySet()) {
+		for(Map.Entry<String, Double> entry : salesMap.entrySet()) {
 			System.out.println(entry.getKey() + " - " + entry.getValue().toString());
 		}
-		
-		
-		
-		
-	}
+	}	
 	
-	
-	private void populateDataset() {
+	public void populateDataset() {
 		dataset = new DefaultCategoryDataset();
-		for(int i = 0; i < 12; i++) {
-			if(!salesMap.containsKey(i))
-				salesMap.put(i, 0.0);
-			dataset.addValue(salesMap.get(i), "incomes", "month");
-		}/*
-		dataset.addValue(10000, "incomes", "january");
-		dataset.addValue(8123, "incomes", "february");
-		dataset.addValue(12450, "incomes", "march");
-		dataset.addValue(6140, "incomes", "april");
-		dataset.addValue(4000, "incomes", "may");
-		dataset.addValue(9100, "incomes", "juny");
-		dataset.addValue(6405, "incomes", "july");*/
+		DefaultCategoryDataset dcd = (DefaultCategoryDataset)dataset;
+		for(Map.Entry<String, Double> entry : salesMap.entrySet()) {
+			dcd.addValue(entry.getValue(), "incomes", entry.getKey().substring(0, 3));
+		}
+			
+		}
+	
+	private ChartPanel createProperGraph(int year) {
+		this.year = year;
+		initMap();
+		getSalesInfo();
+		populateDataset();
+		chart = ChartFactory.createLineChart("Revenues", "Months", "Net income (€)", (DefaultCategoryDataset)dataset, PlotOrientation.VERTICAL, true, true, false);
+		return new ChartPanel(chart);
 	}
 	
 	
-	
-	
-	//////////////////////////DATABASE INTERACTION////////////////////////////////////////
-	private boolean establishConnection() {
-		conn = DatabaseConnection.getDBConnection().getConnection();
-		try {
-			stmnt = conn.createStatement();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
+	private class ChoiceListener implements ActionListener{
+		
+		JComboBox sourceBox;
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			sourceBox = (JComboBox) e.getSource();
+			int newYear = Integer.parseInt((String)this.sourceBox.getSelectedItem());
+			remove(chartPanel);
+			dataset = null;
+			salesMap = null;
+			chartPanel = createProperGraph(newYear);
+			add(chartPanel);
+			chartPanel.setPreferredSize(new Dimension(600, 400));
+			repaint();
+			revalidate();
+			
 		}
-		return true;
 		
 	}
 	
 	
-}
+	
+	
+	}
