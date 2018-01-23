@@ -461,6 +461,14 @@ public class addCustomerPanel extends JPanel {
 				JOptionPane.showMessageDialog(addCustomerPanel, "Civic number cannot be empty", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
+			
+			try {
+				int temp = Integer.parseInt(civicNumberField.getText());
+			}catch(NumberFormatException n) {
+				JOptionPane.showMessageDialog(addCustomerPanel, "Civic number must be a valid number", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+				return;
+			}
+			
 			if (nationField.getText().equals("") || nationField.getText().length() > 30) {
 				JOptionPane.showMessageDialog(addCustomerPanel, "Nation cannot be empty or longer than 30 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
@@ -473,6 +481,12 @@ public class addCustomerPanel extends JPanel {
 				JOptionPane.showMessageDialog(addCustomerPanel, "There must be at least one email and this cannot be longer than 40 characters or invalid", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
 			}
+			
+			if(firstPhone.getText().matches(".*[a-z].*") ) {
+				JOptionPane.showMessageDialog(addCustomerPanel, "Phone number must be a valid number", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
+				return;
+			}
+				
 			if (firstPhone.getText().equals("") || firstPhone.getText().length() > 25) {
 				JOptionPane.showMessageDialog(addCustomerPanel, "There must be at least one phone and this cannot be longer than 25 characters", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
 				return;
@@ -564,7 +578,7 @@ public class addCustomerPanel extends JPanel {
 					//... we continue with its phone numbers ...
 					for(JTextField currentPhone : phoneNumbers) {
 						
-						if(!currentPhone.getText().equals("") && currentPhone.getText().length() < 25) {
+						if(!currentPhone.getText().equals("") && currentPhone.getText().length() < 25 && !currentPhone.getText().matches(".*[a-z].*")) {
 						String addPhone = "INSERT INTO phone_contact (phone_number, owner_customer) VALUES (?,?) ON CONFLICT (phone_number) DO NOTHING";
 						PreparedStatement add = conn.prepareStatement(addPhone);
 						
@@ -581,7 +595,7 @@ public class addCustomerPanel extends JPanel {
 					//... and we finish with its fax numbers!
 					for(JTextField currentFax : faxNumbers) {
 						
-						if(!currentFax.getText().equals("") && currentFax.getText().length() < 30) {
+						if(!currentFax.getText().equals("") && currentFax.getText().length() < 30 && !currentFax.getText().matches(".*[a-z].*")) {
 						String addFax = "INSERT INTO fax_contact (fax, owner_customer) VALUES (?,?) ON CONFLICT (fax) DO NOTHING";
 						PreparedStatement add = conn.prepareStatement(addFax);
 						
