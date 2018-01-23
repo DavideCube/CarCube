@@ -43,6 +43,8 @@ public class CarBarChart extends ChartJPanel {
 		createAndFormatChart();
 		chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new Dimension(600, 400));
+		chartPanel.setOpaque(false);
+		this.setOpaque(false);
 		this.add(chartPanel);
 					
 	}

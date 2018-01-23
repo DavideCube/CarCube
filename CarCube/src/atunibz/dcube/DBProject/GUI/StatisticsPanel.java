@@ -35,7 +35,7 @@ public class StatisticsPanel extends JPanel{
 	private JPanel statPanel, titlePanel, dataPanel;
 	private Connection conn;
 	private JLabel lab1, lab2, lab3, lab4, sales1, sales2, sales3, sales4, sales5;
-	private JButton start, back;
+	private JButton start, back, details;
 	private JDatePickerImpl datePicker, datePicker2;
 	
 	public StatisticsPanel () {
@@ -148,10 +148,15 @@ public class StatisticsPanel extends JPanel{
 		
 		// back button
 		statPanel.add(Box.createRigidArea(new Dimension(0, 40)));
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setOpaque(false);
 		back = AppResources.iconButton("Go back     ", "icons/back.png");
 		back.addActionListener(new BackListener());
-		back.setAlignmentX(CENTER_ALIGNMENT);
-		statPanel.add(back);
+		details = AppResources.iconButton("Details    ", "icons/graphPerez.png");
+		details.addActionListener(new DetailsListener());
+		buttonPanel.add(back);
+		buttonPanel.add(details);
+		statPanel.add(buttonPanel);
 		
 		add(statPanel);
 	}
@@ -317,6 +322,17 @@ public class StatisticsPanel extends JPanel{
 		public void actionPerformed(ActionEvent e) {
 			MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 		}
+	}
+	
+	// listener for go into details
+	private class DetailsListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			MainPanel.getMainPanel().swapPanel(new ChartsPanel());
+			
+		}
+		
 	}
 }
 

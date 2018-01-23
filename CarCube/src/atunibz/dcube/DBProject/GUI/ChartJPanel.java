@@ -27,6 +27,7 @@ public abstract class ChartJPanel extends JPanel {
 	
 	public ChartJPanel() {
 		super();
+		this.setOpaque(false);
 		this.establishConnection();
 		
 	}
