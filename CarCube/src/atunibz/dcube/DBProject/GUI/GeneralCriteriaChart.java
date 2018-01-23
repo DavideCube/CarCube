@@ -121,9 +121,9 @@ public class GeneralCriteriaChart extends ChartJPanel {
 		switch(param) {
 		case "Price": 
 			query = "select make, model, price\n" + 
-			"		 from (select make, model, base_price as price from new_car union all select make, model," +
-			"		 net_price as price from used_car) as all_cars \n" + 
-			"		 group by(all_cars.make, all_cars.price, all_cars.model)\n";
+					"				from (select make, model, base_price as price from new_car union all select make, model,\n" + 
+					"				net_price as price from used_car) as all_cars \n" + 
+					"               order by price desc";
 			return true;
 		case "Horsepower":
 			query = "select *\n" + 
@@ -133,7 +133,8 @@ public class GeneralCriteriaChart extends ChartJPanel {
 					"      union all\n" + 
 					"      select make, model, horsepower\n" + 
 					"      from used_car inner join engine\n" + 
-					"      on engine = engine_id) as horsepower";
+					"      on engine = engine_id) as horsepower2 "
+					+ "order by horsepower2.horsepower desc";
 			return true;
 		case "Capacity":
 			query = "select *\n" + 
@@ -143,10 +144,11 @@ public class GeneralCriteriaChart extends ChartJPanel {
 					"      union all\n" + 
 					"      select make, model, capacity\n" + 
 					"      from used_car inner join engine\n" + 
-					"      on engine = engine_id) as capacity";
+					"      on engine = engine_id) as capacity"
+					+ " order by capacity.capacity desc";
 			return true;
 		case "Mileage (used only)":
-			query = "select make, model, mileage from used_car";
+			query = "select make, model, mileage from used_car order by mileage desc";
 			return true;
 		case "Trunk capacity":
 			query = "select *\n" + 
@@ -156,7 +158,8 @@ public class GeneralCriteriaChart extends ChartJPanel {
 					"      union all\n" + 
 					"      select make, model, trunk_capacity\n" + 
 					"      from used_car inner join dimension\n" + 
-					"      on dimension = dimension) as capacity";
+					"      on dimension = dimension_id) as capacity"
+					+ " order by capacity.trunk_capacity desc";
 			return true;
 		case "Height":
 			query = "select *\n" + 
@@ -166,7 +169,8 @@ public class GeneralCriteriaChart extends ChartJPanel {
 					"      union all\n" + 
 					"      select make, model, car_heigth\n" + 
 					"      from used_car inner join dimension\n" + 
-					"      on dimension = dimension) as height";
+					"      on dimension = dimension_id) as height"
+					+ " order by height.car_heigth desc";
 			return true;
 		case "Length":
 			query = "select *\n" + 
@@ -176,7 +180,8 @@ public class GeneralCriteriaChart extends ChartJPanel {
 					"      union all\n" + 
 					"      select make, model, car_length\n" + 
 					"      from used_car inner join dimension\n" + 
-					"      on dimension = dimension) as length";
+					"      on dimension = dimension_id) as length"
+					+ " order by length.car_length desc";
 			return true;
 		case "Width":
 			query = "select *\n" + 
@@ -186,7 +191,8 @@ public class GeneralCriteriaChart extends ChartJPanel {
 					"      union all\n" + 
 					"      select make, model, car_width\n" + 
 					"      from used_car inner join dimension\n" + 
-					"      on dimension = dimension) as width";
+					"      on dimension = dimension_id) as width"
+					+ " order by width.car_width desc";
 			return true;
 		default:
 			return false;
