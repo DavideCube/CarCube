@@ -391,6 +391,9 @@ public class ViewCarPanel extends JPanel {
 				
 				rs.next();
 				to = "<html><u>" + rs.getString("c_name") + " " + rs.getString("c_surname") + " (" + rs.getString("tax_code") + ")</u></html>";
+				
+				rs.close();
+				st.close();
 			}catch(SQLException e) {
 				e.printStackTrace();
 			}
