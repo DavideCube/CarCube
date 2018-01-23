@@ -493,6 +493,7 @@ public class addCustomerPanel extends JPanel {
 			}
 			
 			
+			
 			// We check if the address of our new customer is already present, if yes we
 			// have
 			// the foreign key for creating the customer, otherwise we insert it.
