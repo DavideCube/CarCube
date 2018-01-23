@@ -69,7 +69,7 @@ public class SalesLineChart extends ChartJPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		for(int i = lowerBound; i <= upperBound; i++) {
+		for(int i = lowerBound; i <= upperBound; i++) { 
 			
 		}
 		
