@@ -43,7 +43,7 @@ public class SalesLineChart extends ChartJPanel{
 	}
 	
 	private String[] setYearsRange() {
-		int upperBound, lowerBound = 0;
+		int upperBound = 0, lowerBound = 0;
 		try {
 			Statement stmnt = conn.createStatement();
 			ResultSet rs = stmnt.executeQuery("select max(sell_date)\n" + 
@@ -55,12 +55,26 @@ public class SalesLineChart extends ChartJPanel{
 				calendar.setTime(rs.getDate(1));
 				upperBound = calendar.get(Calendar.YEAR);
 			}
-			
-			
+			Statement stmnt2 = conn.createStatement();
+			ResultSet rs2 = stmnt2.executeQuery("select min(sell_date)\n" + 
+					"from\n" + 
+					"(select sell_date from used_sell\n" + 
+					"union distinct\n" + 
+					"select sell_date from new_sell) as all_sells");
+			while(rs2.next()) {
+				calendar.setTime(rs2.getDate(1));
+				lowerBound = calendar.get(Calendar.YEAR);
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		for(int i = lowerBound; i <= upperBound; i++) {
+			
+		}
+		
+		return null;
+			
 	}
 	
 	//evaluates the condition required to get the interval in the whole year
