@@ -35,11 +35,32 @@ public class SalesLineChart extends ChartJPanel{
 		chart = ChartFactory.createLineChart("Revenues", "Months", "Net income (€)", (DefaultCategoryDataset)dataset, PlotOrientation.VERTICAL, true, true, false);
 		chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new Dimension(600, 400));
-		criteriaBox = new JComboBox(years);
+		criteriaBox = new JComboBox<String>(years);
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.criteriaBox.addActionListener(new ChoiceListener());
 		this.add(criteriaBox);
 		this.add(chartPanel);		
+	}
+	
+	private String[] setYearsRange() {
+		int upperBound, lowerBound = 0;
+		try {
+			Statement stmnt = conn.createStatement();
+			ResultSet rs = stmnt.executeQuery("select max(sell_date)\n" + 
+					"from\n" + 
+					"(select sell_date from used_sell\n" + 
+					"union distinct\n" + 
+					"select sell_date from new_sell) as all_sells");
+			while(rs.next()) {
+				calendar.setTime(rs.getDate(1));
+				upperBound = calendar.get(Calendar.YEAR);
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	//evaluates the condition required to get the interval in the whole year
