@@ -5,18 +5,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jfree.*;
+
 import org.jfree.chart.*;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 
@@ -26,19 +22,25 @@ public class SalesLineChart extends ChartJPanel{
 	private Map<String, Double> salesMap;
 	private int year = 2017;
 	private JComboBox<String> criteriaBox;
-	private String[] years = {"2015", "2016", "2017", "2018", "2019", "2020"};
 	
 	
 	public SalesLineChart() {
 		this.getSalesInfo();
 		this.populateDataset();
 		chart = ChartFactory.createLineChart("Revenues", "Months", "Net income (€)", (DefaultCategoryDataset)dataset, PlotOrientation.VERTICAL, true, true, false);
+		chart.setBackgroundPaint(new Color (0,0,0,0));
+		final CategoryPlot plot = chart.getCategoryPlot();
+		plot.setBackgroundPaint(Color.GRAY);
+		plot.setDomainGridlinePaint(Color.BLACK);
+		plot.setRangeGridlinePaint(Color.BLACK);
 		chartPanel = new ChartPanel(chart);
+		chartPanel.setOpaque(false);
 		chartPanel.setPreferredSize(new Dimension(600, 400));
 		criteriaBox = new JComboBox<String>(setYearsRange());
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.criteriaBox.addActionListener(new ChoiceListener());
 		this.add(criteriaBox);
+		this.setOpaque(false);
 		this.add(chartPanel);		
 	}
 	
@@ -186,7 +188,14 @@ public class SalesLineChart extends ChartJPanel{
 		getSalesInfo();
 		populateDataset();
 		chart = ChartFactory.createLineChart("Revenues", "Months", "Net income (€)", (DefaultCategoryDataset)dataset, PlotOrientation.VERTICAL, true, true, false);
-		return new ChartPanel(chart);
+		chart.setBackgroundPaint(new Color (0,0,0,0));
+		final CategoryPlot plot = chart.getCategoryPlot();
+		plot.setBackgroundPaint(Color.GRAY);
+		plot.setDomainGridlinePaint(Color.BLACK);
+		plot.setRangeGridlinePaint(Color.BLACK);
+		ChartPanel c = new ChartPanel(chart);
+		c.setOpaque(false);
+		return c;
 	}
 	
 	
