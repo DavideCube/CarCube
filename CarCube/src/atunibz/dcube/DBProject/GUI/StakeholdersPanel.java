@@ -129,7 +129,7 @@ public class StakeholdersPanel extends JPanel{
 		            		else {
 		            			taxCode = getTaxCode (selectedCrit, current, true);
 		            		}
-		            		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(taxCode));
+		            		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(taxCode, false, null));
 		            }
 		            else {
 		            		String vat = null;

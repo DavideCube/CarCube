@@ -206,8 +206,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		//buttons
 		backBtn = AppResources.iconButton("Go back", "icons/back.png");
 		backBtn.setOpaque(false);
-		statsBtn = AppResources.iconButton("Stats", "icons/graph.png");
-		statsBtn.setOpaque(false);
+		
 		addBtn = AppResources.iconButton("Add contact", "icons/plus.png");
 		addBtn.setOpaque(false);
 		modifyBtn = new JButton("Modify");
@@ -454,7 +453,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		btnPanel.setLayout(new FlowLayout());
 		btnPanel.add(backBtn);
 		backBtn.addActionListener(new BackListener());
-		btnPanel.add(statsBtn);
 		btnPanel.add(modifyBtn);
 		btnPanel.add(addBtn);
 		
@@ -485,8 +483,8 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		}
 			String newValue = null;
 			if(fieldName.compareTo("name" )== 0) {
-				newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
-				if (newValue == null)
+				newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's " + fieldName + ":", nameTF.getText());
+				if (newValue == null || newValue.equals(""))
 					return;
 		}
 		switch(fieldName) {
@@ -518,7 +516,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		case "phone":
 			
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's phone:", "Edit data", JOptionPane.QUESTION_MESSAGE);
-			if (newValue == null)
+			if (newValue == null || newValue.equals(""))
 				return;
 			if(newValue.compareTo("") != 0) {
 				if(!newValue.matches("[A-Za-z]+") && (newValue.length() <= 25))
@@ -539,7 +537,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		
 		case "mail":
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
-			if (newValue == null)
+			if (newValue == null || newValue.equals(""))
 				return;
 			if(newValue.compareTo("") != 0) {
 				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
@@ -561,7 +559,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		
 		case "fax":
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for supplier's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
-			if (newValue == null)
+			if (newValue == null || newValue.equals(""))
 				return;
 			if(newValue.compareTo("") != 0) {
 				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);

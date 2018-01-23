@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 
+import atunibz.dcube.DBProject.GUI.ViewCarPanel.tornaAViewCar;
 import atunibz.dcube.DBProject.configuration.AppResources;
 
 
@@ -50,9 +51,14 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private JScrollPane scrollPane;
 	private ArrayList<JButton> buttons;
 	
-	public CustomerInfoPanel(String customerPkey) {
+	private boolean fromViewCar;
+	private tornaAViewCar torna;
+	
+	public CustomerInfoPanel(String customerPkey, boolean fromViewCar, tornaAViewCar torna) {
 		this.setOpaque(false);
 		this.customerPkey = customerPkey;
+		this.fromViewCar = fromViewCar;
+		this.torna = torna;
 		this.addressEditPanel = new AddressEditPanel();
 		getNumberOfContacts();
 		initComponents();
@@ -213,8 +219,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		//buttons
 		backBtn = AppResources.iconButton("Go back", "icons/back.png");
 		backBtn.setOpaque(false);
-		statsBtn = AppResources.iconButton("Stats", "icons/graph.png");
-		statsBtn.setOpaque(false);
 		addBtn = AppResources.iconButton("Add contact", "icons/plus.png");
 		addBtn.setOpaque(false);
 		modifyBtn = new JButton("Modify");
@@ -228,19 +232,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		catch(IOException e){
 			e.printStackTrace();
 		}
-		/*
-		modNameBtn = new JButton();
-		modNameBtn.setIcon(modifyIcon);
-		modNameBtn.addActionListener(new ModifyListener(modNameBtn));
-		
-		modSurnameBtn = new JButton();
-		modSurnameBtn.setIcon(modifyIcon);
-		modSurnameBtn.addActionListener(new ModifyListener(modSurnameBtn));
-		
-		modAddressBtn = new JButton();
-		modAddressBtn.setIcon(modifyIcon);
-		modAddressBtn.addActionListener(new ModifyListener(modAddressBtn));
-		*/
 		buttons = new ArrayList<>();
 		
 		infoPanel = new JPanel();
@@ -511,12 +502,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		btnPanel.setLayout(new FlowLayout());
 		btnPanel.add(backBtn);
 		backBtn.addActionListener(new BackListener());
-		btnPanel.add(statsBtn);
 		btnPanel.add(modifyBtn);
 		btnPanel.add(addBtn);
 		c.gridy = offsetY + 2;
 		c.gridx = 1;
-		//infoPanel.add(btnPanel, c);
 		this.add(btnPanel);
 		this.add((Box.createRigidArea(new Dimension(0, 30))));
 		this.add((Box.createRigidArea(new Dimension(0, 30))));
@@ -552,8 +541,8 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		}
 			String newValue = null;
 			if(fieldName.compareTo("name" )== 0 || fieldName.compareTo("surname") == 0) {
-				newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's " + fieldName + ":", "Edit data", JOptionPane.QUESTION_MESSAGE);
-				if (newValue == null)
+				newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's " + fieldName + ":", fieldName.equals("name")? nameTF.getText(): surnameTF.getText());
+				if (newValue == null || newValue.equals(""))
 					return;
 		}
 		String newPkey = "";
@@ -588,7 +577,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		    	 if(addressEditPanel.sanitizeInput()) {
 		    		 updateAddressInDB(addressEditPanel.zipTF.getText(), addressEditPanel.streetTF.getText(), addressEditPanel.cityTF.getText(), Integer.parseInt(addressEditPanel.civNumTF.getText()), addressEditPanel.nationTF.getText());
 			    	 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Address updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-		    		 MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey));
+		    		 MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey, false, null));
 		    	 }
 		    	 else {
 		    		 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fields must respect the given constraints. \nOnly alphanumerics characters are allowed.\nMoreover, each field must be nonblank.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
@@ -602,7 +591,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		case "phone":
 			
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's phone:", "Edit data", JOptionPane.QUESTION_MESSAGE);
-			if (newValue == null)
+			if (newValue == null || newValue.equals(""))
 				return;
 			if(newValue.compareTo("") != 0) {
 				if(!newValue.matches("[A-Za-z]+") && (newValue.length() <= 25))
@@ -617,13 +606,13 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				return;
 			}	
 			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Phone number updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-   		 	MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey));
+   		 	MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey, false, null));
    		 	
 		break;
 		
 		case "mail":
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
-			if (newValue == null)
+			if (newValue == null || newValue.equals(""))
 				return;
 			if(newValue.compareTo("") != 0) {
 				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's mail:", "Edit data", JOptionPane.QUESTION_MESSAGE);
@@ -639,13 +628,13 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				}
 				
 			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Mail address updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-   		 	MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey));
+   		 	MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey, false, null));
 		
 		break;
 		
 		case "fax":
 			newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
-			if (newValue == null)
+			if (newValue == null || newValue.equals(""))
 				return;
 			if(newValue.compareTo("") != 0) {
 				//newValue = (String)JOptionPane.showInputDialog(null, "Insert new value for customer's fax:", "Edit data", JOptionPane.QUESTION_MESSAGE);
@@ -658,7 +647,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				}
 				
 				JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fax number updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-   		 		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey));
+   		 		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(this.customerPkey, false, null));
 				}
 				else {
 					return;
@@ -714,7 +703,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 				s.executeUpdate(sql);
 				s.close();
 		    	JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Value updated!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-				MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(newPkey));
+				MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(newPkey, false, null));
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -954,7 +943,10 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private class BackListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
+			if(fromViewCar)
+				MainPanel.getMainPanel().swapPanel(new ViewCarPanel(torna.getId(), torna.isNewCar(), torna.getSelectedCusCus()));
+			else
+				MainPanel.getMainPanel().swapPanel(new StakeholdersPanel());
 			
 		}
 	}
@@ -1043,7 +1035,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		    		 	 try {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Phone contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-				    		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
+				    		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey, false, null));
 				    		return;
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
@@ -1058,7 +1050,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		    		 	 try {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Mail contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-				    		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
+				    		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey, false, null));
 				    		return;
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
@@ -1071,7 +1063,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		    		 	 try {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fax contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-				    		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
+				    		MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey, false, null));
 				    		return;
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
@@ -1083,7 +1075,7 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 		    		 
 		    		 
 		    		 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), " added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
-		    		 MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey));
+		    		 MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(customerPkey, false, null));
 		    	 }
 		    	 else {
 		    		 JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Please insert a valid contact information.\nField cannot be left blank.", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));

@@ -365,6 +365,7 @@ public class ViewCarPanel extends JPanel {
 		JLabel soldLabel = new JLabel();
 		AppResources.changeFont(soldLabel, Font.PLAIN, 18);
 		JButton soldButton = new JButton();
+		soldButton.addActionListener(new RoadTo3000());
 		soldButton.setOpaque(false);
 		soldButton.setBorderPainted(false);
 		soldButton.setMargin(new Insets(0,0,0,0));
@@ -2943,5 +2944,43 @@ public class ViewCarPanel extends JPanel {
 			}
 		}
 
+	}
+	
+	// listener gigante inventato solo per arrivare alle 3000 righe :)
+	private class RoadTo3000 implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton pressed = (JButton) e.getSource();
+			String key = pressed.getText().substring(pressed.getText().lastIndexOf("(") + 1, pressed.getText().lastIndexOf(")"));
+			tornaAViewCar torna = new tornaAViewCar(carId, isNewCar,selCustomer);
+			MainPanel.getMainPanel().swapPanel(new CustomerInfoPanel(key, true, torna));
+		}
+		
+	}
+	
+	public class tornaAViewCar{
+		
+		private String id, selectedCusCus;
+		boolean newCar;
+		
+		public tornaAViewCar(String idFirst, boolean newCarFirst, String cuscusFirst) {
+			id = idFirst;
+			newCar = newCarFirst;
+			selectedCusCus = cuscusFirst;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public String getSelectedCusCus() {
+			return selectedCusCus;
+		}
+
+		public boolean isNewCar() {
+			return newCar;
+		}
+		
 	}
 }
