@@ -116,7 +116,7 @@ public class StatisticsPanel extends JPanel{
 		statPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 		
 		
-		JPanel salesPanel = new JPanel ();
+		JPanel salesPanel = new JPanel () ;
 		JPanel support2 = new JPanel();
 		support2.setLayout(new BoxLayout(support2, BoxLayout.Y_AXIS));
 		sales1 = AppResources.iconLabel("Total incomes: " , "icons/money-bag.png");
