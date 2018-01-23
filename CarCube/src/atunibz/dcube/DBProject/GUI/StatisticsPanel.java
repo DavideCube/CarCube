@@ -154,11 +154,8 @@ public class StatisticsPanel extends JPanel{
 		back.addActionListener(new BackListener());
 		details = AppResources.iconButton("Details    ", "icons/graphPerez.png");
 		details.addActionListener(new DetailsListener());
-		JButton perez = new JButton ("click here to see project leader");
-		perez.addActionListener(new PerezListener ());
 		buttonPanel.add(back);
 		buttonPanel.add(details);
-		buttonPanel.add(perez);
 		statPanel.add(buttonPanel);
 		
 		add(statPanel);
@@ -333,19 +330,6 @@ public class StatisticsPanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			MainPanel.getMainPanel().swapPanel(new ChartsPanel());
-			
-		}
-		
-	}
-	
-	private class PerezListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JPanel perezP = new JPanel();
-			perezP.add(new JLabel(new ImageIcon("icons/perez.jpg")));
-			JOptionPane.showMessageDialog(MainPanel.getMainPanel(), perezP, "CarCube",
-					JOptionPane.PLAIN_MESSAGE);
 			
 		}
 		
