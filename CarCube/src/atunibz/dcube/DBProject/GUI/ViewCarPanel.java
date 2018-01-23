@@ -2283,7 +2283,19 @@ public class ViewCarPanel extends JPanel {
 					options, selected);
 
 			if (choice == 0) {
-
+				
+				boolean sel = false;
+				for(ColorCheckBox c : boxes) {
+					if(c.getCheckBox().isSelected())
+						sel = true;
+				}
+				
+				if(!sel) {
+					JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "This car cannot be transparent...",
+							"CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("icons/minilogo.png"));
+					return;
+				}
+				
 				// Remove all colors...
 				String removeColors = "";
 				if (isNewCar)
