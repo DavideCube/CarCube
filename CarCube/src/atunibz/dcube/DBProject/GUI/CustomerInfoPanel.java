@@ -51,7 +51,6 @@ public class CustomerInfoPanel extends BackgroundedPanel {
 	private ArrayList<JButton> buttons;
 	
 	public CustomerInfoPanel(String customerPkey) {
-		System.out.println("THERMHOSIFooooNE");
 		this.setOpaque(false);
 		this.customerPkey = customerPkey;
 		this.addressEditPanel = new AddressEditPanel();
