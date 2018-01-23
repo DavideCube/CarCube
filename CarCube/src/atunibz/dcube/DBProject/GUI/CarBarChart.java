@@ -51,7 +51,7 @@ public class CarBarChart extends ChartJPanel {
 	
 	private void createAndFormatChart() {
 		chart = ChartFactory.createBarChart("Number of units sold", "Make", "Units sold all-time", (DefaultCategoryDataset)dataset, PlotOrientation.VERTICAL, true, true , false);
-		chart.setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(new Color(0,0,0, 0));
 		final CategoryPlot plot = chart.getCategoryPlot();
 		plot.setBackgroundPaint(Color.GRAY);
 		plot.setDomainGridlinePaint(Color.BLACK);

@@ -35,12 +35,15 @@ public class CarPieChart extends ChartJPanel{
 		//pieDataset = (DefaultPieDataset)pieDataset;
 		this.populateDataset();
 		chart = ChartFactory.createPieChart3D("Most sold auto", (DefaultPieDataset)dataset, true, true, false);
+		chart.setBackgroundPaint(new Color(0,0,0, 0));
 		chartPanel = new ChartPanel(chart);
+		chartPanel.setOpaque(false);
 		chartPanel.setPreferredSize(new Dimension(600, 400));
 		
 		PiePlot3D plot = (PiePlot3D)chart.getPlot();
 		plot.setForegroundAlpha(0.5f);
 		
+		this.setOpaque(false);
 		this.add(chartPanel);
 				
 				

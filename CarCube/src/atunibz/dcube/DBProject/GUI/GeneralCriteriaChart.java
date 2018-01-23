@@ -40,9 +40,11 @@ public class GeneralCriteriaChart extends ChartJPanel {
 		selectedCriteria = (String)criteriaBox.getSelectedItem();
 		this.chartPanel = createProperGraph(selectedCriteria);
 		chartPanel.setPreferredSize(new Dimension(600, 400));
+		chartPanel.setOpaque(false);
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.criteriaBox.addActionListener(new ChoiceListener());
 		this.add(criteriaBox);
+		this.setOpaque(false);
 		this.add(chartPanel);
 	}
 	
@@ -50,14 +52,16 @@ public class GeneralCriteriaChart extends ChartJPanel {
 	private ChartPanel createProperGraph(String inputCriteria) {
 		populateDataset();
 		createAndFormatChart(inputCriteria);
-		return new ChartPanel(chart);
+		ChartPanel c = new ChartPanel(chart);
+		c.setOpaque(false);
+		return c;
 	}
 	
 	private void evaluateAxisByCriteria(String inputCriteria) {
 		switch(inputCriteria) {
 		case "Price": 
 			this.xAxis = "Price";
-			this.yAxis = "Price in $";
+			this.yAxis = "Price in €";
 		break;
 		case "Horsepower":
 			this.xAxis = "Horsepower";
@@ -107,7 +111,7 @@ public class GeneralCriteriaChart extends ChartJPanel {
 	private void createAndFormatChart(String inputCriteria) {
 		evaluateAxisByCriteria(inputCriteria);
 		chart = ChartFactory.createBarChart("Car comparison", xAxis, yAxis, (DefaultCategoryDataset)dataset, PlotOrientation.VERTICAL, true, true , false);
-		chart.setBackgroundPaint(Color.WHITE);
+		chart.setBackgroundPaint(new Color (0,0,0,0));
 		final CategoryPlot plot = chart.getCategoryPlot();
 		plot.setBackgroundPaint(Color.GRAY);
 		plot.setDomainGridlinePaint(Color.BLACK);
