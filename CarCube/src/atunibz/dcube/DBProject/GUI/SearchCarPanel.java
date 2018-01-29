@@ -250,7 +250,6 @@ public class SearchCarPanel extends JPanel{
 			}
 			
 			String makeSelected = (String) make.getSelectedItem();
-			System.out.println("Make Listener");
 			if (makeSelected != null && make.getItemCount() != 1)
 				researchQuery();
 		}
@@ -261,7 +260,6 @@ public class SearchCarPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Model Listener");
 			String modelSelected = (String) model.getSelectedItem();
 			String makeSelected = (String) make.getSelectedItem();
 			if (modelSelected != null && makeSelected != null && model.getItemCount() != 1)
@@ -276,7 +274,6 @@ public class SearchCarPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Year Listener");
 			String modelSelected = (String) model.getSelectedItem();
 			String makeSelected = (String) make.getSelectedItem();
 			if (modelSelected != null && makeSelected != null)
@@ -290,7 +287,6 @@ public class SearchCarPanel extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Price Listener");
 			String modelSelected = (String) model.getSelectedItem();
 			String makeSelected = (String) make.getSelectedItem();
 			if (modelSelected != null && makeSelected != null)
@@ -305,7 +301,6 @@ public class SearchCarPanel extends JPanel{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Sold Listener");
 				String modelSelected = (String) model.getSelectedItem();
 				String makeSelected = (String) make.getSelectedItem();
 				if (modelSelected != null && makeSelected != null)
@@ -402,7 +397,6 @@ public class SearchCarPanel extends JPanel{
 		
 		try {
 			Statement stat = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			System.out.println(totalQuery);
 			ResultSet rs = stat.executeQuery(totalQuery);
 			int rowcount = 0;
 			if (rs.last()) {
@@ -574,9 +568,6 @@ public class SearchCarPanel extends JPanel{
 					carPanel.removeAll();
 					createPanelList (rs);
 					
-					System.out.println("CASE BOTH: \n");
-					System.out.println("\t" + newCarQuery);
-					System.out.println("\n\t" + usedCarQuery);
 					stat = conn.createStatement();
 					rs = stat.executeQuery(usedCarQuery);
 					//carPanel.removeAll();

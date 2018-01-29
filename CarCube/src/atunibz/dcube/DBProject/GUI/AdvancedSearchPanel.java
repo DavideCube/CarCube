@@ -568,7 +568,6 @@ public class AdvancedSearchPanel extends JPanel {
 			}
 
 			String makeSelected = (String) make.getSelectedItem();
-			System.out.println("Make Listener");
 			if (makeSelected != null && make.getItemCount() != 1)
 				researchQuery();
 		}
@@ -580,7 +579,6 @@ public class AdvancedSearchPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Model Listener");
 			String modelSelected = (String) model.getSelectedItem();
 			String makeSelected = (String) make.getSelectedItem();
 			if (modelSelected != null && makeSelected != null && model.getItemCount() != 1)
@@ -595,7 +593,6 @@ public class AdvancedSearchPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Changed Listener");
 			String modelSelected = (String) model.getSelectedItem();
 			String makeSelected = (String) make.getSelectedItem();
 			if (modelSelected != null && makeSelected != null)
@@ -628,7 +625,6 @@ public class AdvancedSearchPanel extends JPanel {
 		}
 
 		public void act() {
-			System.out.println("Changed Text Listener");
 			String modelSelected = (String) model.getSelectedItem();
 			String makeSelected = (String) make.getSelectedItem();
 			if (modelSelected != null && makeSelected != null)
@@ -852,10 +848,8 @@ public class AdvancedSearchPanel extends JPanel {
 					newCarQuery += " INTERSECT ALL SELECT new_car.make, new_car.model FROM new_car inner join new_painting on new_car.car_id = new_painting.car_id " + 
 							"inner join color on new_painting.color_code = color.color_code WHERE color.color_code = '"
 							+ colorKeys.get(i) + "'";
-					//System.out.println("Color selected: " + colorKeys.get(i));
 			}
 			
-			System.out.println("Reasearch query: " + newCarQuery);
 		}
 
 		if (usedCar.isSelected()) {
@@ -992,7 +986,6 @@ public class AdvancedSearchPanel extends JPanel {
 					usedCarQuery += " INTERSECT ALL SELECT used_car.make, used_car.model FROM used_car inner join used_painting on used_car.immatriculation = used_painting.immatriculation " + 
 							"inner join color on used_painting.color_code = color.color_code WHERE color.color_code = '"
 							+ colorKeys.get(i) + "'";
-					//System.out.println("Color selected: " + colorKeys.get(i));
 			}
 		}
 		
@@ -1008,7 +1001,6 @@ public class AdvancedSearchPanel extends JPanel {
 
 		try {
 			Statement stat = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			System.out.println(totalQuery);
 			ResultSet rs = stat.executeQuery(totalQuery);
 			int rowcount = 0;
 			if (rs.last()) {
@@ -1297,7 +1289,6 @@ public class AdvancedSearchPanel extends JPanel {
 				if(optionaQuery.length() > 0)
 					newCarQuery += optionaQuery + innerQuery0 + ")";
 				
-				System.out.println("New car Query: " + newCarQuery);
 				
 			}
 			
@@ -1533,7 +1524,6 @@ public class AdvancedSearchPanel extends JPanel {
 				if(optionaQuery.length() > 0)
 					usedCarQuery += optionaQuery + innerQuery0 + ")";
 				
-				System.out.println("Used car Query: " + usedCarQuery);
 			}
 			
 			// CASE BOTH
@@ -1548,9 +1538,6 @@ public class AdvancedSearchPanel extends JPanel {
 					stat.close();
 					rs.close();
 					
-					System.out.println("CASE BOTH: \n");
-					System.out.println("\t" + newCarQuery);
-					System.out.println("\n\t" + usedCarQuery);
 					stat = conn.createStatement();
 					rs = stat.executeQuery(usedCarQuery);
 					//carPanel.removeAll();
@@ -1573,7 +1560,6 @@ public class AdvancedSearchPanel extends JPanel {
 				Statement stat;
 				try {
 					stat = conn.createStatement();
-					System.out.println(newCarQuery);
 					ResultSet rs = stat.executeQuery(newCarQuery);
 					carPanel.removeAll();
 					createPanelList (rs);

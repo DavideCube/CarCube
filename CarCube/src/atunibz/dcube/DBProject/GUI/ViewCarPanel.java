@@ -2258,11 +2258,9 @@ public class ViewCarPanel extends JPanel {
 
 					for (ColorCheckBox c : boxes) {
 
-						System.out.println("ColorCode:" + c.getColorCode());
 
 						if (c.getColorCode().equals(rs.getString("color_code"))) {
 							c.getCheckBox().setSelected(true);
-							System.out.println("Inside");
 						}
 					}
 
@@ -2810,9 +2808,10 @@ public class ViewCarPanel extends JPanel {
 					String customer = (String) customers.getSelectedItem();
 					String soldToKey = customer.substring(customer.lastIndexOf("(")+1, customer.lastIndexOf(")"));
 					
-					Date today = Calendar.getInstance().getTime();
+					
+					Calendar calendar = Calendar.getInstance();			
 				
-					java.sql.Date insertDate = new java.sql.Date(today.getYear(), today.getMonth(), today.getDay());
+					java.sql.Date insertDate = new java.sql.Date(calendar.get(Calendar.YEAR) -1900, calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 					
 					PreparedStatement addT = null;
 					try {

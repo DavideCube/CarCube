@@ -81,7 +81,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			while(rsFax.next()) {
 				numberOfFaxes = rsFax.getInt("count");
 			}
-			System.out.println("The supplier has " + numberOfPhones + " phone numbers, " + numberOfMails + " mail addresses and " + numberOfFaxes + " fax numbers.");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -92,7 +91,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 	private String[] getPhones() {
 		Connection conn = DatabaseConnection.getDBConnection().getConnection();
 		String[] phones = new String[numberOfPhones];
-		System.out.println("PHONES: " + Arrays.toString(phones));
 		int index = 0;
 		try {
 			Statement stmnt = conn.createStatement();
@@ -105,7 +103,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			e.printStackTrace();
 		}
 		
-		System.out.println(Arrays.toString(phones));
 		return phones;
 	}
 	
@@ -124,7 +121,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			e.printStackTrace();
 		}
 		
-		System.out.println(Arrays.toString(mails));
 		return mails;
 	}
 	
@@ -142,9 +138,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		if(faxes.length == 0)
-			System.out.println("[No fax]");
-		System.out.println(Arrays.toString(faxes));
+		
 		return faxes;
 	}
 	
@@ -228,7 +222,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 	}
 	
 	private int addPhoneLabels(GridBagConstraints c, JPanel infoPanel) {
-		System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
 		int offsetX = 0, offsetY = ++c.gridy;
 		String[] phones = getPhones();
 		c.gridx = offsetX;
@@ -253,7 +246,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			//
 			c.gridy = ++c.gridy;
 			c.gridx = 0;
-			System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
 			
 		}
 		
@@ -261,7 +253,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 	}
 	
 	private int addMailLabels(GridBagConstraints c, JPanel infoPanel) {
-		System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
 		int offsetX = 0, offsetY = ++c.gridy;
 		String[] mails = getMails();
 		c.gridx = offsetX;
@@ -286,7 +277,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			//
 			c.gridy = ++c.gridy;
 			c.gridx = 0;
-			System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
 			
 		}
 		
@@ -294,7 +284,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 	}
 	
 	private int addFaxLabels(GridBagConstraints c, JPanel infoPanel) {
-		System.out.println("Constraints: " + c.gridx + ", " + c.gridy);
 		int offsetX = 0, offsetY = ++c.gridy;
 		String[] faxes = getFaxes();
 		c.gridx = offsetX;
@@ -588,11 +577,9 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		Statement s;
 		try {
 			s = con.createStatement();
-			System.out.println("ZIP: " + newZIP + "\nStreet: " + newStreet + "\nCity: " + newCity + "\nN: " + newCivicNumber + "\nNation: " + newNation);
 			String sql = "UPDATE address " + 
 						 "SET postcode = '" + newZIP + "', street = '" + newStreet + "', city = '" + newCity + "', civic_number = " + newCivicNumber + ", nation = '" + newNation + "' " + 
 						 "WHERE address_id in (SELECT supplier.address FROM supplier WHERE supplier.vat = '" + supplierPkey + "')";
-			System.out.println(sql);
 			s.executeUpdate(sql);
 			s.close();
 		}
@@ -610,7 +597,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		String[] phones = getPhones();
 		for(int i = 0; i < phones.length; i++) {
 			if(buttonName.contains("" + (i + 1))) {
-				System.out.println("" + (i+1) + " is fucking equal to " + buttonName);
 				previous = phones[i];
 			}
 		}
@@ -619,7 +605,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		String[] mails = getMails();
 		for(int i = 0; i < mails.length; i++) {
 			if(buttonName.contains("" + (i + 1))) {
-				System.out.println("" + (i+1) + " is fucking equal to " + buttonName);
 				previous = mails[i];
 			}
 		}
@@ -628,7 +613,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		String[] faxes = getFaxes();
 		for(int i = 0; i < faxes.length; i++) {
 			if(buttonName.contains("" + (i + 1))) {
-				System.out.println("" + (i+1) + " is fucking equal to " + buttonName);
 				previous = faxes[i];
 			}
 		}
@@ -637,17 +621,14 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 	case("phone"):
 			
 			sql = "UPDATE phone_contact SET phone_number = '" + newVal + "' WHERE owner_supplier = '" + supplierPkey + "' AND phone_number = '" + previous + "'";
-			//System.out.println("Phone number updated. New number: " + newVal);
 	break;
 	
 	case("mail"): 
 			sql = "UPDATE mail_contact SET mail = '" + newVal + "' WHERE owner_supplier = '" + supplierPkey + "' AND mail = '" + previous + "'";
-			System.out.println("Mail updated. New mail: " + newVal);
 	break;
 	
 	case("fax"): 
 			sql = "UPDATE fax_contact SET fax = '" + newVal + "' WHERE owner_supplier = '" + supplierPkey + "' AND fax = '" + previous + "'";
-			System.out.println("Fax updated. New fax: " + newVal);
 	break;
 			
 	}
@@ -826,7 +807,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			for(JButton curr : buttons) {
 				curr.setVisible(true);
 			}
-			System.out.println("Button " + source.getName() + " clicked.");
 			editField(source.getName());
 		}
 		
@@ -849,7 +829,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			AbstractButton source = (JButton) o;
 			for(ActionListener curr : source.getActionListeners()) {
 				source.removeActionListener(curr);
-				System.out.println("Action listener removed.");
 			}
 			
 			source.addActionListener(al);
@@ -867,7 +846,6 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 			source = (JButton) e.getSource();
 			for (JButton curr : buttons) {
 				curr.setVisible(true);
-				System.out.println("enabled");
 			}
 			
 			swapListener(source, new DisableButtonsListener());
@@ -922,7 +900,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		    		 switch(choice) {
 		    		 case("Phone contact"):
 		    			 //TODO
-		    			 sql = "INSERT INTO phone_contact VALUES ('" + addContactPanel.getUserInput() + "', '" + supplierPkey + "', NULL)";
+		    			 sql = "INSERT INTO phone_contact VALUES ('" + addContactPanel.getUserInput() + "', '" + supplierPkey + "', NULL) ON CONFLICT (phone_number) DO NOTHING";
 		    		 	 try {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Phone contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
@@ -938,7 +916,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		    		 case("Mail contact"):
 		    			 
 		    			 //TODO 
-		    			 sql = "INSERT INTO mail_contact VALUES ('" + addContactPanel.getUserInput() + "', '" + supplierPkey + "', NULL)";
+		    			 sql = "INSERT INTO mail_contact VALUES ('" + addContactPanel.getUserInput() + "', '" + supplierPkey + "', NULL) ON CONFLICT (mail) DO NOTHING";
 		    		 	 try {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Mail contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));
@@ -952,7 +930,7 @@ public class SupplierInfoPanel extends BackgroundedPanel {
 		    		 	 
 		    		 case("Fax contact"):
 		    			 //TODO
-		    			 sql = "INSERT INTO fax_contact VALUES ('" + addContactPanel.getUserInput() + "', '" + supplierPkey + "', NULL)";
+		    			 sql = "INSERT INTO fax_contact VALUES ('" + addContactPanel.getUserInput() + "', '" + supplierPkey + "', NULL) ON CONFLICT (fax) DO NOTHING";
 		    		 	 try {
 							stmnt.executeUpdate(sql);
 							JOptionPane.showMessageDialog(MainPanel.getMainPanel(), "Fax contact added!", "CarCube", JOptionPane.INFORMATION_MESSAGE, new ImageIcon ("icons/minilogo.png"));

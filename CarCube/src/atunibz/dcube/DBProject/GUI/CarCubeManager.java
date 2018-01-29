@@ -59,7 +59,6 @@ public class CarCubeManager {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-	    System.out.println("Loading classes...\n");
 		
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -68,6 +67,5 @@ public class CarCubeManager {
 			e.printStackTrace();
 		}
 		
-		System.out.print("Class loaded.\n");
 	}
 }

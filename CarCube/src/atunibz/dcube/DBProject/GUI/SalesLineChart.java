@@ -75,7 +75,6 @@ public class SalesLineChart extends ChartJPanel{
 		yearsRange = new String[(upperBound-lowerBound) + 1];
 		int pos = 0;
 		for(int i = lowerBound; i <= upperBound; i++) { 
-			System.out.println(i);
 			yearsRange[pos] = "" + i;
 			pos++;
 		}
@@ -168,9 +167,6 @@ public class SalesLineChart extends ChartJPanel{
 			
 		}
 		
-		for(Map.Entry<String, Double> entry : salesMap.entrySet()) {
-			System.out.println(entry.getKey() + " - " + entry.getValue().toString());
-		}
 	}	
 	
 	public void populateDataset() {

@@ -213,7 +213,6 @@ public class GeneralCriteriaChart extends ChartJPanel {
 			try {
 				ResultSet rs = stmnt.executeQuery(query);
 				while(rs.next()) {
-					System.out.println("RS UPDATED");
 						dcd.setValue((double)rs.getInt(3), rs.getString(1) + " " + rs.getString(2), selectedCriteria);
 				}
 			} catch (SQLException e) {
@@ -235,7 +234,6 @@ public class GeneralCriteriaChart extends ChartJPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Action performed!");
 			sourceBox = (JComboBox) e.getSource();
 			selectedCriteria = (String)this.sourceBox.getSelectedItem();
 			remove(chartPanel);
@@ -245,12 +243,7 @@ public class GeneralCriteriaChart extends ChartJPanel {
 			chartPanel.setPreferredSize(new Dimension(600, 400));
 			repaint();
 			revalidate();
-			/*
-			JFrame f = new JFrame();
-			f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			f.getContentPane().add(new GeneralCriteriaChart(selectedCriteria));
-			f.pack();
-			f.setVisible(true);*/
+			
 			
 		}
 		

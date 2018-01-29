@@ -60,7 +60,6 @@ public class CarPieChart extends ChartJPanel{
 				totalSale = rs1.getInt(1);
 				i++;
 			}
-			System.out.println("Total sales: " + totalSale);
 			ResultSet rs = stmnt.executeQuery(unitsSoldPerMake);
 			while(rs.next()) {
 				dpd.setValue(rs.getString(1), new Double((rs.getInt(2)*100)/totalSale));

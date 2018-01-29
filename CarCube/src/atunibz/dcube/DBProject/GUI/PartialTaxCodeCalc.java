@@ -108,20 +108,5 @@ public class PartialTaxCodeCalc {
 		return res;
 	}
 	
-	
-	
-	public static void main(String[] args) {
-		
-		PartialTaxCodeCalc c = new PartialTaxCodeCalc("Davide", "Perez Cuevas");
-		
-		System.out.println(c.refactor());
-		
-		
-	}
-	
-	
-	
-	
-	
 }
 
